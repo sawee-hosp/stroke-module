@@ -2,56 +2,48 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>สวีรู้ทันสโตรก Quiz</title>
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&display=swap" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <style>
-    body { font-family: "Noto Sans Thai"; background: #f5f5f5; padding: 16px; margin: 0; }
-    .container { max-width: 400px; margin: 0 auto; background: #fff; padding: 16px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-    h1 { text-align: center; color: #003366; margin-bottom: 20px; }
-
-    /* Progress Bar */
-    #progressContainer { background: #e9ecef; border-radius: 8px; height: 10px; margin-bottom: 16px; overflow: hidden; }
-    #progressBar { background: #007BFF; height: 100%; width: 0%; transition: width 0.4s ease; }
-
-    /* Question Animation */
-    #questionContainer { opacity: 0; animation: fadeInUp 0.5s forwards; }
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .question p { font-weight: bold; margin: 0 0 12px; }
-    .question label { display: block; margin-bottom: 8px; cursor: pointer; }
-
-    #explanation { margin-top: 12px; color: #dc3545; }
-
-    .btn { display: block; width: 100%; padding: 12px; background: #007BFF; color: #fff; border: none; border-radius: 8px; margin-top: 16px; cursor: pointer; }
-    .btn:hover { background: #0056b3; }
-
-    #result { display: none; text-align: center; margin-top: 20px; }
-    #result h2 { margin-bottom: 12px; }
-    #result p { margin: 8px 0; }
+    body { font-family: "Noto Sans Thai", sans-serif; background: #f5f5f5; padding:16px; margin:0; }
+    .container { max-width:400px; margin:0 auto; background:#fff; padding:16px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
+    h1 { text-align:center; color:#003366; margin-bottom:20px; }
+    #progressContainer { background:#e9ecef; border-radius:8px; height:10px; overflow:hidden; margin-bottom:16px; }
+    #progressBar { background:#28a745; width:0%; height:100%; transition: width 0.4s ease; }
+    #questionContainer, #videoContainer, #result { display:none; }
+    .active { display:block; }
+    .question { opacity:0; animation:fadeInUp 0.5s forwards; margin-bottom:12px; }
+    @keyframes fadeInUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    .question p { font-weight:bold; margin:0 0 8px; }
+    label { display:block; margin-bottom:6px; cursor:pointer; }
+    #explanation { color:#dc3545; margin-bottom:12px; }
+    .btn { display:block; width:100%; padding:12px; background:#007BFF; color:#fff; border:none; border-radius:8px; margin-top:12px; cursor:pointer; }
+    .btn:hover { background:#0056b3; }
+    iframe { width:100%; height:200px; border:none; border-radius:8px; margin-bottom:12px; }
+    #result h2 { margin-bottom:8px; }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>สวีรู้ทันสโตรก Quiz</h1>
-
-    <!-- Progress -->
     <div id="progressContainer"><div id="progressBar"></div></div>
 
     <!-- Question -->
-    <div id="questionContainer">
+    <div id="questionContainer" class="active">
       <div class="question" id="questionText"></div>
       <div id="options"></div>
       <div id="explanation"></div>
+      <button id="nextBtn" class="btn" style="display:none;">ถัดไป</button>
     </div>
 
-    <!-- Next Button -->
-    <button id="nextBtn" class="btn" style="display:none;">ถัดไป</button>
+    <!-- Video -->
+    <div id="videoContainer">
+      <iframe id="videoFrame" src=""></iframe>
+      <button id="afterVideoBtn" class="btn">ต่อไป</button>
+    </div>
 
     <!-- Result -->
     <div id="result">
@@ -64,115 +56,171 @@
 <script>
 const liffId  = '2005789397-ROQvjpYk';
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzDE6SfY8Mabbwn-ojHWmNbqov0XYtpHZqFiOzM9SnISPnPNhOuy7x3wZj1lsV_CtvOFA/exec';
+const VIDEO_LINK = 'https://drive.google.com/file/d/1nl2Bxxdw8DLz1aTuAgbjauJftkragv7W/preview';
 
-let userId = '', userName = '';
-const totalQ = 10;
-let currentQ = 0;
-let correctCount = 0;
-const answers = [];
+let userId='', userName='';
+let segment = 0, phase='pre', idx = 0, answered=0, correctCount=0;
+const postAnswers = [];
 
-// 10 คำถามตามหมวด
-const quizData = [
-  { q:'1. Stroke เกิดจากอะไร?', opts:['สมองขาดเลือด','สมองติดเชื้อ','สมองขาดออกซิเจน','สมองทับเส้นเลือด'], a:0, exp:'Stroke เกิดจากเลือดไปเลี้ยงสมองไม่เพียงพอหรือเลือดออกในสมอง' },
-  { q:'2. ปัจจัยเสี่ยงที่ปรับเปลี่ยนได้คือข้อใด?', opts:['อายุสูง','เบาหวาน','สูบบุหรี่','ประวัติครอบครัว'], a:2, exp:'สูบบุหรี่เป็นปัจจัยเสี่ยงที่ปรับเปลี่ยนได้' },
-  { q:'3. ปัจจัยเสี่ยงที่ไม่สามารถเปลี่ยนได้คือข้อใด?', opts:['อายุสูง','ความดันสูง','ไขมันสูง','สูบบุหรี่'], a:0, exp:'อายุสูงเป็นปัจจัยเสี่ยงที่ไม่สามารถเปลี่ยนได้' },
-  { q:'4. B ใน BE-FAST ย่อมาจาก?', opts:['Balance (ทรงตัวเสีย)','Blink','Breathing','Blood'], a:0, exp:'B = Balance (ทรงตัวเสีย)' },
-  { q:'5. E ใน BE-FAST คือ?', opts:['Eyes (มองไม่ชัด)','Exercise','Eat','Energy'], a:0, exp:'E = Eyes (มองไม่ชัด)' },
-  { q:'6. S ใน BE-FAST ย่อมาจาก?', opts:['Speech (พูดไม่ชัด)','Smile','Shock','Sense'], a:0, exp:'S = Speech (พูดไม่ชัด)' },
-  { q:'7. เมื่อสงสัยสโตรก ควรทำอะไรเป็นอันดับแรก?', opts:['โทร 1669','ดื่มน้ำ','นอนพัก','ไปหาหมอวันถัดไป'], a:0, exp:'ต้องโทร 1669 ทันที' },
-  { q:'8. rtPA ควรให้ภายในกี่ชั่วโมง?', opts:['4.5 ชั่วโมง','6 ชั่วโมง','3 ชั่วโมง','2 ชั่วโมง'], a:0, exp:'rtPA ต้องให้ภายใน 4.5 ชั่วโมงหลังมีอาการ' },
-  { q:'9. การแชร์ตำแหน่งผู้ป่วยใน LINE ใช้ฟีเจอร์ใด?', opts:['แชร์ตำแหน่ง','พิมพ์ที่อยู่','ส่งข้อความเปล่า','โทรบอกปากเปล่า'], a:0, exp:'ใช้ฟีเจอร์ “แชร์ตำแหน่ง” ใน LINE' },
-  { q:'10. ปุ่มโทรฉุกเฉินใน LINE สวีรู้ทันสโตรก คือ?', opts:['โทรฉุกเฉิน 1669','โทร 191','ส่งสติ๊กเกอร์','โทร 1442'], a:0, exp:'ปุ่ม “โทรฉุกเฉิน 1669” อยู่ในเมนูหลัก' }
+// สุ่มคำถาม pre/post แต่ละ segment
+const segments = [
+  { pre: [
+      {q:'1. Pre1: Stroke เกิดจากอะไร?', opts:['สมองขาดเลือด','สมองติดเชื้อ','สมองขาดออกซิเจน','สมองทับเส้นเลือด'], a:0},
+      {q:'2. Pre2: ปัจจัยเสี่ยงปรับเปลี่ยนได้คือ?', opts:['อายุสูง','เบาหวาน','สูบบุหรี่','ประวัติครอบครัว'], a:2},
+      {q:'3. Pre3: ปัจจัยเสี่ยงไม่เปลี่ยนได้คือ?', opts:['อายุสูง','ความดันสูง','ไขมันสูง','สูบบุหรี่'], a:0}
+    ],
+    post: [
+      {q:'1. Post1: Stroke เกิดจากอะไร?', opts:['สมองขาดเลือด','สมองติดเชื้อ','สมองขาดออกซิเจน','สมองทับเส้นเลือด'], a:0, exp:'Stroke เกิดจากเลือดไม่พอเลี้ยงสมอง'},
+      {q:'2. Post2: ปัจจัยเสี่ยงปรับได้คือ?', opts:['อายุสูง','เบาหวาน','สูบบุหรี่','ประวัติครอบครัว'], a:2, exp:'สูบบุหรี่ปรับได้'},
+      {q:'3. Post3: ปัจจัยไม่เปลี่ยนได้คือ?', opts:['อายุสูง','ความดันสูง','ไขมันสูง','สูบบุหรี่'], a:0, exp:'อายุสูงไม่เปลี่ยนได้'}
+    ]
+  },
+  { pre: [
+      {q:'4. Pre1: B ใน BE-FAST ย่อมาจาก?', opts:['Balance','Blink','Breathing','Blood'], a:0},
+      {q:'5. Pre2: E ใน BE-FAST คือ?', opts:['Eyes','Exercise','Eat','Energy'], a:0},
+      {q:'6. Pre3: S ใน BE-FAST ย่อมาจาก?', opts:['Speech','Smile','Shock','Sense'], a:0}
+    ],
+    post: [
+      {q:'4. Post1: B = ?', opts:['Balance','Blink','Breathing','Blood'], a:0, exp:'B = Balance'},
+      {q:'5. Post2: E = ?', opts:['Eyes','Exercise','Eat','Energy'], a:0, exp:'E = Eyes'},
+      {q:'6. Post3: S = ?', opts:['Speech','Smile','Shock','Sense'], a:0, exp:'S = Speech'}
+    ]
+  },
+  { pre: [
+      {q:'7. Pre1: เมื่อสงสัยสโตรก ควรทำอะไร?', opts:['โทร1669','ดื่มน้ำ','นอนพัก','ไปหาหมอ'], a:0},
+      {q:'8. Pre2: rtPA ควรให้ภายใน?', opts:['4.5 ชม','6 ชม','3 ชม','2 ชม'], a:0},
+      {q:'9. Pre3: แชร์ตำแหน่งใช้?', opts:['แชร์ตำแหน่ง','พิมพ์ที่อยู่','ส่งข้อความ','โทรบอก'], a:0}
+    ],
+    post: [
+      {q:'7. Post1: เมื่อสงสัยสโตรก?', opts:['โทร1669','ดื่มน้ำ','นอนพัก','ไปหาหมอ'], a:0, exp:'ต้องโทร1669'},
+      {q:'8. Post2: rtPA ภายใน?', opts:['4.5 ชม','6 ชม','3 ชม','2 ชม'], a:0, exp:'4.5 ชั่วโมง'},
+      {q:'9. Post3: แชร์ตำแหน่งใช้?', opts:['แชร์ตำแหน่ง','พิมพ์ที่อยู่','ส่งข้อความ','โทรบอก'], a:0, exp:'ใช้แชร์ตำแหน่ง'}
+    ]
+  },
+  { pre: [
+      {q:'10. Pre1: ปุ่มฉุกเฉินใน LINE คือ?', opts:['โทร1669','โทร191','ส่งสติ๊กเกอร์','โทร1442'], a:0}
+    ],
+    post: [
+      {q:'10. Post1: ปุ่มฉุกเฉินคือ?', opts:['โทร1669','โทร191','ส่งสติ๊กเกอร์','โทร1442'], a:0, exp:'โทร1669'}
+    ]
+  }
 ];
 
-// เริ่ม LIFF
+const totalQuestions = segments.reduce((sum,s)=> sum + s.pre.length + s.post.length,0);
+
+// เริ่มต้น LIFF
 async function init() {
   await liff.init({ liffId });
   if (!liff.isLoggedIn()) await liff.login();
   const prof = await liff.getProfile();
-  userId   = prof.userId;
-  userName = prof.displayName;
-  showQuestion();
+  userId = prof.userId; userName = prof.displayName;
+  showCurrent();
 }
 
-// แสดงคำถามและตัวเลือก
-function showQuestion() {
+// อัปเดต Progress Bar
+function updateProgress() {
+  $('#progressBar').css('width', `${(answered/totalQuestions)*100}%`);
+}
+
+// แสดงคำถามหรือวิดีโอ
+function showCurrent() {
   $('#explanation').hide().text('');
   $('#nextBtn').hide();
-  const data = quizData[currentQ];
-  $('#questionText').text(data.q);
-  $('#options').empty();
-  data.opts.forEach((opt,i) => {
-    $('#options').append(`
-      <label>
-        <input type="radio" name="opt" value="${i}"> ${opt}
-      </label>`);
-  });
-  // progress
-  const pct = ((currentQ)/totalQ)*100;
-  $('#progressBar').css('width', pct + '%');
-  $('#questionContainer').css('opacity', 0).show().animate({opacity:1, top:0}, 400);
+  updateProgress();
+  if (phase === 'pre' || phase === 'post') {
+    $('#videoContainer, #result').hide();
+    $('#questionContainer').show().addClass('active');
+    const list = segments[segment][phase];
+    const item = list[idx];
+    $('#questionText').text(item.q);
+    $('#options').empty();
+    item.opts.forEach((opt,i) => {
+      $('#options').append(`<label><input type="radio" name="opt" value="${i}"> ${opt}</label>`);
+    });
+    $('#questionContainer').css('opacity',0).animate({opacity:1},400);
+  } else if (phase === 'video') {
+    $('#questionContainer, #result').hide();
+    $('#videoContainer').show();
+    $('#videoFrame').attr('src', VIDEO_LINK);
+  }
 }
 
-// เมื่อเลือกคำตอบแล้ว
+// เมื่อเลือกคำตอบ
 $(document).on('change','input[name=opt]',function(){
-  const selected = parseInt($(this).val());
-  const correct  = quizData[currentQ].a;
-  let msg = '';
-  if (selected === correct) {
-    correctCount++;
-    msg = '✅ ถูกต้อง!';
-  } else {
-    msg = '❌ ผิด: ' + quizData[currentQ].exp;
+  const val = parseInt($(this).val());
+  const item = segments[segment][phase][idx];
+  answered++; updateProgress();
+  if (phase === 'pre') {
+    if (val !== item.a) {
+      $('#explanation').show().text('ยังไม่ถูก เดี๋ยวดูวิดีโอแล้วตอบใหม่นะ');
+    } else {
+      $('#explanation').hide();
+    }
+  } else { // post
+    if (val === item.a) {
+      $('#explanation').show().text('✅ ถูกต้อง!');
+      correctCount++;
+      postAnswers.push(1);
+    } else {
+      $('#explanation').show().text(`❌ ผิด: ${item.exp}`);
+      postAnswers.push(0);
+    }
   }
-  answers.push(selected===correct?1:0);
-  $('#explanation').show().text(msg);
   $('#nextBtn').show();
 });
 
-// ปุ่ม Next
-$('#nextBtn').click(()=>{
-  currentQ++;
-  if (currentQ < totalQ) {
-    showQuestion();
-  } else {
-    showResult();
+// ปุ่มถัดไป
+$('#nextBtn').click(()=> {
+  $('#explanation').hide();
+  if (phase === 'pre') {
+    if (idx + 1 < segments[segment].pre.length) {
+      idx++;
+    } else {
+      phase = 'video'; idx = 0;
+    }
+  } else if (phase === 'video') {
+    phase = 'post'; idx = 0;
+  } else { // post
+    if (idx + 1 < segments[segment].post.length) {
+      idx++;
+    } else {
+      // จบ segment
+      if (segment + 1 < segments.length) {
+        segment++; phase = 'pre'; idx = 0;
+      } else {
+        // จบทั้งหมด
+        showResult(); return;
+      }
+    }
   }
+  $('input[name=opt]').prop('checked',false);
+  showCurrent();
 });
 
 // แสดงผลสรุป
 function showResult() {
-  $('#questionContainer, #nextBtn').hide();
-  const title = correctCount >= 8
-    ? `${userName} รู้ทันสโตรก! 🎉`
-    : `คุณได้ ${correctCount} คะแนน`;
-  $('#resultTitle').text(title);
+  $('#questionContainer, #videoContainer').hide();
+  $('#resultTitle').text(`${userName} ทดสอบความรู้เรื่องสโตรก ได้ ${correctCount}/10 คะแนน` +
+    (correctCount >= 8 ? ' 👑' : ''));
   $('#score').text(correctCount);
-  // progress full
-  $('#progressBar').css('width','100%');
   $('#result').show();
-  // บันทึกผล
-  $.post(GAS_URL, JSON.stringify({ userId, answers }), null, 'json');
+  // ส่งบันทึก
+  $.post(GAS_URL, JSON.stringify({ userId, postAnswers, score: correctCount }));
 }
 
-// แชร์ผลลัพธ์ด้วย Flex
+// แชร์ Flex
 $('#shareBtn').click(()=>{
-  const flex = {
-    type: 'flex',
-    altText: 'ผลการทดสอบสโตรก',
-    contents: {
-      type: 'bubble',
-      body: {
-        type: 'box',
-        layout: 'vertical',
-        contents: [
-          { type: 'text', text: $('#resultTitle').text(), weight:'bold', size:'lg' },
-          { type: 'text', text: `คะแนน: ${correctCount}/10`, margin:'md' }
-        ]
-      }
+  const bubble = {
+    type:'flex', altText:'ผลการทดสอบ', contents:{
+      type:'bubble',
+      body:{ type:'box', layout:'vertical', backgroundColor:'#FFF1C1', contents:[
+        { type:'text', text:`${userName}`, weight:'bold', size:'lg', color:'#333333' },
+        { type:'text', text:`ได้ ${correctCount}/10 คะแนน`, size:'md', margin:'md', color:'#555555' },
+        ...(correctCount>=8 ? [{ type:'text', text:'👑 รู้ทันสโตรก!', size:'md', margin:'md', color:'#DAA520' }] : [])
+      ]}
     }
   };
-  liff.shareTargetPicker([flex]).catch(console.error);
+  liff.shareTargetPicker([bubble]).catch(console.error);
 });
 
 $(document).ready(init);
