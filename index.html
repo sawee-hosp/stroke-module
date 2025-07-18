@@ -1,59 +1,117 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>คุณรู้ทันสโตรกหรือยัง?</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet"/>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
-    body { font-family:'Noto Sans Thai',sans-serif; background:#f0f2f5;
-      display:flex; justify-content:center; align-items:flex-start; padding:40px 0; }
+    /* Reset & base */
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0 }
+    body {
+      font-family:'Noto Sans Thai',sans-serif;
+      background:#f0f2f5;
+      display:flex; justify-content:center; align-items:flex-start;
+      padding:40px 0;
+    }
     .container { max-width:480px; width:100%; padding:0 16px; }
+
+    /* Header */
     h1 { font-size:2.2rem; color:#1a237e; text-align:center; margin-bottom:4px; }
     .subtitle { font-size:0.9rem; color:#666; text-align:center; margin-bottom:4px; }
     .history  { font-size:1rem; color:#444; text-align:center; margin-bottom:24px; }
+
+    /* Tabs */
     .tabs { display:flex; margin-bottom:24px; border-radius:8px; overflow:hidden;
-      box-shadow:0 2px 8px rgba(0,0,0,0.1); }
-    .tabs button { flex:1; padding:12px; font-size:1rem; font-weight:600;
-      border:none; background:#e0e0e0; cursor:pointer; transition:background .3s; }
-    .tabs button.active { background:#3949ab; color:#fff; }
-    .tabs button:not(.active):hover { background:#d5d5d5; }
-    .card { background:#fff; border-radius:12px;
-      box-shadow:0 4px 12px rgba(0,0,0,0.05); padding:24px; margin-bottom:24px;
-      transition:transform .2s; }
-    .card:hover { transform:translateY(-2px); }
-    .button-group { display:flex; gap:16px; }
-    .btn { flex:1; padding:14px; font-size:1rem; font-weight:600;
-      color:#fff; border:none; border-radius:8px; cursor:pointer;
-      transition:background .3s, box-shadow .3s; }
-    .btn-video { background:linear-gradient(45deg,#43a047,#66bb6a);
-      box-shadow:0 4px 8px rgba(67,160,71,0.3); }
+            box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+    .tabs button {
+      flex:1; padding:12px; font-size:1rem; font-weight:600;
+      border:none; background:#e0e0e0; cursor:pointer; transition:background .3s;
+    }
+    .tabs button.active { background:#3949ab; color:#fff }
+    .tabs button:not(.active):hover { background:#d5d5d5 }
+
+    /* Cards */
+    .card {
+      background:#fff; border-radius:12px;
+      box-shadow:0 4px 12px rgba(0,0,0,0.05);
+      padding:24px; margin-bottom:24px;
+      transition:transform .2s;
+    }
+    .card:hover { transform:translateY(-2px) }
+
+    /* Start buttons */
+    .button-group { display:flex; gap:16px }
+    .btn {
+      flex:1; padding:14px; font-size:1rem; font-weight:600; color:#fff;
+      border:none; border-radius:8px; cursor:pointer;
+      transition:background .3s, box-shadow .3s;
+    }
+    .btn-video {
+      background:linear-gradient(45deg,#43a047,#66bb6a);
+      box-shadow:0 4px 8px rgba(67,160,71,0.3);
+    }
     .btn-video:hover { background:linear-gradient(45deg,#388e3c,#57a05a); }
-    .btn-quiz { background:linear-gradient(45deg,#1e88e5,#42a5f5);
-      box-shadow:0 4px 8px rgba(30,136,229,0.3); }
+    .btn-quiz {
+      background:linear-gradient(45deg,#1e88e5,#42a5f5);
+      box-shadow:0 4px 8px rgba(30,136,229,0.3);
+    }
     .btn-quiz:hover { background:linear-gradient(45deg,#1565c0,#1e7ae1); }
-    #quiz-card,#result-card { display:none; }
-    #quiz-card img { width:100%; border-radius:8px;
-      margin-bottom:16px; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
-    #progress { height:8px; background:#e0e0e0;
-      border-radius:4px; overflow:hidden; margin-bottom:16px; }
-    #progress-bar { height:100%; background:#1e88e5;
-      width:0; transition:width .4s ease; }
-    .question { font-size:1.4rem; font-weight:bold;
-      color:#1a237e; margin-bottom:16px; }
-    .choices label { display:block; font-size:1.1rem;
+
+    /* Quiz */
+    #quiz-card, #result-card { display:none; }
+    #quiz-card img {
+      width:100%; border-radius:8px;
+      margin-bottom:16px; box-shadow:0 2px 6px rgba(0,0,0,0.1);
+    }
+    #progress {
+      height:8px; background:#e0e0e0;
+      border-radius:4px; overflow:hidden; margin-bottom:16px;
+    }
+    #progress-bar {
+      height:100%; background:#1e88e5;
+      width:0; transition:width .4s ease;
+    }
+    .question {
+      font-size:1.4rem; font-weight:bold;
+      color:#1a237e; margin-bottom:16px;
+    }
+    .choices label {
+      display:block; font-size:1.1rem;
       margin-bottom:12px; padding:12px; border-radius:6px;
-      background:#f7f7f7; cursor:pointer; transition:background .3s; }
+      background:#f7f7f7; cursor:pointer; transition:background .3s;
+    }
     .choices label:hover { background:#ececec; }
-    .choices input { margin-right:10px; transform:scale(1.2); }
-    .correct { background:#c8e6c9 !important; color:#2e7d32; }
-    .wrong   { background:#ffcdd2 !important; color:#c62828; }
-    #nextBtn { display:none; width:100%; padding:12px;
+    .choices input {
+      margin-right:10px; transform:scale(1.2);
+    }
+
+    /* Submit button */
+    #submitBtn {
+      display:none; width:100%; padding:12px;
       font-size:1.1rem; font-weight:600; color:#fff;
       background:#5e35b1; border:none; border-radius:8px;
-      cursor:pointer; margin-top:16px; transition:background .3s; }
-    #nextBtn:hover { background:#512da8; }
+      cursor:pointer; margin-top:16px; transition:background .3s;
+    }
+    #submitBtn:hover { background:#512da8; }
+
+    /* Modal */
+    .modal {
+      display:none; position:fixed; top:0; left:0;
+      width:100%; height:100%; background:rgba(0,0,0,0.5);
+      justify-content:center; align-items:center; z-index:1000;
+    }
+    .modal-content {
+      background:#fff; padding:20px; border-radius:8px;
+      max-width:300px; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.2);
+    }
+    .modal-content p { margin-bottom:16px; font-size:1.1rem; }
+    .modal-content button {
+      padding:10px 20px; font-size:1rem; font-weight:600;
+      color:#fff; background:#1e88e5; border:none; border-radius:6px;
+      cursor:pointer; transition:background .3s;
+    }
+    .modal-content button:hover { background:#1565c0; }
   </style>
 </head>
 <body>
@@ -79,159 +137,120 @@
       <div id="progress"><div id="progress-bar"></div></div>
       <div id="questionText" class="question"></div>
       <div id="choicesContainer" class="choices"></div>
-      <button id="nextBtn">ถัดไป</button>
+      <button id="submitBtn">ส่งคำตอบ</button>
     </div>
 
     <div id="result-card" class="card">
-      <h2 style="margin-top:0;">สรุปผล</h2>
+      <h2 style="margin-top:0">สรุปผล</h2>
       <p id="scoreText" style="font-size:1.2rem;"></p>
       <p id="wrongText" style="font-size:1rem;color:#c62828;"></p>
     </div>
   </div>
 
+  <div id="answerModal" class="modal">
+    <div class="modal-content">
+      <p id="modalMessage"></p>
+      <button id="modalNextBtn">ข้อต่อไป</button>
+    </div>
+  </div>
+
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-  <script>
-    const GAS_URL = 'https://script.google.com/macros/s/AKfycbwt4O6aTK_NqGGdYaIF6gRbv5f37dgFeQYZ7ZLxZIRYGBEz54EnJx1hS36XPhET1AOgHg/exec';
-    const LIFF_ID = '2005789397-ROQvjpYk';
-    let userProfile, level='general', questions=[], idx=0, score=0, wrongs=[];
+ <script>
+  const GAS_URL = 'https://script.google.com/macros/s/.../exec';
+  const LIFF_ID = '2005789397-ROQvjpYk';
+  let userProfile, level = 'general', questions = [], idx = 0, score = 0, wrongs = [];
+  let historyData = [];
 
-    function makeDriveUrl(url) {
-      // extract file ID
-      const m = url.match(/\/d\/([^\/]+)/) || url.match(/id=([^&]+)/);
-      const id = m ? m[1] : null;
-      return id
-        ? `https://drive.google.com/uc?export=view&id=${id}`
-        : url;
-    }
-
-    window.handleHistory = data => {
-      const el = document.getElementById('quiz-history');
-      el.textContent = data.length
-        ? `ครั้งล่าสุด: ${data[data.length-1].score}/${data[data.length-1].full_score}`
-        : 'ยังไม่เคยสอบ';
-    };
-
-    window.handleQuiz = data => {
-      questions=data; idx=0; score=0; wrongs=[];
-      document.getElementById('start-card').style.display='none';
-      document.getElementById('quiz-card').style.display='block';
-      showQuestion();
-    };
-
-    window.handleRecord = resp => console.log('Recorded:', resp);
-
-    async function init() {
-      await liff.init({ liffId:LIFF_ID });
-      if (!liff.isLoggedIn()) liff.login();
-      userProfile = await liff.getProfile();
-      loadHistory();
-
-      // tab clicks
-      document.querySelectorAll('.tabs button').forEach(btn => {
-        btn.onclick = () => {
-          document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
-          btn.classList.add('active');
-          level = btn.dataset.level;
-          document.getElementById('quiz-history').textContent='กำลังโหลดประวัติ...';
-          loadHistory();
-        };
-      });
-
-      document.getElementById('btnQuiz').onclick = () => {
-        const s = document.createElement('script');
-        s.src = `${GAS_URL}?action=getQuiz&level=${level}&callback=handleQuiz`;
-        document.head.appendChild(s);
-      };
-
-      document.getElementById('btnVideo').onclick = () => {
-        window.open('https://youtu.be/your_video_url','_blank');
-        setTimeout(()=>document.getElementById('btnQuiz').click(),500);
-      };
-    }
-    document.addEventListener('DOMContentLoaded', init);
-
-    function loadHistory() {
-      if (!userProfile?.userId) return;
+  // 1) CALLBACK: history JSONP
+  window.handleHistory = data => {
+    historyData = data || [];
+    const startCard = document.getElementById('start-card');
+    // first time?
+    if (!historyData.length) {
+      startCard.innerHTML = `
+        <div class="intro" style="margin-bottom:16px; text-align:center;">
+          <p>มาทดสอบความรู้ครั้งแรกกันเถอะ</p>
+          <p>ว่าคุณรู้จักสโตรกแค่ไหน</p>
+          <p>รู้จักสโตรก จะห่างโรคอัมพาต</p>
+          <p>เริ่มทำแบบทดสอบกันเลย ↓</p>
+        </div>
+        <div class="button-group">
+          <button id="btnVideo" class="btn btn-video">ดูวิดีโอ</button>
+          <button id="btnQuiz"  class="btn btn-quiz">ทำแบบทดสอบ</button>
+        </div>`;
+      attachStartButtons();
+    } else {
+      // have history: get last score & fetch user name
+      const last     = historyData[historyData.length-1];
+      const full     = last.full_score;
+      const scoreVal = last.score;
+      // ask Apps Script for the display name
       const s = document.createElement('script');
-      s.src = `${GAS_URL}?action=getHistory&userId=${userProfile.userId}&level=${level}&callback=handleHistory`;
+      s.src = `${GAS_URL}?action=getUserName&userId=${userProfile.userId}&callback=handleUserName`;
       document.head.appendChild(s);
+      // store last for use in handleUserName
+      window._lastScore = { score: scoreVal, full: full };
+    }
+  };
+
+  // 2) CALLBACK: after fetching user name
+  window.handleUserName = resp => {
+    const nameObj  = resp.name || 'คุณผู้ทดสอบ';
+    const { score: sc, full } = window._lastScore || {};
+    const startCard = document.getElementById('start-card');
+    let introHtml;
+
+    if (sc < full) {
+      introHtml = `
+        <div class="intro" style="margin-bottom:16px; text-align:center;">
+          <p>ครั้งที่แล้วคุณได้คะแนน <strong>${sc}/${full}</strong></p>
+          <p>มาแก้มือให้ได้คะแนน ${full} เต็มกันเถอะ ↓</p>
+        </div>`;
+    } else {
+      introHtml = `
+        <div class="intro" style="margin-bottom:16px; text-align:center;">
+          <p>คุณ ${nameObj} เป็นผู้รู้ทันสโตรกอยู่แล้ว 🎉</p>
+          <p>ครั้งนี้จะลองทำข้อสอบใหม่ไหม ↓</p>
+        </div>`;
     }
 
-    function shuffle(a) {
-      for (let i=a.length-1;i>0;i--) {
-        const j=Math.floor(Math.random()*(i+1));
-        [a[i],a[j]]=[a[j],a[i]];
-      }
-      return a;
-    }
+    startCard.innerHTML = introHtml + `
+      <div class="button-group">
+        <button id="btnVideo" class="btn btn-video">ดูวิดีโอ</button>
+        <button id="btnQuiz"  class="btn btn-quiz">ทำแบบทดสอบ</button>
+      </div>`;
+    attachStartButtons();
+  };
 
-    function showQuestion() {
-      const q = questions[idx];
-      // show infographic
-      const img = document.getElementById('infographic');
-      if (q.infographic) {
-        img.src = makeDriveUrl(q.infographic);
-        img.style.display = 'block';
-      } else {
-        img.style.display = 'none';
-      }
-      // progress bar
-      document.getElementById('progress-bar').style.width = `${(idx+1)/questions.length*100}%`;
-      // text
-      document.getElementById('questionText').textContent = q.question;
-      // choices
-      const keys = shuffle(['choice1','choice2','choice3','choice4']);
-      const cont = document.getElementById('choicesContainer'); cont.innerHTML = '';
-      keys.forEach(key => {
-        const label = document.createElement('label');
-        label.textContent = q[key];
-        label.onclick = () => selectAnswer(q, key, label);
-        cont.appendChild(label);
-      });
-      // prepend inputs
-      document.querySelectorAll('.choices label').forEach(l => {
-        const inp = document.createElement('input');
-        inp.type='radio'; inp.name='choice'; inp.value=l.textContent;
-        l.prepend(inp);
-      });
-      // hide next
-      document.getElementById('nextBtn').style.display='none';
-    }
+  // wire up the two start buttons after we overwrite innerHTML
+  function attachStartButtons() {
+    document.getElementById('btnQuiz').onclick = () => {
+      const s = document.createElement('script');
+      s.src = `${GAS_URL}?action=getQuiz&level=${level}&callback=handleQuiz`;
+      document.head.appendChild(s);
+    };
+    document.getElementById('btnVideo').onclick = () => {
+      window.open('https://youtu.be/your_video_url','_blank');
+      setTimeout(()=>document.getElementById('btnQuiz').click(), 500);
+    };
+  }
 
-    function selectAnswer(q, key, label) {
-      const selected = label.textContent.trim();
-      const correct  = q.correct_choice.trim();
-      console.log('Selected:', JSON.stringify(selected), 'Correct:', JSON.stringify(correct));
-      const isCorrect = (selected === correct);
-      if (isCorrect) { score++; label.classList.add('correct'); }
-      else          { wrongs.push(q.test_id); label.classList.add('wrong'); }
-      document.querySelectorAll('.choices input').forEach(i=>i.disabled=true);
-      const btn = document.getElementById('nextBtn');
-      btn.style.display='block';
-      btn.onclick = () => idx<questions.length-1 ? (idx++, showQuestion()) : finishQuiz();
-    }
+  // … your existing init(), getQuiz callback, showQuestion(), etc. …
 
-    function finishQuiz() {
-      document.getElementById('quiz-card').style.display='none';
-      document.getElementById('result-card').style.display='block';
-      document.getElementById('scoreText').textContent = `คุณได้ ${score}/${questions.length} คะแนน`;
-      document.getElementById('wrongText').textContent = wrongs.length
-        ? `ข้อที่ผิด: ${wrongs.join(',')}`
-        : 'ตอบถูกทั้งหมด!';
-      const params = [
-        'action=recordResult',
-        `userId=${userProfile.userId}`,
-        `level=${level}`,
-        `score=${score}`,
-        `full_score=${questions.length}`,
-        `posttest=true`,
-        `wrong=${encodeURIComponent(wrongs.join(','))}`,
-        'callback=handleRecord'
-      ];
-      const r = document.createElement('script');
-      r.src = `${GAS_URL}?${params.join('&')}`;
-      document.head.appendChild(r);
-    }
-  </script>
+  // at end of <script>:
+  document.addEventListener('DOMContentLoaded', async () => {
+    await liff.init({ liffId: LIFF_ID });
+    if (!liff.isLoggedIn()) liff.login();
+    userProfile = await liff.getProfile();
+    loadHistory();
+  });
+
+  function loadHistory() {
+    if (!userProfile?.userId) return;
+    const s = document.createElement('script');
+    s.src = `${GAS_URL}?action=getHistory&userId=${userProfile.userId}&level=${level}&callback=handleHistory`;
+    document.head.appendChild(s);
+  }
+</script>
 </body>
 </html>
