@@ -4,64 +4,20 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>แบบทดสอบความรู้ สวีรู้ทันสโตรก</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet"/>
   <style>
-    body {
-      font-family: 'Noto Sans Thai', sans-serif;
-      background: #f5f5f5;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-    .container {
-      width: 100%;
-      max-width: 480px;
-      padding: 16px;
-    }
-    .card {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      padding: 24px;
-      margin-bottom: 16px;
-    }
-    .card h1 {
-      font-size: 1.5rem;
-      color: #003366;
-      text-align: center;
-      margin-bottom: 16px;
-    }
-    .card p,
-    .card label {
-      font-size: 1rem;
-      color: #333;
-    }
-    button {
-      display: block;
-      width: 100%;
-      padding: 12px;
-      font-size: 1rem;
-      color: #fff;
-      background: #007BFF;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.3s;
-      margin-top: 16px;
-    }
-    button:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-    }
-    .choices label {
-      display: block;
-      margin: 8px 0;
-    }
+    body { font-family:'Noto Sans Thai',sans-serif; background:#f5f5f5; margin:0;
+           display:flex;justify-content:center;align-items:center;min-height:100vh; }
+    .container { width:100%;max-width:480px;padding:16px; }
+    .card { background:#fff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);
+            padding:24px;margin-bottom:16px; }
+    h1 { font-size:1.5rem;color:#003366;text-align:center;margin-bottom:16px; }
+    p,label { font-size:1rem;color:#333; }
+    button { width:100%;padding:12px;font-size:1rem;color:#fff;
+             background:#007BFF;border:none;border-radius:8px;cursor:pointer;margin-top:16px;
+             transition:background .3s; }
+    button:disabled { background:#ccc;cursor:not-allowed; }
+    .choices label { display:block;margin:8px 0; }
   </style>
 </head>
 <body>
@@ -93,6 +49,7 @@
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbwt4O6aTK_NqGGdYaIF6gRbv5f37dgFeQYZ7ZLxZIRYGBEz54EnJx1hS36XPhET1AOgHg/exec';
     const LIFF_ID = '2005789397-ROQvjpYk';
     let userProfile, questions = [], currentIndex = 0, correctCount = 0, wrongIds = [], testType = 'pretest';
 
@@ -105,26 +62,25 @@
 
     $('#startBtn').on('click', () => {
       testType = $('input[name="testType"]:checked').val();
-      google.script.run.withSuccessHandler(startQuiz).getQuiz('asm');
+      // เรียก AJAX GET เพื่อดึงข้อสอบระดับ asm
+      fetch(`${GAS_URL}?action=getQuiz&level=asm`)
+        .then(r => r.json())
+        .then(data => {
+          questions = data;
+          currentIndex = 0; correctCount = 0; wrongIds = [];
+          $('#start-screen').hide();
+          $('#quiz-screen').show();
+          showQuestion();
+        })
+        .catch(err => console.error(err));
     });
-
-    function startQuiz(data) {
-      questions = data;
-      currentIndex = 0; correctCount = 0; wrongIds = [];
-      $('#start-screen').hide();
-      $('#quiz-screen').show();
-      showQuestion();
-    }
 
     function showQuestion() {
       const q = questions[currentIndex];
       let html = `<p><strong>${q.test_id}</strong> ${q.question}</p><div class="choices">`;
-      ['A','B','C','D'].forEach((letter,i) => {
-        html += `
-          <label>
-            <input type="radio" name="choice" value="${letter}">
-            ${q['choice'+(i+1)]}
-          </label>`;
+      ['choice1','choice2','choice3','choice4'].forEach((key,i) => {
+        const letter = String.fromCharCode(65 + i);
+        html += `<label><input type="radio" name="choice" value="${letter}"> ${q[key]}</label>`;
       });
       html += '</div>';
       $('#question-container').html(html);
@@ -141,8 +97,11 @@
       if (selected === q.correct_choice) correctCount++;
       else wrongIds.push(q.test_id);
       currentIndex++;
-      if (currentIndex < questions.length) showQuestion();
-      else finishQuiz();
+      if (currentIndex < questions.length) {
+        showQuestion();
+      } else {
+        finishQuiz();
+      }
     });
 
     function finishQuiz() {
@@ -154,14 +113,19 @@
           ? `ข้อที่ตอบผิด: ${wrongIds.join(', ')}`
           : 'ไม่มีข้อที่ตอบผิด'
       );
-      google.script.run.recordResult({
-        userId:     userProfile.userId,
-        level:      'asm',
-        type:       testType,
-        score:      correctCount,
-        full_score: questions.length,
-        wrong:      wrongIds
-      });
+      // ส่งผลไปบันทึกผ่าน POST
+      fetch(GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId:     userProfile.userId,
+          level:      'asm',
+          type:       testType,
+          score:      correctCount,
+          full_score: questions.length,
+          wrong:      wrongIds
+        })
+      }).catch(err => console.error(err));
     }
   </script>
 </body>
