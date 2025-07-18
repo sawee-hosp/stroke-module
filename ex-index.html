@@ -6,70 +6,22 @@
   <title>แบบทดสอบความรู้ สวีรู้ทันสโตรก</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet"/>
   <style>
-    body {
-      font-family: 'Noto Sans Thai', sans-serif;
-      background: #f5f5f5;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-    .container {
-      width: 100%;
-      max-width: 480px;
-      padding: 16px;
-    }
-    .card {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      padding: 24px;
-      margin-bottom: 16px;
-    }
-    h1 {
-      font-size: 1.5rem;
-      color: #003366;
-      text-align: center;
-      margin-bottom: 16px;
-    }
-    p, label, small {
-      font-size: 1rem;
-      color: #333;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      font-size: 1rem;
-      color: #fff;
-      background: #007BFF;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 16px;
-      transition: background 0.3s;
-    }
-    button:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-    }
-    .choices label {
-      display: block;
-      margin: 8px 0;
-    }
-    #feedback {
-      font-size: 1rem;
-      margin-top: 12px;
-      color: #555;
-    }
-    #result-screen h2 {
-      margin-top: 0;
-      color: #003366;
-    }
-    #result-screen p {
-      margin: 8px 0;
-    }
+    body { font-family:'Noto Sans Thai',sans-serif; background:#f5f5f5; margin:0;
+           display:flex;justify-content:center;align-items:center;min-height:100vh; }
+    .container { width:100%; max-width:480px; padding:16px; }
+    .card { background:#fff; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1);
+            padding:24px; margin-bottom:16px; }
+    h1 { font-size:1.5rem; color:#003366; text-align:center; margin-bottom:16px; }
+    p,label,small { font-size:1rem; color:#333; }
+    .form-group { margin-bottom:12px; }
+    button { width:100%; padding:12px; font-size:1rem; color:#fff; background:#007BFF;
+             border:none; border-radius:8px; cursor:pointer; margin-top:16px;
+             transition:background .3s; }
+    button:disabled { background:#ccc; cursor:not-allowed; }
+    .choices label { display:block; margin:8px 0; }
+    #feedback { font-size:1rem; margin-top:12px; color:#555; }
+    #result-screen h2 { margin-top:0; color:#003366; }
+    #result-screen p { margin:8px 0; }
   </style>
 </head>
 <body>
@@ -78,9 +30,16 @@
 
     <!-- Start Screen -->
     <div id="start-screen" class="card">
-      <p>เลือกประเภทการทดสอบ:</p>
-      <label><input type="radio" name="testType" value="pretest" checked> Pretest</label>
-      <label><input type="radio" name="testType" value="posttest"> Posttest</label>
+      <div class="form-group">
+        <p>ระดับแบบทดสอบ:</p>
+        <label><input type="radio" name="testLevel" value="asm" checked> อสม. (ASM)</label>
+        <label><input type="radio" name="testLevel" value="befast"> ประชาชนทั่วไป (BEFAST)</label>
+      </div>
+      <div class="form-group">
+        <p>ประเภทการทดสอบ:</p>
+        <label><input type="radio" name="testType" value="pretest" checked> Pretest</label>
+        <label><input type="radio" name="testType" value="posttest"> Posttest</label>
+      </div>
       <button id="startBtn">เริ่มทำแบบทดสอบ</button>
     </div>
 
@@ -103,105 +62,103 @@
   <script>
     const GAS_URL = 'https://script.google.com/macros/s/AKfycbwt4O6aTK_NqGGdYaIF6gRbv5f37dgFeQYZ7ZLxZIRYGBEz54EnJx1hS36XPhET1AOgHg/exec';
     const LIFF_ID = '2005789397-ROQvjpYk';
-    let userProfile, questions = [], currentIndex = 0, correctCount = 0, wrongIds = [], testType = 'pretest', answered = false;
 
-    async function initialize() {
+    let userProfile, questions = [], idx = 0, score = 0, wrongs = [], level = 'asm', type = 'pretest', answered = false;
+
+    // LIFF init
+    async function init() {
       await liff.init({ liffId: LIFF_ID });
       if (!liff.isLoggedIn()) liff.login();
       userProfile = await liff.getProfile();
     }
-    document.addEventListener('DOMContentLoaded', initialize);
+    document.addEventListener('DOMContentLoaded', init);
 
-    // JSONP callback for getQuiz
+    // JSONP callbacks
     window.handleQuiz = function(data) {
       questions = data;
-      currentIndex = 0;
-      correctCount = 0;
-      wrongIds = [];
+      idx = 0; score = 0; wrongs = [];
       document.getElementById('start-screen').style.display = 'none';
       document.getElementById('quiz-screen').style.display  = 'block';
-      showQuestion();
+      showQ();
+    };
+    window.handleRecord = function(res) {
+      console.log('บันทึกผลสอบ:', res);
     };
 
-    // JSONP callback for recordResult
-    window.handleRecord = function(resp) {
-      console.log('บันทึกผลสอบ:', resp);
-    };
-
+    // Start button
     document.getElementById('startBtn').onclick = () => {
-      testType = document.querySelector('input[name="testType"]:checked').value;
+      level = document.querySelector('input[name="testLevel"]:checked').value;
+      type  = document.querySelector('input[name="testType"]:checked').value;
       const s = document.createElement('script');
-      s.src = `${GAS_URL}?action=getQuiz&level=asm&callback=handleQuiz`;
+      s.src = `${GAS_URL}?action=getQuiz&level=${level}&callback=handleQuiz`;
       document.head.appendChild(s);
     };
 
-    function showQuestion() {
-      const q = questions[currentIndex];
+    function showQ() {
+      const q = questions[idx];
       let html = `<p><strong>${q.test_id}</strong> ${q.question}</p><div class="choices">`;
-      ['choice1','choice2','choice3','choice4'].forEach((key,i) => {
-        const letter = String.fromCharCode(65 + i);
-        html += `<label><input type="radio" name="choice" value="${letter}"> ${q[key]}</label>`;
+      ['choice1','choice2','choice3','choice4'].forEach((c,i) => {
+        const L = String.fromCharCode(65+i);
+        html += `<label><input type="radio" name="choice" value="${L}"> ${q[c]}</label>`;
       });
       html += '</div>';
       document.getElementById('question-container').innerHTML = html;
       const fb = document.getElementById('feedback');
-      fb.style.display = 'none';
-      fb.textContent = '';
+      fb.style.display = 'none'; fb.textContent = '';
       answered = false;
       const btn = document.getElementById('nextBtn');
-      btn.disabled = true;
-      btn.textContent = 'ตรวจคำตอบ';
+      btn.disabled = true; btn.textContent = 'ตรวจคำตอบ';
     }
 
     document.getElementById('question-container').addEventListener('change', e => {
-      if (e.target.name === 'choice') {
-        document.getElementById('nextBtn').disabled = false;
-      }
+      if (e.target.name==='choice') document.getElementById('nextBtn').disabled = false;
     });
 
     document.getElementById('nextBtn').onclick = function() {
-      const q = questions[currentIndex];
-      const selected = document.querySelector('input[name="choice"]:checked').value;
-      const fb = document.getElementById('feedback');
+      const q   = questions[idx];
+      const sel = document.querySelector('input[name="choice"]:checked').value.trim().toUpperCase();
+      const corr= q.correct_choice.trim().toUpperCase();
+      const fb  = document.getElementById('feedback');
 
       if (!answered) {
-        if (testType === 'pretest') {
-          fb.textContent = selected === q.correct_choice ? '✅ ถูก' : '❌ ผิด';
+        // feedback
+        if (type==='pretest') {
+          fb.textContent = sel===corr ? '✅ ถูก' : '❌ ผิด';
         } else {
-          const idx = q.correct_choice.charCodeAt(0) - 65 + 1;
-          fb.textContent = `✅ เฉลย: ${q['choice' + idx]}`;
+          const num = corr.charCodeAt(0)-65+1;
+          fb.textContent = `✅ เฉลย: ${q['choice'+num]}`;
         }
         fb.style.display = 'block';
-        if (selected === q.correct_choice) correctCount++;
-        else wrongIds.push(q.test_id);
+
+        // tally
+        if (sel===corr) score++; else wrongs.push(q.test_id);
         answered = true;
-        this.textContent = currentIndex < questions.length - 1 ? 'ถัดไป' : 'จบ';
+        this.textContent = idx<questions.length-1 ? 'ถัดไป' : 'จบ';
       } else {
-        if (currentIndex < questions.length - 1) {
-          currentIndex++;
-          showQuestion();
+        if (idx<questions.length-1) {
+          idx++; showQ();
         } else {
-          finishQuiz();
+          finish();
         }
       }
     };
 
-    function finishQuiz() {
-      document.getElementById('quiz-screen').style.display  = 'none';
+    function finish() {
+      document.getElementById('quiz-screen').style.display   = 'none';
       document.getElementById('result-screen').style.display = 'block';
-      document.getElementById('scoreText').textContent = `คุณได้ ${correctCount}/${questions.length} คะแนน`;
-      document.getElementById('wrongText').textContent = wrongIds.length
-        ? `ข้อที่ตอบผิด: ${wrongIds.join(', ')}`
-        : 'ไม่มีข้อที่ตอบผิด';
+      document.getElementById('scoreText').textContent = `คุณได้ ${score}/${questions.length} คะแนน`;
+      document.getElementById('wrongText').textContent = wrongs.length
+        ? `ข้อที่ตอบผิด: ${wrongs.join(', ')}`
+        : 'ไม่มีข้อผิด';
 
-      if (testType === 'posttest') {
-        const wrongParam = wrongIds.join(',');
+      if (type==='posttest') {
+        const wrongParam = wrongs.join(',');
         const params = [
           'action=recordResult',
           `userId=${userProfile.userId}`,
-          'level=asm',
-          `type=${testType}`,
-          `score=${correctCount}`,
+          `level=${level}`,
+          `type=${type}`,
+          `score=${score}`,
           `full_score=${questions.length}`,
           `wrong=${encodeURIComponent(wrongParam)}`,
           'callback=handleRecord'
