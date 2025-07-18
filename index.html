@@ -3,129 +3,274 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>แบบทดสอบความรู้ สวีรู้ทันสโตรก</title>
+  <title>Quiz สโตรก</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet"/>
   <style>
-    body { font-family:'Noto Sans Thai',sans-serif; background:#f5f5f5; margin:0;
-           display:flex;justify-content:center;align-items:center;min-height:100vh; }
-    .container { width:100%;max-width:480px;padding:16px; }
-    .card { background:#fff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);
-            padding:24px;margin-bottom:16px; }
-    h1 { font-size:1.5rem;color:#003366;text-align:center;margin-bottom:16px; }
-    p,label { font-size:1rem;color:#333; }
-    button { width:100%;padding:12px;font-size:1rem;color:#fff;
-             background:#007BFF;border:none;border-radius:8px;cursor:pointer;margin-top:16px;
-             transition:background .3s; }
-    button:disabled { background:#ccc;cursor:not-allowed; }
-    .choices label { display:block;margin:8px 0; }
+    body {
+      font-family: 'Noto Sans Thai', sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      width: 100%; max-width: 480px;
+      padding: 16px;
+    }
+    h1 {
+      font-size: 2rem;
+      color: #003366;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .tab {
+      flex: 1;
+      padding: 12px;
+      background: #eee;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: background 0.3s;
+    }
+    .tab.active {
+      background: #007BFF;
+      color: #fff;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin-bottom: 16px;
+      transition: all 0.3s ease;
+    }
+    .hidden {
+      display: none;
+    }
+    #history-card p,
+    #start-card p,
+    #result-card p,
+    #question-container p,
+    .choices label {
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+    }
+    .choices label input {
+      margin-right: 8px;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      font-size: 1.2rem;
+      color: #fff;
+      background: #007BFF;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    #feedback {
+      font-size: 1.2rem;
+      margin-top: 12px;
+      color: #555;
+    }
+    #progress {
+      height: 8px;
+      background: #e9ecef;
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 12px 0;
+    }
+    #progress-bar {
+      height: 100%;
+      background: #28a745;
+      width: 0%;
+      transition: width 0.5s ease;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>แบบทดสอบความรู้<br>สวีรู้ทันสโตรก</h1>
-
-    <!-- Start Screen -->
-    <div id="start-screen" class="card">
-      <p>เลือกประเภทการทดสอบ:</p>
-      <label><input type="radio" name="testType" value="pretest" checked> Pretest</label>
+    <h1>สวีรู้ทันสโตรก Quiz</h1>
+    <div class="tabs">
+      <button class="tab active" data-level="general">General</button>
+      <button class="tab" data-level="asm">ASM</button>
+    </div>
+    <div id="history-card" class="card">
+      <p>กำลังโหลดประวัติ…</p>
+    </div>
+    <div id="start-card" class="card">
+      <p>เลือกรูปแบบการทดสอบ:</p>
+      <label><input type="radio" name="testType" value="pretest" checked> Pretest</label><br>
       <label><input type="radio" name="testType" value="posttest"> Posttest</label>
       <button id="startBtn">เริ่มทำแบบทดสอบ</button>
     </div>
-
-    <!-- Quiz Screen -->
-    <div id="quiz-screen" class="card" style="display:none;">
+    <div id="quiz-card" class="card hidden">
+      <div id="progress"><div id="progress-bar"></div></div>
       <div id="question-container"></div>
-      <button id="nextBtn" disabled>ถัดไป</button>
+      <div id="feedback"></div>
+      <button id="nextBtn" disabled>ตรวจคำตอบ</button>
     </div>
-
-    <!-- Result Screen -->
-    <div id="result-screen" class="card" style="display:none;">
-      <h2>ผลการทดสอบ</h2>
+    <div id="result-card" class="card hidden">
+      <h2>สรุปผล</h2>
       <p id="scoreText"></p>
       <p id="wrongText"></p>
     </div>
   </div>
 
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
     const GAS_URL = 'https://script.google.com/macros/s/AKfycbwt4O6aTK_NqGGdYaIF6gRbv5f37dgFeQYZ7ZLxZIRYGBEz54EnJx1hS36XPhET1AOgHg/exec';
     const LIFF_ID = '2005789397-ROQvjpYk';
-    let userProfile, questions = [], currentIndex = 0, correctCount = 0, wrongIds = [], testType = 'pretest';
 
-    async function initialize() {
+    let userProfile, level = 'general', type = 'pretest';
+    let questions = [], idx = 0, score = 0, wrongs = [], answered = false;
+
+    // JSONP callbacks
+    window.handleHistory = data => {
+      if (!userProfile || !userProfile.userId) return;
+      const c = document.getElementById('history-card');
+      if (!data.length) {
+        c.innerHTML = '<p>ไม่มีประวัติการทำแบบทดสอบ</p>';
+      } else {
+        const last = data[data.length - 1];
+        c.innerHTML = `<p><strong>ประวัติ ${level.toUpperCase()}</strong><br>` +
+                      `ครั้งล่าสุด: ${new Date(last.timestamp).toLocaleString('th-TH')}<br>` +
+                      `${last.type}: ${last.score}/${last.full_score}</p>`;
+      }
+    };
+
+    window.handleQuiz = data => {
+      questions = data;
+      idx = 0; score = 0; wrongs = [];
+      answered = false;
+      document.getElementById('start-card').classList.add('hidden');
+      document.getElementById('history-card').classList.add('hidden');
+      document.getElementById('quiz-card').classList.remove('hidden');
+      showQuestion();
+    };
+
+    window.handleRecord = resp => console.log('บันทึกผล:', resp);
+
+    async function init() {
       await liff.init({ liffId: LIFF_ID });
       if (!liff.isLoggedIn()) liff.login();
       userProfile = await liff.getProfile();
+      loadHistory();
     }
-    document.addEventListener('DOMContentLoaded', initialize);
+    document.addEventListener('DOMContentLoaded', init);
 
-    $('#startBtn').on('click', () => {
-      testType = $('input[name="testType"]:checked').val();
-      // เรียก AJAX GET เพื่อดึงข้อสอบระดับ asm
-      fetch(`${GAS_URL}?action=getQuiz&level=asm`)
-        .then(r => r.json())
-        .then(data => {
-          questions = data;
-          currentIndex = 0; correctCount = 0; wrongIds = [];
-          $('#start-screen').hide();
-          $('#quiz-screen').show();
-          showQuestion();
-        })
-        .catch(err => console.error(err));
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        level = btn.dataset.level;
+        document.getElementById('start-card').classList.remove('hidden');
+        document.getElementById('quiz-card').classList.add('hidden');
+        document.getElementById('result-card').classList.add('hidden');
+        loadHistory();
+      };
     });
+
+    function loadHistory() {
+      if (!userProfile || !userProfile.userId) return;
+      const s = document.createElement('script');
+      s.src = `${GAS_URL}?action=getHistory&userId=${userProfile.userId}&level=${level}&callback=handleHistory`;
+      document.head.appendChild(s);
+    }
+
+    document.getElementById('startBtn').onclick = () => {
+      type = document.querySelector('input[name="testType"]:checked').value;
+      const s = document.createElement('script');
+      s.src = `${GAS_URL}?action=getQuiz&level=${level}&callback=handleQuiz`;
+      document.head.appendChild(s);
+    };
 
     function showQuestion() {
-      const q = questions[currentIndex];
-      let html = `<p><strong>${q.test_id}</strong> ${q.question}</p><div class="choices">`;
-      ['choice1','choice2','choice3','choice4'].forEach((key,i) => {
-        const letter = String.fromCharCode(65 + i);
-        html += `<label><input type="radio" name="choice" value="${letter}"> ${q[key]}</label>`;
+      const q = questions[idx];
+      document.getElementById('progress-bar').style.width = `${(idx / questions.length) * 100}%`;
+      let html = `<p><strong>${idx + 1}/${questions.length}</strong> ${q.question}</p><div class="choices">`;
+      ['choice1', 'choice2', 'choice3', 'choice4'].forEach((c, i) => {
+        const L = String.fromCharCode(65 + i);
+        html += `<label><input name="choice" type="radio" value="${L}"> ${q[c]}</label>`;
       });
       html += '</div>';
-      $('#question-container').html(html);
-      $('#nextBtn').prop('disabled', true);
+      document.getElementById('question-container').innerHTML = html;
+      const fb = document.getElementById('feedback');
+      fb.textContent = '';
+      fb.style.display = 'none';
+      answered = false;
+      const btn = document.getElementById('nextBtn');
+      btn.disabled = true;
+      btn.textContent = 'ตรวจคำตอบ';
     }
 
-    $('#question-container').on('change','input[name="choice"]', () => {
-      $('#nextBtn').prop('disabled', false);
-    });
-
-    $('#nextBtn').on('click', () => {
-      const selected = $('input[name="choice"]:checked').val();
-      const q = questions[currentIndex];
-      if (selected === q.correct_choice) correctCount++;
-      else wrongIds.push(q.test_id);
-      currentIndex++;
-      if (currentIndex < questions.length) {
-        showQuestion();
-      } else {
-        finishQuiz();
+    document.getElementById('question-container').addEventListener('change', e => {
+      if (e.target.name === 'choice') {
+        document.getElementById('nextBtn').disabled = false;
       }
     });
 
-    function finishQuiz() {
-      $('#quiz-screen').hide();
-      $('#result-screen').show();
-      $('#scoreText').text(`คุณได้ ${correctCount}/${questions.length} คะแนน`);
-      $('#wrongText').text(
-        wrongIds.length
-          ? `ข้อที่ตอบผิด: ${wrongIds.join(', ')}`
-          : 'ไม่มีข้อที่ตอบผิด'
-      );
-      // ส่งผลไปบันทึกผ่าน POST
-      fetch(GAS_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId:     userProfile.userId,
-          level:      'asm',
-          type:       testType,
-          score:      correctCount,
-          full_score: questions.length,
-          wrong:      wrongIds
-        })
-      }).catch(err => console.error(err));
+    document.getElementById('nextBtn').onclick = function() {
+      const q = questions[idx];
+      const sel = (document.querySelector('input[name="choice"]:checked')?.value || '').trim().toUpperCase();
+      const corr = q.correct_choice.trim().toUpperCase();
+      const fb = document.getElementById('feedback');
+      fb.style.display = 'block';
+      if (!answered) {
+        if (sel === corr) {
+          score++;
+          fb.textContent = type === 'pretest' ? '✅ ถูก' : `✅ เฉลย: ${q['choice' + (corr.charCodeAt(0) - 64)]}`;
+        } else {
+          wrongs.push(q.test_id);
+          fb.textContent = type === 'pretest' ? '❌ ผิด' : `✅ เฉลย: ${q['choice' + (corr.charCodeAt(0) - 64)]}`;
+        }
+        answered = true;
+        this.textContent = idx < questions.length - 1 ? 'ถัดไป' : 'จบ';
+      } else {
+        idx++;
+        if (idx < questions.length) {
+          showQuestion();
+        } else {
+          finish();
+        }
+      }
+    };
+
+    function finish() {
+      document.getElementById('quiz-card').classList.add('hidden');
+      document.getElementById('result-card').classList.remove('hidden');
+      document.getElementById('scoreText').textContent = `คุณได้ ${score}/${questions.length} คะแนน`;
+      document.getElementById('wrongText').textContent = wrongs.length
+        ? `ข้อที่ตอบผิด: ${wrongs.join(', ')}`
+        : 'ตอบถูกทั้งหมด!';
+      const params = [
+        'action=recordResult',
+        `userId=${userProfile.userId}`,
+        `level=${level}`,
+        `type=${type}`,
+        `score=${score}`,
+        `full_score=${questions.length}`,
+        `wrong=${encodeURIComponent(wrongs.join(','))}`,
+        'callback=handleRecord'
+      ];
+      const r = document.createElement('script');
+      r.src = GAS_URL + '?' + params.join('&');
+      document.head.appendChild(r);
     }
   </script>
 </body>
