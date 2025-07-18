@@ -122,10 +122,10 @@
     function showQuestion() {
       const q = questions[idx];
       document.getElementById('progress-bar').style.width = `${(idx/10)*100}%`;
-      let html = `<p><strong>${idx+1}/10</strong> ${q.question}</p><div>`;
+      let html = `<p><strong>${idx+1}/10</strong> ${q.question}</p><div class=\"choices\">`;
       ['choice1','choice2','choice3','choice4'].forEach((c,i)=>{
         const L = String.fromCharCode(65+i);
-        html+= `<label><input name="choice" type="radio" value="${L}"> ${q[c]}</label>`;
+        html+= `<label><input name=\"choice\" type=\"radio\" value=\"${L}\"> ${q[c]}</label>`;
       });
       html += '</div>';
       document.getElementById('question-container').innerHTML = html;
@@ -134,9 +134,7 @@
     }
 
     document.getElementById('question-container').addEventListener('change',e=>{
-      if(e.target.name==='choice'){
-        document.getElementById('nextBtn').disabled = false;
-      }
+      if(e.target.name==='choice') document.getElementById('nextBtn').disabled = false;
     });
 
     document.getElementById('nextBtn').onclick = function(){
@@ -153,13 +151,13 @@
           wrongs.push(q.test_id);
           fb.textContent = type==='pretest' ? '❌ ผิด' : `✅ เฉลย: ${q['choice'+(corr.charCodeAt(0)-64)]}`;
         }
+        fb.style.display = 'block';
         idx++;
         this.textContent = idx<questions.length ? 'ถัดไป' : 'จบ';
       } else {
         finish();
         return;
       }
-      this.disabled=false; // keep enabled
     };
 
     function finish(){
@@ -170,7 +168,6 @@
         ? `ข้อที่ตอบผิด: ${wrongs.join(', ')}`
         : 'ตอบถูกทั้งหมด!';
 
-      // record posttest & pretest
       const p = [
         'action=recordResult',
         `userId=${userProfile.userId}`,
