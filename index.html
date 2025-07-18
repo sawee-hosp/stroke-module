@@ -3,131 +3,204 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Quiz สโตรก</title>
+  <title>คุณรู้ทันสโตรกหรือยัง?</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet"/>
   <style>
+    /* Global Reset */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Noto Sans Thai', sans-serif;
-      background: #f5f5f5;
-      margin: 0;
-      padding: 0;
+      background: #f0f2f5;
+      color: #333;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
       min-height: 100vh;
+      padding: 40px 0;
     }
     .container {
-      width: 100%; max-width: 480px;
-      padding: 16px;
+      width: 100%;
+      max-width: 480px;
+      padding: 0 16px;
     }
     h1 {
-      font-size: 2rem;
-      color: #003366;
+      font-size: 2.2rem;
+      color: #1a237e;
       text-align: center;
-      margin-bottom: 16px;
+      margin-bottom: 8px;
     }
+    .subtitle {
+      font-size: 0.95rem;
+      color: #666;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    .history {
+      font-size: 1rem;
+      color: #444;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    /* Tabs styled as half-width buttons */
     .tabs {
       display: flex;
-      gap: 8px;
-      margin-bottom: 16px;
+      margin-bottom: 24px;
+      overflow: hidden;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-    .tab {
+    .tabs button {
       flex: 1;
       padding: 12px;
-      background: #eee;
+      font-size: 1rem;
+      font-weight: 600;
       border: none;
-      border-radius: 8px;
+      background: #e0e0e0;
       cursor: pointer;
-      font-size: 1.1rem;
       transition: background 0.3s;
     }
-    .tab.active {
-      background: #007BFF;
+    .tabs button.active {
+      background: #3949ab;
       color: #fff;
+    }
+    .tabs button:not(.active):hover {
+      background: #d5d5d5;
     }
     .card {
       background: #fff;
       border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      padding: 20px;
-      margin-bottom: 16px;
-      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      padding: 24px;
+      margin-bottom: 24px;
+      transition: transform 0.2s;
     }
-    .hidden {
-      display: none;
+    .card:hover {
+      transform: translateY(-2px);
     }
-    #history-card p,
-    #start-card p,
-    #result-card p,
-    #question-container p,
-    .choices label {
-      font-size: 1.2rem;
-      margin-bottom: 8px;
+    .button-group {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
     }
-    .choices label input {
-      margin-right: 8px;
-    }
-    button {
-      width: 100%;
+    .btn {
+      flex: 1;
       padding: 14px;
-      font-size: 1.2rem;
+      font-size: 1rem;
+      font-weight: 600;
       color: #fff;
-      background: #007BFF;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: background 0.3s, box-shadow 0.3s;
     }
-    button:disabled {
-      background: #ccc;
-      cursor: not-allowed;
+    .btn:focus { outline: none; }
+    .btn-video {
+      background: linear-gradient(45deg, #43a047, #66bb6a);
+      box-shadow: 0 4px 8px rgba(67,160,71,0.3);
     }
-    #feedback {
-      font-size: 1.2rem;
-      margin-top: 12px;
-      color: #555;
+    .btn-video:hover {
+      background: linear-gradient(45deg, #388e3c, #57a05a);
     }
+    .btn-quiz {
+      background: linear-gradient(45deg, #1e88e5, #42a5f5);
+      box-shadow: 0 4px 8px rgba(30,136,229,0.3);
+    }
+    .btn-quiz:hover {
+      background: linear-gradient(45deg, #1565c0, #1e7ae1);
+    }
+    #quiz-card, #result-card { display: none; }
     #progress {
       height: 8px;
-      background: #e9ecef;
+      background: #e0e0e0;
       border-radius: 4px;
       overflow: hidden;
-      margin: 12px 0;
+      margin-bottom: 16px;
     }
     #progress-bar {
       height: 100%;
-      background: #28a745;
-      width: 0%;
-      transition: width 0.5s ease;
+      background: #1e88e5;
+      width: 0;
+      transition: width 0.4s ease;
+    }
+    .question {
+      font-size: 1.4rem;
+      font-weight: bold;
+      margin-bottom: 16px;
+      color: #1a237e;
+    }
+    .choices label {
+      display: block;
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      padding: 12px;
+      border-radius: 6px;
+      background: #f7f7f7;
+      transition: background 0.3s;
+      cursor: pointer;
+    }
+    .choices label:hover {
+      background: #ececec;
+    }
+    .choices input {
+      margin-right: 10px;
+      transform: scale(1.2);
+    }
+    .correct {
+      background: #c8e6c9 !important;
+      color: #2e7d32;
+    }
+    .wrong {
+      background: #ffcdd2 !important;
+      color: #c62828;
+    }
+    #nextBtn {
+      display: none;
+      width: 100%;
+      padding: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #fff;
+      background: #5e35b1;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 16px;
+      transition: background 0.3s;
+    }
+    #nextBtn:hover {
+      background: #512da8;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>สวีรู้ทันสโตรก Quiz</h1>
+    <h1>คุณรู้ทันสโตรกหรือยัง?</h1>
+    <div class="subtitle">ประวัติการสอบครั้งล่าสุด</div>
+    <div class="history" id="quiz-history">กำลังโหลดประวัติ...</div>
+
     <div class="tabs">
-      <button class="tab active" data-level="general">General</button>
-      <button class="tab" data-level="asm">ASM</button>
+      <button class="active" data-level="general">Quiz สโตรก (10)</button>
+      <button data-level="asm">Quiz อสม. (20)</button>
     </div>
-    <div id="history-card" class="card">
-      <p>กำลังโหลดประวัติ…</p>
+
+    <div class="card" id="start-card">
+      <div class="button-group">
+        <button class="btn btn-video" id="btnVideo">ดูวิดีโอ</button>
+        <button class="btn btn-quiz" id="btnQuiz">ทำแบบทดสอบ</button>
+      </div>
     </div>
-    <div id="start-card" class="card">
-      <p>เลือกรูปแบบการทดสอบ:</p>
-      <label><input type="radio" name="testType" value="pretest" checked> Pretest</label><br>
-      <label><input type="radio" name="testType" value="posttest"> Posttest</label>
-      <button id="startBtn">เริ่มทำแบบทดสอบ</button>
-    </div>
-    <div id="quiz-card" class="card hidden">
+
+    <div id="quiz-card" class="card">
       <div id="progress"><div id="progress-bar"></div></div>
-      <div id="question-container"></div>
-      <div id="feedback"></div>
-      <button id="nextBtn" disabled>ตรวจคำตอบ</button>
+      <div class="question" id="questionText"></div>
+      <div class="choices" id="choicesContainer"></div>
+      <button id="nextBtn">ถัดไป</button>
     </div>
-    <div id="result-card" class="card hidden">
-      <h2>สรุปผล</h2>
-      <p id="scoreText"></p>
-      <p id="wrongText"></p>
+
+    <div id="result-card" class="card">
+      <h2 style="margin-top:0;">สรุปผล</h2>
+      <p id="scoreText" style="font-size:1.2rem;"></p>
+      <p id="wrongText" style="font-size:1rem;color:#c62828;"></p>
     </div>
   </div>
 
@@ -136,141 +209,108 @@
     const GAS_URL = 'https://script.google.com/macros/s/AKfycbwt4O6aTK_NqGGdYaIF6gRbv5f37dgFeQYZ7ZLxZIRYGBEz54EnJx1hS36XPhET1AOgHg/exec';
     const LIFF_ID = '2005789397-ROQvjpYk';
 
-    let userProfile, level = 'general', type = 'pretest';
-    let questions = [], idx = 0, score = 0, wrongs = [], answered = false;
+    let userProfile, level = 'general', questions = [], idx = 0, score = 0, wrongs = [];
 
-    // JSONP callbacks
     window.handleHistory = data => {
-      if (!userProfile || !userProfile.userId) return;
-      const c = document.getElementById('history-card');
-      if (!data.length) {
-        c.innerHTML = '<p>ไม่มีประวัติการทำแบบทดสอบ</p>';
-      } else {
-        const last = data[data.length - 1];
-        c.innerHTML = `<p><strong>ประวัติ ${level.toUpperCase()}</strong><br>` +
-                      `ครั้งล่าสุด: ${new Date(last.timestamp).toLocaleString('th-TH')}<br>` +
-                      `${last.type}: ${last.score}/${last.full_score}</p>`;
-      }
+      const el = document.getElementById('quiz-history');
+      el.textContent = data.length
+        ? `ครั้งล่าสุด: ${data[data.length-1].score}/${data[data.length-1].full_score}`
+        : 'ยังไม่เคยสอบ';
     };
 
     window.handleQuiz = data => {
-      questions = data;
-      idx = 0; score = 0; wrongs = [];
-      answered = false;
-      document.getElementById('start-card').classList.add('hidden');
-      document.getElementById('history-card').classList.add('hidden');
-      document.getElementById('quiz-card').classList.remove('hidden');
+      questions = data; idx = 0; score = 0; wrongs = [];
+      document.getElementById('start-card').style.display = 'none';
+      document.getElementById('quiz-card').style.display = 'block';
       showQuestion();
     };
 
-    window.handleRecord = resp => console.log('บันทึกผล:', resp);
+    window.handleRecord = resp => console.log(resp);
 
     async function init() {
       await liff.init({ liffId: LIFF_ID });
       if (!liff.isLoggedIn()) liff.login();
       userProfile = await liff.getProfile();
       loadHistory();
+
+      document.querySelectorAll('.tabs button').forEach(btn => btn.onclick = () => {
+        document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        level = btn.dataset.level;
+        document.getElementById('quiz-history').textContent = 'กำลังโหลดประวัติ...';
+        loadHistory();
+      });
+
+      document.getElementById('btnQuiz').onclick = () => {
+        const s = document.createElement('script');
+        s.src = `${GAS_URL}?action=getQuiz&level=${level}&callback=handleQuiz`;
+        document.head.appendChild(s);
+      };
+
+      document.getElementById('btnVideo').onclick = () => {
+        window.open('https://youtu.be/your_video_url');
+        setTimeout(() => document.getElementById('btnQuiz').click(), 500);
+      };
     }
     document.addEventListener('DOMContentLoaded', init);
 
-    // Tab switching
-    document.querySelectorAll('.tab').forEach(btn => {
-      btn.onclick = () => {
-        document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        level = btn.dataset.level;
-        document.getElementById('start-card').classList.remove('hidden');
-        document.getElementById('quiz-card').classList.add('hidden');
-        document.getElementById('result-card').classList.add('hidden');
-        loadHistory();
-      };
-    });
-
     function loadHistory() {
-      if (!userProfile || !userProfile.userId) return;
+      if (!userProfile?.userId) return;
       const s = document.createElement('script');
       s.src = `${GAS_URL}?action=getHistory&userId=${userProfile.userId}&level=${level}&callback=handleHistory`;
       document.head.appendChild(s);
     }
 
-    document.getElementById('startBtn').onclick = () => {
-      type = document.querySelector('input[name="testType"]:checked').value;
-      const s = document.createElement('script');
-      s.src = `${GAS_URL}?action=getQuiz&level=${level}&callback=handleQuiz`;
-      document.head.appendChild(s);
-    };
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
 
     function showQuestion() {
       const q = questions[idx];
-      document.getElementById('progress-bar').style.width = `${(idx / questions.length) * 100}%`;
-      let html = `<p><strong>${idx + 1}/${questions.length}</strong> ${q.question}</p><div class="choices">`;
-      ['choice1', 'choice2', 'choice3', 'choice4'].forEach((c, i) => {
-        const L = String.fromCharCode(65 + i);
-        html += `<label><input name="choice" type="radio" value="${L}"> ${q[c]}</label>`;
+      document.getElementById('progress-bar').style.width = `${(idx + 1) / questions.length * 100}%`;
+      document.getElementById('questionText').textContent = q.question;
+      const opts = shuffle(['choice1','choice2','choice3','choice4']);
+      const container = document.getElementById('choicesContainer'); container.innerHTML = '';
+      opts.forEach(key => {
+        const label = document.createElement('label');
+        label.textContent = q[key];
+        label.onclick = () => selectAnswer(q, key, label);
+        container.appendChild(label);
       });
-      html += '</div>';
-      document.getElementById('question-container').innerHTML = html;
-      const fb = document.getElementById('feedback');
-      fb.textContent = '';
-      fb.style.display = 'none';
-      answered = false;
-      const btn = document.getElementById('nextBtn');
-      btn.disabled = true;
-      btn.textContent = 'ตรวจคำตอบ';
+      document.querySelectorAll('.choices label').forEach(l => {
+        const input = document.createElement('input');
+        input.type = 'radio'; input.name = 'choice'; input.value = l.textContent;
+        l.prepend(input);
+      });
+      document.getElementById('nextBtn').style.display = 'none';
     }
 
-    document.getElementById('question-container').addEventListener('change', e => {
-      if (e.target.name === 'choice') {
-        document.getElementById('nextBtn').disabled = false;
-      }
-    });
+    function selectAnswer(q, key, label) {
+      const chosen = label.textContent;
+      const correct = q[key = q.correct_choice.toLowerCase()]; // actual correct value
+      if (chosen === correct) { score++; label.classList.add('correct'); }
+      else { wrongs.push(q.test_id); label.classList.add('wrong'); }
+      document.querySelectorAll('.choices label input').forEach(i => i.disabled = true);
+      const btn = document.getElementById('nextBtn'); btn.style.display = 'block'; btn.onclick = () => {
+        idx < questions.length - 1 ? (idx++, showQuestion()) : finishQuiz();
+      };
+    }
 
-    document.getElementById('nextBtn').onclick = function() {
-      const q = questions[idx];
-      const sel = (document.querySelector('input[name="choice"]:checked')?.value || '').trim().toUpperCase();
-      const corr = q.correct_choice.trim().toUpperCase();
-      const fb = document.getElementById('feedback');
-      fb.style.display = 'block';
-      if (!answered) {
-        if (sel === corr) {
-          score++;
-          fb.textContent = type === 'pretest' ? '✅ ถูก' : `✅ เฉลย: ${q['choice' + (corr.charCodeAt(0) - 64)]}`;
-        } else {
-          wrongs.push(q.test_id);
-          fb.textContent = type === 'pretest' ? '❌ ผิด' : `✅ เฉลย: ${q['choice' + (corr.charCodeAt(0) - 64)]}`;
-        }
-        answered = true;
-        this.textContent = idx < questions.length - 1 ? 'ถัดไป' : 'จบ';
-      } else {
-        idx++;
-        if (idx < questions.length) {
-          showQuestion();
-        } else {
-          finish();
-        }
-      }
-    };
-
-    function finish() {
-      document.getElementById('quiz-card').classList.add('hidden');
-      document.getElementById('result-card').classList.remove('hidden');
+    function finishQuiz() {
+      document.getElementById('quiz-card').style.display = 'none';
+      document.getElementById('result-card').style.display = 'block';
       document.getElementById('scoreText').textContent = `คุณได้ ${score}/${questions.length} คะแนน`;
-      document.getElementById('wrongText').textContent = wrongs.length
-        ? `ข้อที่ตอบผิด: ${wrongs.join(', ')}`
-        : 'ตอบถูกทั้งหมด!';
+      document.getElementById('wrongText').textContent = wrongs.length ? `ข้อที่ผิด: ${wrongs.join(', ')}` : 'ตอบถูกทั้งหมด!';
       const params = [
-        'action=recordResult',
-        `userId=${userProfile.userId}`,
-        `level=${level}`,
-        `type=${type}`,
-        `score=${score}`,
-        `full_score=${questions.length}`,
-        `wrong=${encodeURIComponent(wrongs.join(','))}`,
-        'callback=handleRecord'
+        'action=recordResult', `userId=${userProfile.userId}`, `level=${level}`,
+        `score=${score}`, `full_score=${questions.length}`, `post=${false}`,
+        `wrong=${encodeURIComponent(wrongs.join(','))}`, 'callback=handleRecord'
       ];
-      const r = document.createElement('script');
-      r.src = GAS_URL + '?' + params.join('&');
-      document.head.appendChild(r);
+      const r = document.createElement('script'); r.src = `${GAS_URL}?${params.join('&')}`; document.head.appendChild(r);
     }
   </script>
 </body>
