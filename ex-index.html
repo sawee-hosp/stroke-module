@@ -3,56 +3,49 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>แบบทดสอบความรู้ สวีรู้ทันสโตรก</title>
+  <title>Quiz สโตรก</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet"/>
   <style>
-    body { font-family:'Noto Sans Thai',sans-serif; background:#f5f5f5; margin:0;
-           display:flex;justify-content:center;align-items:center;min-height:100vh; }
+    body, button { font-family:'Noto Sans Thai',sans-serif; }
+    body { background:#f5f5f5; margin:0; padding:0;
+           display:flex; justify-content:center; }
     .container { width:100%; max-width:480px; padding:16px; }
-    .card { background:#fff; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1);
-            padding:24px; margin-bottom:16px; }
-    h1 { font-size:1.5rem; color:#003366; text-align:center; margin-bottom:16px; }
-    p,label,small { font-size:1rem; color:#333; }
-    .form-group { margin-bottom:12px; }
-    button { width:100%; padding:12px; font-size:1rem; color:#fff; background:#007BFF;
-             border:none; border-radius:8px; cursor:pointer; margin-top:16px;
-             transition:background .3s; }
-    button:disabled { background:#ccc; cursor:not-allowed; }
+    .tabs { display:flex; gap:8px; margin-bottom:16px; }
+    .tab { flex:1; padding:8px; background:#eee; border:none; cursor:pointer; }
+    .tab.active { background:#007BFF; color:#fff; }
+    .card { background:#fff; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1);
+            padding:16px; margin-bottom:16px; }
+    .hidden { display:none; }
     .choices label { display:block; margin:8px 0; }
-    #feedback { font-size:1rem; margin-top:12px; color:#555; }
-    #result-screen h2 { margin-top:0; color:#003366; }
-    #result-screen p { margin:8px 0; }
+    #feedback { margin-top:12px; color:#555; }
+    #progress { height:6px; background:#e9ecef; border-radius:4px; overflow:hidden; margin:12px 0; }
+    #progress-bar { height:100%; background:#28a745; width:0%; transition:width .3s; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>แบบทดสอบความรู้<br>สวีรู้ทันสโตรก</h1>
-
-    <!-- Start Screen -->
-    <div id="start-screen" class="card">
-      <div class="form-group">
-        <p>ระดับแบบทดสอบ:</p>
-        <label><input type="radio" name="testLevel" value="asm" checked> อสม. (ASM)</label>
-        <label><input type="radio" name="testLevel" value="befast"> ประชาชนทั่วไป (BEFAST)</label>
-      </div>
-      <div class="form-group">
-        <p>ประเภทการทดสอบ:</p>
-        <label><input type="radio" name="testType" value="pretest" checked> Pretest</label>
-        <label><input type="radio" name="testType" value="posttest"> Posttest</label>
-      </div>
+    <h1 style="text-align:center;color:#003366;">สวีรู้ทันสโตรก Quiz</h1>
+    <div class="tabs">
+      <button class="tab active" data-level="general">General</button>
+      <button class="tab" data-level="asm">ASM</button>
+    </div>
+    <div id="history-card" class="card">
+      กำลังโหลดประวัติ…
+    </div>
+    <div id="start-card" class="card">
+      <p>เลือกรูปแบบ:</p>
+      <label><input type="radio" name="testType" value="pretest" checked> Pretest</label>
+      <label><input type="radio" name="testType" value="posttest"> Posttest</label>
       <button id="startBtn">เริ่มทำแบบทดสอบ</button>
     </div>
-
-    <!-- Quiz Screen -->
-    <div id="quiz-screen" class="card" style="display:none;">
+    <div id="quiz-card" class="card hidden">
+      <div id="progress"><div id="progress-bar"></div></div>
       <div id="question-container"></div>
-      <div id="feedback" style="display:none;"></div>
+      <div id="feedback"></div>
       <button id="nextBtn" disabled>ตรวจคำตอบ</button>
     </div>
-
-    <!-- Result Screen -->
-    <div id="result-screen" class="card" style="display:none;">
-      <h2>ผลการทดสอบ</h2>
+    <div id="result-card" class="card hidden">
+      <h2>สรุปผล</h2>
       <p id="scoreText"></p>
       <p id="wrongText"></p>
     </div>
@@ -63,110 +56,134 @@
     const GAS_URL = 'https://script.google.com/macros/s/AKfycbwt4O6aTK_NqGGdYaIF6gRbv5f37dgFeQYZ7ZLxZIRYGBEz54EnJx1hS36XPhET1AOgHg/exec';
     const LIFF_ID = '2005789397-ROQvjpYk';
 
-    let userProfile, questions = [], idx = 0, score = 0, wrongs = [], level = 'asm', type = 'pretest', answered = false;
+    let userProfile, level='general', type='pretest';
+    let questions=[], idx=0, score=0, wrongs=[];
 
-    // LIFF init
+    // JSONP callbacks
+    window.handleHistory = data=>{
+      const c = document.getElementById('history-card');
+      if(!data.length) {
+        c.textContent = 'ไม่มีประวัติการทำแบบทดสอบ';
+      } else {
+        const last = data[data.length-1];
+        c.innerHTML = 
+          `<strong>ประวัติ ${level.toUpperCase()}</strong><br>`+
+          `ครั้งล่าสุด: ${new Date(last.timestamp).toLocaleString('th-TH')}<br>`+
+          `${last.type}: ${last.score}/${last.full_score}`;
+      }
+    };
+
+    window.handleQuiz = data=>{
+      questions = data; idx=0; score=0; wrongs=[];
+      document.getElementById('start-card').classList.add('hidden');
+      document.getElementById('history-card').classList.add('hidden');
+      document.getElementById('quiz-card').classList.remove('hidden');
+      showQuestion();
+    };
+
+    window.handleRecord = resp=>{
+      console.log('บันทึกผล:',resp);
+    };
+
     async function init() {
       await liff.init({ liffId: LIFF_ID });
       if (!liff.isLoggedIn()) liff.login();
       userProfile = await liff.getProfile();
+      loadHistory();
     }
     document.addEventListener('DOMContentLoaded', init);
 
-    // JSONP callbacks
-    window.handleQuiz = function(data) {
-      questions = data;
-      idx = 0; score = 0; wrongs = [];
-      document.getElementById('start-screen').style.display = 'none';
-      document.getElementById('quiz-screen').style.display  = 'block';
-      showQ();
-    };
-    window.handleRecord = function(res) {
-      console.log('บันทึกผลสอบ:', res);
-    };
+    // TAB click
+    document.querySelectorAll('.tab').forEach(btn=>{
+      btn.onclick = ()=>{
+        document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        level = btn.dataset.level;
+        document.getElementById('start-card').classList.remove('hidden');
+        document.getElementById('quiz-card').classList.add('hidden');
+        document.getElementById('result-card').classList.add('hidden');
+        loadHistory();
+      };
+    });
 
-    // Start button
-    document.getElementById('startBtn').onclick = () => {
-      level = document.querySelector('input[name="testLevel"]:checked').value;
-      type  = document.querySelector('input[name="testType"]:checked').value;
+    function loadHistory() {
+      const s = document.createElement('script');
+      s.src = `${GAS_URL}?action=getHistory&userId=${userProfile.userId}&level=${level}&callback=handleHistory`;
+      document.head.appendChild(s);
+    }
+
+    document.getElementById('startBtn').onclick = ()=>{
+      type = document.querySelector('input[name="testType"]:checked').value;
       const s = document.createElement('script');
       s.src = `${GAS_URL}?action=getQuiz&level=${level}&callback=handleQuiz`;
       document.head.appendChild(s);
     };
 
-    function showQ() {
+    function showQuestion() {
       const q = questions[idx];
-      let html = `<p><strong>${q.test_id}</strong> ${q.question}</p><div class="choices">`;
-      ['choice1','choice2','choice3','choice4'].forEach((c,i) => {
+      document.getElementById('progress-bar').style.width = `${(idx/10)*100}%`;
+      let html = `<p><strong>${idx+1}/10</strong> ${q.question}</p><div>`;
+      ['choice1','choice2','choice3','choice4'].forEach((c,i)=>{
         const L = String.fromCharCode(65+i);
-        html += `<label><input type="radio" name="choice" value="${L}"> ${q[c]}</label>`;
+        html+= `<label><input name="choice" type="radio" value="${L}"> ${q[c]}</label>`;
       });
       html += '</div>';
       document.getElementById('question-container').innerHTML = html;
-      const fb = document.getElementById('feedback');
-      fb.style.display = 'none'; fb.textContent = '';
-      answered = false;
-      const btn = document.getElementById('nextBtn');
-      btn.disabled = true; btn.textContent = 'ตรวจคำตอบ';
+      document.getElementById('feedback').textContent = '';
+      document.getElementById('nextBtn').disabled = true;
     }
 
-    document.getElementById('question-container').addEventListener('change', e => {
-      if (e.target.name==='choice') document.getElementById('nextBtn').disabled = false;
+    document.getElementById('question-container').addEventListener('change',e=>{
+      if(e.target.name==='choice'){
+        document.getElementById('nextBtn').disabled = false;
+      }
     });
 
-    document.getElementById('nextBtn').onclick = function() {
-      const q   = questions[idx];
+    document.getElementById('nextBtn').onclick = function(){
+      const q = questions[idx];
       const sel = document.querySelector('input[name="choice"]:checked').value.trim().toUpperCase();
       const corr= q.correct_choice.trim().toUpperCase();
       const fb  = document.getElementById('feedback');
 
-      if (!answered) {
-        // feedback
-        if (type==='pretest') {
-          fb.textContent = sel===corr ? '✅ ถูก' : '❌ ผิด';
+      if(idx<questions.length){
+        if(sel===corr) {
+          score++;
+          fb.textContent = type==='pretest' ? '✅ ถูก' : `✅ เฉลย: ${q['choice'+(corr.charCodeAt(0)-64)]}`;
         } else {
-          const num = corr.charCodeAt(0)-65+1;
-          fb.textContent = `✅ เฉลย: ${q['choice'+num]}`;
+          wrongs.push(q.test_id);
+          fb.textContent = type==='pretest' ? '❌ ผิด' : `✅ เฉลย: ${q['choice'+(corr.charCodeAt(0)-64)]}`;
         }
-        fb.style.display = 'block';
-
-        // tally
-        if (sel===corr) score++; else wrongs.push(q.test_id);
-        answered = true;
-        this.textContent = idx<questions.length-1 ? 'ถัดไป' : 'จบ';
+        idx++;
+        this.textContent = idx<questions.length ? 'ถัดไป' : 'จบ';
       } else {
-        if (idx<questions.length-1) {
-          idx++; showQ();
-        } else {
-          finish();
-        }
+        finish();
+        return;
       }
+      this.disabled=false; // keep enabled
     };
 
-    function finish() {
-      document.getElementById('quiz-screen').style.display   = 'none';
-      document.getElementById('result-screen').style.display = 'block';
-      document.getElementById('scoreText').textContent = `คุณได้ ${score}/${questions.length} คะแนน`;
+    function finish(){
+      document.getElementById('quiz-card').classList.add('hidden');
+      document.getElementById('result-card').classList.remove('hidden');
+      document.getElementById('scoreText').textContent = `คุณได้ ${score}/10 คะแนน`;
       document.getElementById('wrongText').textContent = wrongs.length
         ? `ข้อที่ตอบผิด: ${wrongs.join(', ')}`
-        : 'ไม่มีข้อผิด';
+        : 'ตอบถูกทั้งหมด!';
 
-      if (type==='posttest') {
-        const wrongParam = wrongs.join(',');
-        const params = [
-          'action=recordResult',
-          `userId=${userProfile.userId}`,
-          `level=${level}`,
-          `type=${type}`,
-          `score=${score}`,
-          `full_score=${questions.length}`,
-          `wrong=${encodeURIComponent(wrongParam)}`,
-          'callback=handleRecord'
-        ];
-        const r = document.createElement('script');
-        r.src = GAS_URL + '?' + params.join('&');
-        document.head.appendChild(r);
-      }
+      // record posttest & pretest
+      const p = [
+        'action=recordResult',
+        `userId=${userProfile.userId}`,
+        `level=${level}`,
+        `type=${type}`,
+        `score=${score}`,
+        'full_score=10',
+        `wrong=${encodeURIComponent(wrongs.join(','))}`,
+        'callback=handleRecord'
+      ];
+      const r = document.createElement('script');
+      r.src = GAS_URL+'?'+p.join('&');
+      document.head.appendChild(r);
     }
   </script>
 </body>
