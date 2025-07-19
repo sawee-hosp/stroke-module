@@ -7,104 +7,219 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap"
         rel="stylesheet"/>
   <style>
-    /* Global reset & base */
+    /* Reset & Base */
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'Noto Sans Thai',sans-serif;
-         font-size:18px;background:#f0f2f5;
-         display:flex;justify-content:center;padding:40px 0;}
-    .container{max-width:480px;width:100%;padding:0 16px}
+    body {
+      font-family: 'Noto Sans Thai', sans-serif;
+      font-size:18px;
+      background:#f0f2f5;
+      display:flex;
+      justify-content:center;
+      padding:40px 0;
+    }
+    .container {
+      width:100%;
+      max-width:480px;
+      padding:0 16px;
+    }
 
     /* Card */
-    .card{background:#fff;border-radius:8px;
-          box-shadow:0 2px 6px rgba(0,0,0,0.05);
-          padding:20px;margin-bottom:20px;text-align:center}
+    .card {
+      background:#fff;
+      border-radius:8px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.05);
+      padding:20px;
+      margin-bottom:20px;
+      text-align:center;
+    }
 
-    /* Header */
-    h1{font-size:28px;color:#1a237e;margin-bottom:16px}
+    h1 {
+      font-size:28px;
+      color:#1a237e;
+      margin-bottom:16px;
+    }
 
-    /* Tabs */
-    .tabs{display:flex;margin-bottom:16px;border-radius:4px;overflow:hidden}
-    .tabs button{flex:1;padding:8px;font-size:16px;font-weight:700;
-                 border:none;background:#e0e0e0;cursor:pointer;
-                 transition:background .2s}
-    .tabs button.active{background:#3949ab;color:#fff}
-    .tabs button:not(.active):hover{background:#d5d5d5}
-
-    /* Intro lines */
-    .intro{line-height:1.6;color:#333;margin-bottom:16px;text-align:center}
-
-    /* Buttons */
-    .button-group{display:flex;gap:12px}
-    .btn{flex:1;padding:12px;font-size:18px;font-weight:700;
-         color:#fff;border:none;border-radius:6px;cursor:pointer;
-         transition:background .2s}
-    .btn-quiz{background:linear-gradient(45deg,#1e88e5,#42a5f5)}
-    .btn-quiz:hover{background:linear-gradient(45deg,#1565c0,#1e7ae1)}
-    .btn-text{padding:8px;font-size:16px;color:#1e88e5;
-             background:none;border:1px solid #1e88e5;border-radius:4px;
-             text-decoration:none;display:inline-block;cursor:pointer}
+    /* Start */
+    .intro {
+      line-height:1.6;
+      color:#333;
+      margin-bottom:16px;
+    }
+    .button-group {
+      display:flex;
+      gap:12px;
+    }
+    .btn {
+      flex:1;
+      padding:12px;
+      font-size:18px;
+      font-weight:700;
+      color:#fff;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      background:linear-gradient(45deg,#1e88e5,#42a5f5);
+      transition:background .2s;
+    }
+    .btn:hover {
+      background:linear-gradient(45deg,#1565c0,#1e7ae1);
+    }
 
     /* Quiz */
-    #quiz-card{display:none}
-    #progress{position:relative;height:8px;background:#e0e0e0;
-              border-radius:4px;margin-bottom:16px}
-    #progress-bar{height:100%;width:0;background:#1e88e5;transition:width .3s}
-    #qindex{position:absolute;top:-24px;left:50%;transform:translateX(-50%);
-            font-size:16px;font-weight:700;color:#333}
-    .question{font-size:20px;font-weight:700;color:#1a237e;margin-bottom:16px}
-    .choices label{display:block;font-size:18px;margin-bottom:12px;
-                   padding:12px;background:#f7f7f7;border-radius:6px;
-                   cursor:pointer;transition:background .2s;text-align:left}
-    .choices label:hover{background:#ececec}
-    .choices input{margin-right:12px;transform:scale(1.2)}
-
-    #submitBtn{display:none;width:100%;padding:12px;margin-top:16px;
-               background:#5e35b1;color:#fff;border:none;border-radius:6px;
-               font-size:18px;font-weight:700;cursor:pointer;
-               transition:background .2s}
-    #submitBtn:hover{background:#512da8}
+    #quiz-card { display:none; }
+    #progress {
+      position:relative;
+      height:8px;
+      background:#e0e0e0;
+      border-radius:4px;
+      margin-bottom:16px;
+    }
+    #progress-bar {
+      height:100%;
+      width:0;
+      background:#1e88e5;
+      transition:width .3s;
+    }
+    #qindex {
+      position:absolute;
+      top:-24px;
+      left:50%;
+      transform:translateX(-50%);
+      font-size:16px;
+      font-weight:700;
+      color:#333;
+    }
+    .question {
+      font-size:20px;
+      font-weight:700;
+      color:#1a237e;
+      margin-bottom:16px;
+    }
+    .choices label {
+      display:block;
+      font-size:18px;
+      margin-bottom:12px;
+      padding:12px;
+      background:#f7f7f7;
+      border-radius:6px;
+      cursor:pointer;
+      text-align:left;
+      transition:background .2s;
+    }
+    .choices label:hover { background:#ececec; }
+    .choices input {
+      margin-right:12px;
+      transform:scale(1.2);
+    }
+    #submitBtn {
+      display:none;
+      width:100%;
+      padding:12px;
+      margin-top:16px;
+      background:#5e35b1;
+      color:#fff;
+      border:none;
+      border-radius:6px;
+      font-size:18px;
+      font-weight:700;
+      cursor:pointer;
+      transition:background .2s;
+    }
+    #submitBtn:hover { background:#512da8; }
 
     /* Modal */
-    .modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;
-           background:rgba(0,0,0,0.4);justify-content:center;align-items:center;
-           z-index:1000}
-    .modal-content{background:#fff;padding:24px;border-radius:6px;
-                   text-align:center;width:90%;max-width:360px}
-    .modal-content p{font-size:22px;margin-bottom:16px}
-    .modal-content button{padding:10px 24px;font-size:18px;
-                          font-weight:700;color:#fff;
-                          background:#1e88e5;border:none;border-radius:6px;
-                          cursor:pointer;transition:background .2s}
-    .modal-content button:hover{background:#1565c0}
+    .modal {
+      display:none;
+      position:fixed;
+      top:0;left:0;right:0;bottom:0;
+      background:rgba(0,0,0,0.4);
+      justify-content:center;
+      align-items:center;
+      z-index:1000;
+    }
+    .modal-content {
+      background:#fff;
+      padding:24px;
+      border-radius:6px;
+      text-align:center;
+      width:90%;
+      max-width:360px;
+    }
+    .modal-content p {
+      font-size:22px;
+      margin-bottom:16px;
+    }
+    .modal-content button {
+      padding:10px 24px;
+      font-size:18px;
+      font-weight:700;
+      color:#fff;
+      background:#1e88e5;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      transition:background .2s;
+    }
+    .modal-content button:hover { background:#1565c0; }
 
     /* Result */
-    #result-card{display:none}
-    #result-card h2{font-size:22px;margin-bottom:16px}
-    #result-card p{font-size:18px;margin-bottom:12px}
-    #shareBtn{display:none;width:100%;padding:12px;margin-top:16px;
-              background:linear-gradient(45deg,#fb8c00,#ffb74d);
-              color:#fff;border:none;border-radius:6px;
-              font-size:18px;font-weight:700;cursor:pointer;
-              transition:background .2s}
-    #shareBtn:hover{background:linear-gradient(45deg,#f57c00,#ffa726)}
+    #result-card { display:none; }
+    #result-card h2 {
+      font-size:22px;
+      margin-bottom:16px;
+    }
+    #result-card p {
+      font-size:18px;
+      margin-bottom:12px;
+    }
+    #btnLearn {
+      display:inline-block;
+      padding:8px 16px;
+      font-size:16px;
+      color:#1e88e5;
+      background:none;
+      border:1px solid #1e88e5;
+      border-radius:4px;
+      text-decoration:none;
+      margin-bottom:16px;
+    }
+    #shareBtn {
+      display:none;
+      width:100%;
+      padding:12px;
+      background:linear-gradient(45deg,#fb8c00,#ffb74d);
+      color:#fff;
+      border:none;
+      border-radius:6px;
+      font-size:18px;
+      font-weight:700;
+      cursor:pointer;
+      transition:background .2s;
+    }
+    #shareBtn:hover { background:linear-gradient(45deg,#f57c00,#ffa726); }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>คุณรู้ทันสโตรกหรือยัง?</h1>
 
-    <!-- Tabs -->
-    <div class="tabs">
-      <button class="active" data-level="general">Quiz สโตรก (10)</button>
-      <button data-level="asm">Quiz อสม. (20)</button>
-    </div>
-
     <!-- Start Card -->
-    <div id="start-card" class="card"></div>
+    <div id="start-card" class="card">
+      <div class="intro">
+        มาทดสอบความรู้ครั้งแรกกันเถอะ<br/>
+        รู้จักสโตรก จะห่างโรคอัมพาต
+      </div>
+      <div class="button-group">
+        <button id="btnQuiz" class="btn">เริ่มทำข้อสอบ</button>
+      </div>
+    </div>
 
     <!-- Quiz Card -->
     <div id="quiz-card" class="card">
-      <div id="progress"><span id="qindex">1/10</span><div id="progress-bar"></div></div>
+      <div id="progress">
+        <span id="qindex">1/10</span>
+        <div id="progress-bar"></div>
+      </div>
       <div id="questionText" class="question"></div>
       <div id="choicesContainer" class="choices"></div>
       <button id="submitBtn">ส่งคำตอบ</button>
@@ -114,7 +229,7 @@
     <div id="result-card" class="card">
       <h2>สรุปผล</h2>
       <p id="resultMessage"></p>
-      <a id="btnLearn" class="btn-text" target="_blank">สโตรกคืออะไร</a><br/><br/>
+      <a id="btnLearn" href="https://lin.ee/mQhHzLv" target="_blank">สโตรกคืออะไร</a><br/>
       <button id="shareBtn">บันทึกผลและแชร์คะแนน</button>
     </div>
   </div>
@@ -129,173 +244,167 @@
 
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script>
-    const GAS_URL = 'https://script.google.com/macros/s/.../exec';
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbwt4O6aTK_NqGGdYaIF6gRbv5f37dgFeQYZ7ZLxZIRYGBEz54EnJx1hS36XPhET1AOgHg/exec';
     const LIFF_ID = '2005789397-ROQvjpYk';
-    let userProfile, questions=[], idx=0, score=0, wrongs=[], level='general';
-    let cachedRank, cachedTotal;
+    let userProfile, questions = [], idx = 0, score = 0, wrongs = [], cachedRank, cachedTotal;
 
-    function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-
-    // 1) load history
-    function loadHistory(){
-      if(!userProfile?.userId) return;
-      const s=document.createElement('script');
-      s.src=`${GAS_URL}?action=getHistory&userId=${userProfile.userId}&level=${level}&callback=handleHistory`;
-      document.head.appendChild(s);
-    }
-    window.handleHistory = data=>{
-      const start=document.getElementById('start-card');
-      if(!data||!data.length){
-        start.innerHTML=`
-          <div class="intro">
-            มาทดสอบความรู้ครั้งแรกกันเถอะ<br/>
-            รู้จักสโตรก จะห่างโรคอัมพาต
-          </div>
-          <div class="button-group">
-            <button id="btnQuiz" class="btn btn-quiz">เริ่มทำข้อสอบ</button>
-          </div>`;
-      } else {
-        const last=data[data.length-1];
-        window._last=last;
-        const s=document.createElement('script');
-        s.src=`${GAS_URL}?action=getUserName&userId=${userProfile.userId}&callback=handleUserName`;
-        document.head.appendChild(s);
+    function shuffle(a) {
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
       }
-      attachStart();
-    };
-    window.handleUserName=resp=>{
-      const last=window._last, nm=resp.name||userProfile.displayName;
-      const sc=last.score, full=last.full_score, start=document.getElementById('start-card');
-      start.innerHTML=`
-        <div class="intro">
-          ครั้งที่แล้วคุณ ${nm} ทำข้อสอบได้ ${sc}/${full}<br/>
-          มาแก้มือให้ได้ ${full} เต็มกันเถอะ
-        </div>
-        <div class="button-group">
-          <button id="btnQuiz" class="btn btn-quiz">เริ่มทำข้อสอบ</button>
-        </div>`;
-      attachStart();
-    };
-    function attachStart(){
-      const b=document.getElementById('btnQuiz');
-      if(b) b.onclick=()=>{
-        const s=document.createElement('script');
-        s.src=`${GAS_URL}?action=getQuiz&level=${level}&callback=handleQuiz`;
-        document.head.appendChild(s);
-      };
+      return a;
     }
 
-    // 2) load quiz
-    window.handleQuiz=data=>{
-      questions=data;idx=0;score=0;wrongs=[];
-      document.getElementById('start-card').style.display='none';
-      document.getElementById('quiz-card').style.display='block';
+    // 1) Attach start button
+    document.getElementById('btnQuiz').onclick = () => {
+      const s = document.createElement('script');
+      s.src = `${GAS_URL}?action=getQuiz&level=general&callback=handleQuiz`;
+      document.head.appendChild(s);
+    };
+
+    // 2) Handle quiz load
+    window.handleQuiz = data => {
+      questions = data;
+      idx = 0; score = 0; wrongs = [];
+      document.getElementById('start-card').style.display = 'none';
+      document.getElementById('quiz-card').style.display = 'block';
       showQuestion();
     };
-    function showQuestion(){
-      const q=questions[idx];
-      document.getElementById('qindex').textContent=`${idx+1}/${questions.length}`;
-      document.getElementById('progress-bar').style.width=`${(idx+1)/questions.length*100}%`;
-      document.getElementById('questionText').textContent=q.question;
-      const ct=document.getElementById('choicesContainer');ct.innerHTML='';
-      shuffle(['choice1','choice2','choice3','choice4']).forEach(key=>{
-        const lbl=document.createElement('label');
-        lbl.textContent=q[key];
-        lbl.onclick=()=>{
-          document.getElementById('submitBtn').style.display='block';
+
+    function showQuestion() {
+      const q = questions[idx];
+      document.getElementById('qindex').textContent = `${idx+1}/${questions.length}`;
+      document.getElementById('progress-bar').style.width = `${(idx+1)/questions.length*100}%`;
+      document.getElementById('questionText').textContent = q.question;
+      const container = document.getElementById('choicesContainer');
+      container.innerHTML = '';
+      shuffle(['choice1','choice2','choice3','choice4']).forEach(key => {
+        const lbl = document.createElement('label');
+        lbl.textContent = q[key];
+        lbl.onclick = () => {
+          document.getElementById('submitBtn').style.display = 'block';
           document.querySelectorAll('.choices label').forEach(l=>l.classList.remove('selected'));
           lbl.classList.add('selected');
         };
-        ct.appendChild(lbl);
+        container.appendChild(lbl);
       });
-      ct.querySelectorAll('label').forEach(lbl=>{
-        const inp=document.createElement('input');
-        inp.type='radio';inp.name='choice';inp.value=lbl.textContent;
+      container.querySelectorAll('label').forEach(lbl=>{
+        const inp = document.createElement('input');
+        inp.type='radio'; inp.name='choice'; inp.value=lbl.textContent;
         lbl.prepend(inp);
       });
-      const sb=document.getElementById('submitBtn');
-      sb.style.display='none';
-      sb.onclick=()=>checkAnswer(q);
+      const sb = document.getElementById('submitBtn');
+      sb.style.display = 'none';
+      sb.onclick = () => checkAnswer(q);
     }
-    function checkAnswer(q){
-      const sel=document.querySelector('input[name="choice"]:checked');
-      if(!sel) return;
-      const chosen=sel.value.trim(), correct=q.correct_choice.trim();
-      const modal=document.getElementById('answerModal'), msg=document.getElementById('modalMessage');
-      msg.textContent = chosen===correct ? '✅ ถูกต้อง!' : `😞 คำตอบที่ถูกคือ ${correct}`;
-      if(chosen!==correct) wrongs.push(q.test_id);
-      modal.style.display='flex';
-      document.getElementById('modalNextBtn').onclick=()=>{
-        modal.style.display='none';
-        idx<questions.length-1 ? showQuestionAt(idx+1) : finishQuiz();
+
+    function checkAnswer(q) {
+      const sel = document.querySelector('input[name="choice"]:checked');
+      if (!sel) return;
+      const chosen = sel.value.trim();
+      const correct = q.correct_choice.trim();
+      const modal = document.getElementById('answerModal');
+      const msg = document.getElementById('modalMessage');
+      msg.textContent = chosen === correct
+        ? '✅ ถูกต้อง!'
+        : `😞 คำตอบที่ถูกคือ ${correct}`;
+      if (chosen !== correct) wrongs.push(q.test_id);
+      modal.style.display = 'flex';
+      document.getElementById('modalNextBtn').onclick = () => {
+        modal.style.display = 'none';
+        idx < questions.length-1
+          ? showQuestionAt(idx+1)
+          : finishQuiz();
       };
     }
-    function showQuestionAt(i){idx=i;document.getElementById('submitBtn').style.display='none';showQuestion();}
 
-    // 3) finish
-    function finishQuiz(){
-      document.getElementById('quiz-card').style.display='none';
-      document.getElementById('result-card').style.display='block';
-      const scoreText=`คุณได้ ${score}/${questions.length} คะแนน`;
-      let msg='';
-      if(score<=4){
-        msg=`ไม่เป็นไรครับ เรามาเรียนรู้เรื่องสโตรกกันก่อนแล้วค่อยมาสอบกันใหม่`;
-        document.getElementById('btnLearn').href='https://lin.ee/mQhHzLv';
-      } else if(score<=8){
-        msg=`ถือว่าเก่งเลยนะเนี่ย แต่มีบางเรื่องยังไม่เข้าใจ มาอ่านความรู้กันหน่อย`;
+    function showQuestionAt(i) {
+      idx = i;
+      document.getElementById('submitBtn').style.display = 'none';
+      showQuestion();
+    }
+
+    // 3) Finish
+    function finishQuiz() {
+      document.getElementById('quiz-card').style.display = 'none';
+      document.getElementById('result-card').style.display = 'block';
+      let msgText;
+      if (score <= 4) {
+        msgText = 'ไม่เป็นไรครับ เรามาเรียนรู้เรื่องสโตรกกันก่อน แล้วค่อยมาสอบใหม่';
+      } else if (score <= 8) {
+        msgText = 'ถือว่าเก่งเลย แต่มีบางเรื่องยังไม่เข้าใจ มาอ่านความรู้กันหน่อย';
       } else {
-        msg=`สุดยอดเลยครับ รู้จักสโตรกแล้ว อย่าลืมรีบมารักษาเมื่อพบอาการเสี่ยง`;
+        msgText = 'สุดยอดเลยครับ รู้จักสโตรกแล้ว อย่าลืมบอกคนอื่นด้วย!';
       }
-      document.getElementById('resultMessage').innerHTML=`<strong>${scoreText}</strong><br/>${msg}`;
+      document.getElementById('resultMessage').innerHTML =
+        `<strong>คุณได้ ${score}/${questions.length} คะแนน</strong><br/>${msgText}`;
+
       // auto-record
-      const p=[
+      const params = [
         'action=recordResult',
         `userId=${userProfile.userId}`,
-        `level=${level}`,
+        'level=general',
         `score=${score}`,
         `full_score=${questions.length}`,
         'posttest=true',
         `wrong=${encodeURIComponent(wrongs.join(','))}`,
         'callback=cacheRank'
       ];
-      const s=document.createElement('script');
-      s.src=`${GAS_URL}?${p.join('&')}`;
+      const s = document.createElement('script');
+      s.src = `${GAS_URL}?${params.join('&')}`;
       document.head.appendChild(s);
     }
-    window.cacheRank=resp=>{ cachedRank=resp.rank;cachedTotal=resp.totalPlayers;document.getElementById('shareBtn').style.display='block';};
 
-    // 4) share
-    document.getElementById('shareBtn').onclick=()=>{
-      const name=userProfile.displayName;
-      const pic=userProfile.pictureUrl;
-      const flex={
-        type:'flex',altText:`${name} รู้ทันสโตรก`,
+    window.cacheRank = resp => {
+      if (resp.status === 'success') {
+        cachedRank = resp.rank;
+        cachedTotal = resp.totalPlayers;
+        document.getElementById('shareBtn').style.display = 'block';
+      }
+    };
+
+    // 4) Share flex
+    document.getElementById('shareBtn').onclick = () => {
+      const name = userProfile.displayName;
+      const pic  = userProfile.pictureUrl;
+      const flex = {
+        type:'flex', altText:`${name} รู้ทันสโตรก`,
         contents:{
-          type:'bubble',size:'kilo',
-          header:{type:'box',layout:'vertical',backgroundColor:'#FFF9C4',contents:[
-            {type:'text',text:`${name} รู้ทันสโตรก`,align:'center',weight:'bold',size:'lg',margin:'none'},
-            {type:'text',text:'👑',align:'center',size:'4xl',margin:'none'}
-          ]},
-          body:{type:'box',layout:'vertical',backgroundColor:'#FFF9C4',spacing:'none',paddingAll:'0px',contents:[
-            {type:'image',url:pic,size:'full',aspectMode:'cover',cornerRadius:'999px',margin:'none'},
-            {type:'text',text:`รู้เรื่องสโตรกคะแนน ${score}/${questions.length}`,align:'center',size:'md',weight:'bold',margin:'none'},
-            {type:'text',text:`เก่งเป็นอันดับที่ ${cachedRank} จาก ${cachedTotal}`,align:'center',size:'sm',color:'#666666',margin:'none'}
-          ]},
-          footer:{type:'box',layout:'vertical',backgroundColor:'#FFF9C4',spacing:'none',paddingAll:'0px',contents:[
-            {type:'button',style:'primary',action:{type:'uri',label:'ทดสอบความรู้สโตรก',uri:`https://liff.line.me/${LIFF_ID}`},margin:'none'},
-            {type:'text',text:'สวีรู้ทันสโตรก',align:'center',size:'sm',color:'#1e88e5',action:{type:'uri',uri:'https://lin.ee/mQhHzLv'},margin:'none'}
-          ]}
+          type:'bubble', size:'kilo',
+          header:{ type:'box', layout:'vertical', backgroundColor:'#FFF9C4',
+            contents:[
+              { type:'text', text:`${name} รู้ทันสโตรก`, align:'center', weight:'bold', size:'lg' },
+              { type:'text', text:'👑', align:'center', size:'4xl' }
+            ]
+          },
+          body:{ type:'box', layout:'vertical', backgroundColor:'#FFF9C4', spacing:'none', paddingAll:'0px',
+            contents:[
+              { type:'image', url:pic, size:'full', aspectMode:'cover', cornerRadius:'999px' },
+              { type:'text', text:`รู้เรื่องสโตรกคะแนน ${score}/${questions.length}`, align:'center', size:'md', weight:'bold' },
+              { type:'text', text:`อันดับ ${cachedRank} จาก ${cachedTotal}`, align:'center', size:'sm', color:'#666666' }
+            ]
+          },
+          footer:{ type:'box', layout:'vertical', backgroundColor:'#FFF9C4', spacing:'none', paddingAll:'0px',
+            contents:[
+              { type:'button', style:'primary',
+                action:{ type:'uri', label:'ทดสอบความรู้สโตรก', uri:`https://liff.line.me/${LIFF_ID}` }
+              },
+              { type:'text', text:'สวีรู้ทันสโตรก', align:'center', size:'sm', color:'#1e88e5',
+                action:{ type:'uri', uri:'https://lin.ee/mQhHzLv' }
+              }
+            ]
+          }
         }
       };
       liff.shareTargetPicker([flex]).catch(e=>console.error(e));
     };
 
     // LIFF init
-    document.addEventListener('DOMContentLoaded',async()=>{
-      await liff.init({liffId:LIFF_ID});
-      if(!liff.isLoggedIn()) liff.login();
-      userProfile=await liff.getProfile();
-      loadHistory();
+    document.addEventListener('DOMContentLoaded', async () => {
+      await liff.init({ liffId:LIFF_ID });
+      if (!liff.isLoggedIn()) liff.login();
+      userProfile = await liff.getProfile();
     });
   </script>
 </body>
