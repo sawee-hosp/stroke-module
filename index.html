@@ -274,7 +274,7 @@
 const GAS_URL='https://script.google.com/macros/s/AKfycbwt4O6aTK_NqGGdYaIF6gRbv5f37dgFeQYZ7ZLxZIRYGBEz54EnJx1hS36XPhET1AOgHg/exec',LIFF_ID='2005789397-ROQvjpYk';
 let userProfile, questions = [], idx = 0, score = 0, wrongs = [];
 let cachedRank, cachedTotal;
-let histGen, histAsm, _name;
+let gotGen = false, gotAsm = false, gotName = false;
 
 // SHUFFLE
 const shuffle=a=>{for(let i=a.length-1;i>0;i--){let j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;};
@@ -303,21 +303,38 @@ function loadHistory(){
   document.head.appendChild(s3);
 }
 
-window.handleHistoryGen = data => { histGen = data || []; tryRenderHistory(); };
-window.handleHistoryAsm = data => { histAsm = data || []; tryRenderHistory(); };
-window.handleUserNameHistory = resp => { _name = resp.name || userProfile.displayName; tryRenderHistory(); };
+window.handleHistoryGen = data => {
+  histGen = data || [];
+  gotGen = true;
+  tryRenderHistory();
+};
+window.handleHistoryAsm = data => {
+  histAsm = data || [];
+  gotAsm = true;
+  tryRenderHistory();
+};
+window.handleUserNameHistory = resp => {
+  _name = resp.name;
+  gotName = true;
+  tryRenderHistory();
+};
 
 function tryRenderHistory(){
-  if (histGen===null || histAsm===null || _name===null) return;
+  if (!(gotGen && gotAsm && gotName)) return;  // ยังไม่พร้อมทั้งหมด
   const txt = document.getElementById('history-text');
-  const gen = histGen.pop();
-  const asm = histAsm.pop();
-  if (asm){
-    txt.innerHTML = `สวัสดีคุณ ${_name}<br/>ครั้งที่แล้วคุณได้คะแนนสอบ อสม.สโตรกไป ${asm.score}/20<br/>วันนี้ต้องการแก้ตัวหรือไม่`;
-  } else if (gen){
-    txt.innerHTML = `สวัสดีคุณ ${_name}<br/>ครั้งที่แล้วคุณได้คะแนนสโตรกพื้นฐานไป ${gen.score}/10<br/>วันนี้ต้องการแก้ตัวหรือไม่`;
+  const nameToShow = _name || userProfile.displayName;
+  const lastGen = histGen.pop();
+  const lastAsm = histAsm.pop();
+  if (lastAsm) {
+    txt.innerHTML = `สวัสดีคุณ ${nameToShow}<br>
+      ครั้งที่แล้วคุณได้คะแนนสอบ อสม.สโตรก ${lastAsm.score}/20<br>
+      วันนี้ต้องการแก้ตัวหรือไม่`;
+  } else if (lastGen) {
+    txt.innerHTML = `สวัสดีคุณ ${nameToShow}<br>
+      ครั้งที่แล้วคุณได้คะแนนสอบพื้นฐาน ${lastGen.score}/10<br>
+      วันนี้ต้องการแก้ตัวหรือไม่`;
   } else {
-    txt.innerHTML = `มาทดสอบความรู้สโตรกกันหน่อย<br/>คลิกเลือกข้อสอบได้เลยครับ<br/>ถ้าไม่ชัวร์ สามารถเปิดหนังสือดูคำตอบได้ตลอดเวลา`;
+    txt.innerHTML = `มาทดสอบความรู้สโตรกกันหน่อย…`;
   }
 }
 
