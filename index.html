@@ -67,6 +67,8 @@ h1{text-align:center;font-size:28px;color:#1a237e;margin-bottom:24px}
 <body>
 <div class="container">
   <h1>คุณรู้ทันสโตรกหรือยัง?</h1>
+    <div id="start-text" style="display:none;"></div>
+
   <!-- 4 Cards Grid -->
   <div class="grid">
     <div id="cardGeneralQuiz" class="card">
@@ -260,7 +262,7 @@ h1{text-align:center;font-size:28px;color:#1a237e;margin-bottom:24px}
 </div>
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script>
-const GAS_URL='https://script.google.com/macros/s/.../exec',LIFF_ID='2005789397-ROQvjpYk';
+const GAS_URL='https://script.google.com/macros/s/AKfycbwt4O6aTK_NqGGdYaIF6gRbv5f37dgFeQYZ7ZLxZIRYGBEz54EnJx1hS36XPhET1AOgHg/exec',LIFF_ID='2005789397-ROQvjpYk';
 let userProfile,questions=[],idx=0,score=0,wrongs=[],cachedRank,cachedTotal;
 // SHUFFLE
 const shuffle=a=>{for(let i=a.length-1;i>0;i--){let j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;};
@@ -271,15 +273,19 @@ function loadHistory(){
   s.src=`${GAS_URL}?action=getHistory&userId=${encodeURIComponent(userProfile.userId)}&level=general&callback=handleHistory`;
   document.head.appendChild(s);
 }
-window.handleHistory=data=>{
-  let txt=document.getElementById('start-text');
-  if(data&&data.length){
-    window._last=data.pop();
-    let s2=document.createElement('script');
-    s2.src=`${GAS_URL}?action=getUserName&userId=${encodeURIComponent(userProfile.userId)}&callback=handleUserName`;
-    document.head.appendChild(s2);
-  }else txt.innerHTML=`<span class="highlight">ยินดีต้อนรับสู่แบบทดสอบ</span><br/>เริ่มทำข้อสอบได้เลย`;
-};
+  window.handleHistory = data => {
+    // **Guard**: ถ้าไม่มี element start-text ให้หยุดเลย
+    const txt = document.getElementById('start-text');
+    if (!txt) return;
+    if (data?.length){
+      window._last = data.pop();
+      const s2 = document.createElement('script');
+      s2.src = `${GAS_URL}?action=getUserName&userId=${encodeURIComponent(userProfile.userId)}&callback=handleUserName`;
+      document.head.appendChild(s2);
+    } else {
+      txt.innerHTML = '<span class="highlight">ยินดีต้อนรับสู่แบบทดสอบ</span><br>เริ่มทำข้อสอบได้เลย';
+    }
+  };
 window.handleUserName=resp=>{
   let nm=resp.name||userProfile.displayName;
   let txt=document.getElementById('start-text');
