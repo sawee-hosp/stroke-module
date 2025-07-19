@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>คุณรู้ทันสโตรกหรือยัง?</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet"/>
 <style>
@@ -10,37 +9,29 @@
 body,button,label,input{font-family:'Noto Sans Thai',sans-serif!important}
 body{background:#f0f2f5;display:flex;justify-content:center;padding:40px 0}
 .container{width:100%;max-width:480px;padding:0 16px}
+h1{text-align:center;font-size:28px;color:#1a237e;margin-bottom:24px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
 .card{background:#fff;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.05);
-  padding:20px;margin-bottom:20px;min-height:300px;display:flex;flex-direction:column;
-  justify-content:center;text-align:center}
-h1{font-size:28px;color:#1a237e;margin-bottom:16px}
-.intro{font-size:20px;line-height:1.6;color:#333;margin-bottom:16px}
-.intro .highlight{font-weight:700;color:#FF5722}
-.button-group{display:flex;gap:12px;margin-top:12px}
-.btn{flex:1;padding:12px;font-size:18px;font-weight:700;color:#fff;
-  border:none;border-radius:6px;cursor:pointer;
-  background:linear-gradient(45deg,#1e88e5,#42a5f5);transition:.2s}
-.btn:hover{background:linear-gradient(45deg,#1565c0,#1e7ae1)}
-.asm-quiz-btn{background:#795548;color:#fff;margin-top:8px;padding:12px;font-size:18px;
-  border:none;border-radius:6px;cursor:pointer;transition:.2s}
-.asm-quiz-btn:hover{background:#5d4037}
+  padding:20px;text-align:center;cursor:pointer;min-height:140px;
+  display:flex;flex-direction:column;justify-content:center;transition:transform .2s}
+.card:hover{transform:translateY(-4px)}
+.card .emoji{font-size:36px;margin-bottom:8px}
+.card .title{font-size:18px;font-weight:700;color:#333}
 #quiz-card,#result-card,#learn-card,#asm-guide{display:none}
 #progress{position:relative;height:8px;background:#e0e0e0;border-radius:4px;margin-bottom:16px}
-#progress-bar{height:100%;width:0;background:#1e88e5;transition:.3s}
-#qindex{position:absolute;top:20px;left:50%;transform:translateX(-50%);
-  font-size:16px;font-weight:700;color:#333}
-.question{font-size:28px;font-weight:700;color:#1a237e;margin:20px 0}
-.choices{text-align:left}
+#progress-bar{height:100%;width:0;background:#1e88e5;transition:width .3s}
+#qindex{position:absolute;top:4px;left:50%;transform:translateX(-50%);font-size:14px;font-weight:700;color:#333}
+.question{font-size:28px;font-weight:700;color:#1a237e;margin:24px 0}
 .choices label{display:block;font-size:22px;padding:12px;background:#f7f7f7;
-  border-radius:6px;margin-bottom:12px;cursor:pointer;transition:.2s}
+  border-radius:6px;margin-bottom:12px;cursor:pointer;transition:background .2s;text-align:left}
 .choices label:hover{background:#ececec}
 .choices input{margin-right:12px;transform:scale(1.2)}
 #submitBtn{display:none;width:100%;padding:12px;margin-top:16px;
   background:#5e35b1;color:#fff;border:none;border-radius:6px;font-size:18px;
-  font-weight:700;cursor:pointer;transition:.2s}
+  font-weight:700;cursor:pointer;transition:background .2s}
 #submitBtn:hover{background:#512da8}
-.link-note{font-size:14px;color:#666;margin-top:8px}
-.link-note span{cursor:pointer;color:#1e88e5}
+.link-note{font-size:14px;color:#666;margin-top:12px;text-align:left}
+.link-note span{color:#1e88e5;cursor:pointer}
 .modal{position:fixed;top:0;left:0;right:0;bottom:0;
   background:rgba(0,0,0,0.4);display:flex;justify-content:center;
   align-items:center;z-index:1000}
@@ -50,218 +41,297 @@ h1{font-size:28px;color:#1a237e;margin-bottom:16px}
 .modal-content button{padding:10px 24px;font-size:18px;font-weight:700;
   color:#fff;background:#1e88e5;border:none;border-radius:6px;cursor:pointer;transition:.2s}
 .modal-content button:hover{background:#1565c0}
-.accordion{width:100%;border-top:1px solid #ddd}
+.accordion{margin:16px 0}
 .accordion-item:not(:last-child){border-bottom:1px solid #ddd}
 .accordion-header{padding:12px;font-size:18px;font-weight:700;cursor:pointer;
-  background:#fafafa;display:flex;justify-content:space-between;align-items:center}
-.accordion-body{padding:12px;display:none;font-size:16px;line-height:1.6}
-.accordion-header.active{background:#e3f2fd}
+  background:#e3f2fd;display:flex;justify-content:space-between;align-items:center}
+.accordion-body{padding:12px;font-size:16px;line-height:1.6;display:none}
+.accordion-header.active{background:#bbdefb}
 .accordion-header .icon{font-size:20px}
-#learn-card textarea{display:none}
-#asm-menu{list-style:none;text-align:left;padding:0}
-#asm-menu li{padding:8px 0;cursor:pointer;color:#1e88e5}
-#asm-menu li.active{font-weight:700;color:#0d47a1}
+#shareBtn{display:none;width:100%;padding:12px;margin-top:16px;
+  background:linear-gradient(45deg,#fb8c00,#ffb74d);color:#fff;border:none;
+  border-radius:6px;font-size:18px;font-weight:700;cursor:pointer;transition:.2s}
+#shareBtn:hover{background:linear-gradient(45deg,#f57c00,#ffa726)}
+.asm-quiz-btn{display:none;padding:12px;width:100%;font-size:18px;
+  font-weight:700;color:#fff;background:#795548;border:none;border-radius:6px;
+  cursor:pointer;transition:.2s;margin-top:12px}
+.asm-quiz-btn:hover{background:#5d4037}
 </style>
 </head>
 <body>
 <div class="container">
   <h1>คุณรู้ทันสโตรกหรือยัง?</h1>
-
-  <!-- Start Card -->
-  <div id="start-card" class="card">
-    <div id="start-text" class="intro">กำลังโหลดประวัติ…</div>
-    <div class="button-group">
-      <button id="btnQuiz" class="btn">เริ่มทำข้อสอบ</button>
+  <!-- 4 Cards Grid -->
+  <div class="grid">
+    <div id="cardGeneralQuiz" class="card">
+      <div class="emoji">❓</div>
+      <div class="title">ทดสอบความรู้ทั่วไป</div>
     </div>
-    <button id="btnAsmQuiz" class="asm-quiz-btn">แบบทดสอบ อสม.สโตรก</button>
+    <div id="cardGeneralLearn" class="card">
+      <div class="emoji">📖</div>
+      <div class="title">อ่านความรู้เรื่องสโตรก</div>
+    </div>
+    <div id="cardAsmQuiz" class="card">
+      <div class="emoji">🩺</div>
+      <div class="title">ทดสอบความรู้ อสม.สโตรก</div>
+    </div>
+    <div id="cardAsmGuide" class="card">
+      <div class="emoji">📋</div>
+      <div class="title">แนวปฏิบัติ อสม.สโตรก</div>
+    </div>
   </div>
 
   <!-- Quiz Card -->
-  <div id="quiz-card" class="card">
+  <div id="quiz-card" class="card" style="min-height:500px">
     <div id="progress"><span id="qindex">1/10</span><div id="progress-bar"></div></div>
     <div id="questionText" class="question"></div>
     <div id="choicesContainer" class="choices"></div>
     <button id="submitBtn">ส่งคำตอบ</button>
-    <div class="link-note">
-      ถ้าไม่แน่ใจคำตอบ <span id="openLearn">📖 อ่านความรู้</span>
-    </div>
+    <div class="link-note">ถ้าไม่แน่ใจ กดอ่านความรู้ก่อนที่นี่ <span id="openLearn">📖</span></div>
   </div>
 
   <!-- Result Card -->
-  <div id="result-card" class="card">
+  <div id="result-card" class="card" style="min-height:500px">
     <h2>สรุปผล</h2>
-    <div id="resultMessage" style="font-size:18px;line-height:1.6;margin-bottom:16px"></div>
-    <div class="button-group">
-      <button id="shareBtn" class="btn" style="background:linear-gradient(45deg,#fb8c00,#ffb74d)">
-        บันทึกผลและแชร์คะแนน
-      </button>
-    </div>
-    <div style="margin-top:16px">
-      <span>อ่านความรู้เพิ่มเติมได้ที่ </span><span id="openLearn2" style="cursor:pointer;color:#1e88e5">📖</span>
-    </div>
+    <div id="resultMessage" style="font-size:18px;line-height:1.6"></div>
+    <button id="shareBtn">บันทึกผลและแชร์คะแนน</button>
   </div>
+</div>
 
-  <!-- General Knowledge Modal (Accordion) -->
-  <div id="learn-card" class="modal">
-    <div class="modal-content" style="text-align:left;max-height:80vh;overflow:auto">
-      <h2>ความรู้เรื่องสโตรก</h2>
-      <div class="accordion">
-        <!-- Chapter 1 -->
-        <div class="accordion-item">
-          <div class="accordion-header"><span>1. รู้จัก “สโตรก” อย่างเข้าใจ</span><span class="icon">＋</span></div>
-          <div class="accordion-body">
-            <p>สโตรก … ภายใน 4.5 ชั่วโมงหลังอาการเริ่มต้น …</p>
-            <!-- detailed text -->
-          </div>
-        </div>
-        <!-- Chapter 2 -->
-        <div class="accordion-item">
-          <div class="accordion-header"><span>2. ปัจจัยเสี่ยงที่ควรระวังและปรับเปลี่ยน</span><span class="icon">＋</span></div>
-          <div class="accordion-body">
-            <p>ปัจจัยที่เปลี่ยนไม่ได้ …</p>
-            <ul>
-              <li>อายุที่มากขึ้น</li>
-              <li>เพศชาย …</li>
-              <!-- etc. -->
-            </ul>
-          </div>
-        </div>
-        <!-- Chapter 3 -->
-        <div class="accordion-item">
-          <div class="accordion-header"><span>3. สังเกตอาการด้วย BEFAST และปฏิบัติทันที</span><span class="icon">＋</span></div>
-          <div class="accordion-body">
-            <ul>
-              <li><strong>B</strong> Balance: เดินเซ …</li>
-              <!-- etc. -->
-            </ul>
-          </div>
-        </div>
-        <!-- Chapter 4 -->
-        <div class="accordion-item">
-          <div class="accordion-header"><span>4. ดูแลหลังสโตรกและการฟื้นฟู</span><span class="icon">＋</span></div>
-          <div class="accordion-body">
-            <p>การรักษาเบื้องต้น …</p>
-          </div>
+<!-- General Knowledge Modal -->
+<div id="learn-card" class="modal">
+  <div class="modal-content" style="max-height:80vh;overflow:auto;text-align:left">
+    <h2>ความรู้เรื่องสโตรก</h2>
+    <div class="accordion">
+      <div class="accordion-item">
+        <div class="accordion-header">1. รู้จัก “สโตรก” อย่างเข้าใจ<span class="icon">＋</span></div>
+        <div class="accordion-body">
+          <p>สโตรก หรือโรคหลอดเลือดสมอง คือภาวะที่เลือดไม่สามารถไปเลี้ยงสมองได้เพียงพอ
+          เกิดจากหลอดเลือดตีบตัน (Ischemic) หรือแตก/รั่ว (Hemorrhagic) ส่งผลให้เซลล์สมองเสียหาย
+          ภายในไม่กี่นาที อาจเกิดอัมพฤกษ์ อัมพาต พูดไม่ได้ หรือเสียชีวิต</p>
         </div>
       </div>
-      <div class="button-group" style="margin-top:16px">
-        <button id="closeLearn" class="btn" style="background:#f44336">ปิด</button>
+      <div class="accordion-item">
+        <div class="accordion-header">2. ปัจจัยเสี่ยงที่ควรระวังและปรับเปลี่ยน<span class="icon">＋</span></div>
+        <div class="accordion-body">
+          <p><strong>ปัจจัยที่เปลี่ยนไม่ได้:</strong></p>
+          <ul style="padding-left:1em">
+            <li>อายุที่มากขึ้น</li>
+            <li>เพศชายมีความเสี่ยงสูงกว่าเล็กน้อย</li>
+            <li>ประวัติครอบครัวเป็นสโตรก</li>
+          </ul>
+          <p><strong>ปัจจัยที่ปรับเปลี่ยนได้:</strong></p>
+          <ul style="padding-left:1em">
+            <li>ความดันสูง: รักษาให้น้อยกว่า 140/90 mmHg</li>
+            <li>เบาหวาน: ควบคุมน้ำตาลให้อยู่ในช่วง 70–130 mg/dL</li>
+            <li>ไขมันสูง: ลดอาหารมัน ตรวจคอเลสเตอรอล</li>
+            <li>สูบบุหรี่: เลิกทันทีเพื่อลดการอุดตัน</li>
+            <li>น้ำหนักเกิน–อ้วนลงพุง</li>
+            <li>ขาดการออกกำลังกาย: แนะนำ 150 นาที/สัปดาห์</li>
+          </ul>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header">3. สังเกตอาการด้วย BEFAST และปฏิบัติทันที<span class="icon">＋</span></div>
+        <div class="accordion-body">
+          <ul style="padding-left:1em">
+            <li><strong>B</strong> (Balance): เดินทรงตัวลำบาก</li>
+            <li><strong>E</strong> (Eyes): ตามัวทันที</li>
+            <li><strong>F</strong> (Face): หน้าเบี้ยว</li>
+            <li><strong>A</strong> (Arm): แขนอ่อนแรง</li>
+            <li><strong>S</strong> (Speech): พูดไม่ชัด</li>
+            <li><strong>T</strong> (Time): เวลาเป็นสิ่งสำคัญ โทร 1669 ทันที</li>
+          </ul>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header">4. ดูแลหลังสโตรกและการฟื้นฟู<span class="icon">＋</span></div>
+        <div class="accordion-body">
+          <p>หลังสโตรกต้องได้รับกายภาพบำบัด ฝึกพูด ฝึกกลืน และติดตามสุขภาพ
+          ตรวจความดัน เบาหวาน ไขมันเป็นประจำ ภายใต้คำแนะนำแพทย์</p>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header">5. ยาละลายลิ่มเลือดและการรักษาเฉพาะหน้า<span class="icon">＋</span></div>
+        <div class="accordion-body">
+          <p>rT‐PA เป็นยาที่ให้ภายใน 4.5 ชั่วโมงแรกหลังอาการเริ่มต้น ช่วยเปิดหลอดเลือด
+          ป้องกันสมองถูกทำลายยาวนาน</p>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header">6. วิธีใช้แอปสวีรู้ทันสโตรก<span class="icon">＋</span></div>
+        <div class="accordion-body">
+          <ol style="padding-left:1em">
+            <li>เปิดแอป “สวีรู้ทันสโตรก” (LIFF)</li>
+            <li>สแกน QR หรือกดปุ่ม LIFF</li>
+            <li>อนุญาตผ่าน LINE</li>
+            <li>เลือก “ทดสอบความรู้ทั่วไป” หรือ “อสม.สโตรก”</li>
+            <li>ทำข้อสอบ แล้วรับสรุปคะแนน</li>
+            <li>แชร์ผลผ่าน Flex message หรือดูประวัติ</li>
+          </ol>
+        </div>
       </div>
     </div>
+    <button id="closeLearn" class="btn" style="background:#f44336">ปิด</button>
   </div>
+</div>
 
-  <!-- ASM Guidance Modal -->
-  <div id="asm-guide" class="modal">
-    <div class="modal-content" style="text-align:left;max-height:80vh;overflow:auto">
-      <h2>แนวปฏิบัติของ อสม.สโตรก</h2>
-      <ul id="asm-menu">
-        <li data-i="0">1. ทำความรู้จักโรคหลอดเลือดสมอง</li>
-        <li data-i="1">2. ปัจจัยเสี่ยงและวิธีป้องกัน</li>
-        <li data-i="2">3. สังเกตสัญญาณเตือนด้วย BEFAST</li>
-        <li data-i="3">4. วิธีวัดค่าพื้นฐานเพื่อประเมินความเสี่ยง</li>
-        <li data-i="4">5. ประเมินความเสี่ยงด้วย “ตารางสี” ฯลฯ</li>
-      </ul>
-      <div id="asm-content" style="margin-top:16px"></div>
-      <div class="button-group" style="margin-top:16px">
-        <button id="closeAsm" class="btn" style="background:#f44336">ปิด</button>
+<!-- ASM Guide Modal -->
+<div id="asm-guide" class="modal">
+  <div class="modal-content" style="max-height:80vh;overflow:auto;text-align:left">
+    <h2>แนวปฏิบัติ อสม.สโตรก</h2>
+    <div class="accordion">
+      <div class="accordion-item">
+        <div class="accordion-header">1. ทำความรู้จักโรคหลอดเลือดสมอง<span class="icon">＋</span></div>
+        <div class="accordion-body">
+          <p>สโตรกเกิดจากหลอดเลือดตีบตันหรือแตก ทำให้เลือดไปเลี้ยงสมองไม่เพียงพอ
+          ต้องรักษาเร็วภายใน 4.5 ชม. เพื่อป้องกันพิการ</p>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header">2. ปัจจัยเสี่ยงและวิธีป้องกัน<span class="icon">＋</span></div>
+        <div class="accordion-body">
+          <ul style="padding-left:1em">
+            <li>ความดันสูง ควบคุม <140/90 mmHg</li>
+            <li>เบาหวาน ควบคุมน้ำตาล 70–130 mg/dL</li>
+            <li>ไขมันสูง หลีกเลี่ยงอาหารมัน</li>
+            <li>สูบบุหรี่ เลิกทันที</li>
+            <li>อ้วนลงพุง วัดรอบเอวไม่เกินเกณฑ์</li>
+          </ul>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header">3. สังเกตสัญญาณเตือนด้วย BEFAST<span class="icon">＋</span></div>
+        <div class="accordion-body">
+          <ul style="padding-left:1em">
+            <li>B: เดินทรงตัวลำบาก</li>
+            <li>E: ตามัวทันที</li>
+            <li>F: หน้าเบี้ยว</li>
+            <li>A: แขนอ่อนแรง</li>
+            <li>S: พูดไม่ชัด</li>
+            <li>T: โทร 1669 ทันที</li>
+          </ul>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header">4. วิธีวัดค่าพื้นฐานเพื่อประเมิน<span class="icon">＋</span></div>
+        <div class="accordion-body">
+          <ul style="padding-left:1em">
+            <li>วัดความดันโลหิต 2 ครั้ง แล้วเอาค่าเฉลี่ย</li>
+            <li>วัดรอบเอว ผ่านสะดือ ขณะผ่อนหายใจ</li>
+            <li>ตรวจน้ำตาลและไขมันในเลือด</li>
+          </ul>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header">5. ประเมินความเสี่ยงด้วย “ตารางสี” และติดตามผล<span class="icon">＋</span></div>
+        <div class="accordion-body">
+          <p>แบ่งสีตามความเสี่ยง 10 ปี : เขียว <10%, เหลือง 10–<20%, ส้ม 20–<30%, แดง ≥30%</p>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header">6. วิธีใช้แอปสำหรับ อสม.<span class="icon">＋</span></div>
+        <div class="accordion-body">
+          <ol style="padding-left:1em">
+            <li>เปิดแอป LIFF “สวีรู้ทันสโตรก”</li>
+            <li>ล็อกอิน LINE</li>
+            <li>เลือก “แบบทดสอบ อสม.สโตรก”</li>
+            <li>ทำข้อสอบ 20 ข้อ</li>
+            <li>รับคะแนน และแชร์ผล</li>
+            <li>ดูประวัติในการ์ด “ดูประวัติสุขภาพ”</li>
+          </ol>
+        </div>
       </div>
     </div>
+    <button id="closeAsm" class="btn" style="background:#f44336">ปิด</button>
   </div>
-</div><!-- /.container -->
+</div>
 
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script>
 const GAS_URL='https://script.google.com/macros/s/.../exec',LIFF_ID='2005789397-ROQvjpYk';
 let userProfile,questions=[],idx=0,score=0,wrongs=[],cachedRank,cachedTotal;
+// SHUFFLE
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){let j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;};
 
-// UTIL
-function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-
-// HISTORY & USERNAME
+// HISTORY
 function loadHistory(){
-  const s=document.createElement('script');
+  let s=document.createElement('script');
   s.src=`${GAS_URL}?action=getHistory&userId=${encodeURIComponent(userProfile.userId)}&level=general&callback=handleHistory`;
   document.head.appendChild(s);
 }
 window.handleHistory=data=>{
-  const txt=document.getElementById('start-text');
-  if(data?.length){
+  let txt=document.getElementById('start-text');
+  if(data&&data.length){
     window._last=data.pop();
-    const s2=document.createElement('script');
+    let s2=document.createElement('script');
     s2.src=`${GAS_URL}?action=getUserName&userId=${encodeURIComponent(userProfile.userId)}&callback=handleUserName`;
     document.head.appendChild(s2);
-  }else{
-    txt.innerHTML=`<span class="highlight">ยินดีต้อนรับสู่แบบทดสอบความรู้เรื่องสโตรกนะครับ</span><br/>
-      สำหรับมาครั้งแรก เริ่มทำข้อสอบได้เลยครับ<br/>ได้เท่าไหร่ไม่ว่ากัน เดี๋ยวแนะนำให้ครับ`;
-  }
+  }else txt.innerHTML=`<span class="highlight">ยินดีต้อนรับสู่แบบทดสอบ</span><br/>เริ่มทำข้อสอบได้เลย`;
 };
 window.handleUserName=resp=>{
-  const nm=resp.name||userProfile.displayName;
-  const txt=document.getElementById('start-text');
-  const{score:ls,full_score:lf}=window._last;
-  if(ls<lf)txt.innerHTML=`<span class="highlight">ยินดีต้อนรับอีกครั้ง</span><br/>
-    ครั้งที่แล้วคุณ ${nm} ทำได้ ${ls}/${lf}`;
-  else txt.innerHTML=`<span class="highlight">ยินดีต้อนรับคุณ ${nm} อีกครั้ง</span><br/>
-    ทำเต็ม ${lf}!`;
+  let nm=resp.name||userProfile.displayName;
+  let txt=document.getElementById('start-text');
+  let{score:ls,full_score:lf}=window._last;
+  txt.innerHTML=ls<lf
+    ?`<span class="highlight">ยินดีต้อนรับอีกครั้ง คุณ ${nm}</span><br/>ครั้งที่แล้วทำได้ ${ls}/${lf}`
+    :`<span class="highlight">สวัสดีคุณ ${nm}!</span><br/>ทำเต็ม ${lf} แล้ว`;
 };
 
-// START QUIZ
-document.getElementById('btnQuiz').onclick=()=>{
-  const s=document.createElement('script');
+// CARD CLICKS
+document.getElementById('cardGeneralQuiz').onclick=_=>{
+  let s=document.createElement('script');
   s.src=`${GAS_URL}?action=getQuiz&level=general&callback=handleQuiz`;
   document.head.appendChild(s);
 };
-document.getElementById('btnAsmQuiz').onclick=()=>{
+document.getElementById('cardGeneralLearn').onclick=_=>{
+  document.getElementById('learn-card').style.display='flex';
+};
+document.getElementById('cardAsmQuiz').onclick=_=>{
+  let s=document.createElement('script');
+  s.src=`${GAS_URL}?action=getQuiz&level=asm&callback=handleQuiz`;
+  document.head.appendChild(s);
+};
+document.getElementById('cardAsmGuide').onclick=_=>{
   document.getElementById('asm-guide').style.display='flex';
 };
-
-// OPEN LEARN MODAL
-['openLearn','openLearn2'].forEach(id=>
-  document.getElementById(id).onclick=_=>document.getElementById('learn-card').style.display='flex'
-);
-document.getElementById('closeLearn').onclick=_=>document.getElementById('learn-card').style.display='none';
 
 // QUIZ CALLBACK
 window.handleQuiz=data=>{
   questions=data;idx=0;score=0;wrongs=[];
-  document.getElementById('start-card').style.display='none';
   document.getElementById('quiz-card').style.display='block';
   showQuestion();
 };
 function showQuestion(){
-  const q=questions[idx];
+  let q=questions[idx];
   document.getElementById('qindex').textContent=`${idx+1}/${questions.length}`;
   document.getElementById('progress-bar').style.width=`${(idx+1)/questions.length*100}%`;
   document.getElementById('questionText').textContent=q.question;
-  const cont=document.getElementById('choicesContainer');
-  cont.innerHTML='';
+  let ct=document.getElementById('choicesContainer');ct.innerHTML='';
   shuffle(['choice1','choice2','choice3','choice4']).forEach(k=>{
-    const lbl=document.createElement('label');
+    let lbl=document.createElement('label');
     lbl.textContent=q[k];
     lbl.onclick=_=>{
       document.getElementById('submitBtn').style.display='block';
       document.querySelectorAll('.choices label').forEach(l=>l.classList.remove('selected'));
       lbl.classList.add('selected');
     };
-    const inp=document.createElement('input');
+    let inp=document.createElement('input');
     inp.type='radio';inp.name='choice';inp.value=lbl.textContent;
-    lbl.prepend(inp);
-    cont.appendChild(lbl);
+    lbl.prepend(inp);ct.appendChild(lbl);
   });
-  const sb=document.getElementById('submitBtn');
-  sb.style.display='none';
+  let sb=document.getElementById('submitBtn');sb.style.display='none';
   sb.onclick=_=>checkAnswer(q);
 }
 function checkAnswer(q){
-  const sel=document.querySelector('input[name="choice"]:checked');
+  let sel=document.querySelector('input[name="choice"]:checked');
   if(!sel)return;
-  const chosen=sel.value.trim(),correct=q.correct_choice.trim();
-  const modal=document.getElementById('answerModal'),msg=document.getElementById('modalMessage');
-  if(chosen===correct){score++;msg.textContent='✅ ถูกต้อง!'}
-  else{wrongs.push(q.test_id);msg.textContent=`😞 คำตอบคือ ${correct}`;}
-  modal.style.display='flex';
+  let ch=sel.value.trim(),co=q.correct_choice.trim();
+  let m=document.getElementById('modalMessage');
+  if(ch===co){score++;m.textContent='✅ ถูกต้อง!'}else{wrongs.push(q.test_id);m.textContent=`😞 คำตอบคือ ${co}`;}
+  document.getElementById('answerModal').style.display='flex';
   document.getElementById('modalNextBtn').onclick=_=>{
-    modal.style.display='none';
+    document.getElementById('answerModal').style.display='none';
     idx<questions.length-1?showQuestionAt(idx+1):finishQuiz();
   };
 }
@@ -269,36 +339,23 @@ function showQuestionAt(i){idx=i;document.getElementById('submitBtn').style.disp
 function finishQuiz(){
   document.getElementById('quiz-card').style.display='none';
   document.getElementById('result-card').style.display='block';
-  let lines;
-  if(score<=4)lines=[
-    '<span class="line1">ไม่เป็นไรครับ ถ้ายังไม่รู้จักสโตรก</span>',
-    'แนะนำอ่านบทความข้างล่าง',
-    'รับรอง รู้ครบ จบหลักสูตรสโตรกเลยครับ'
-  ];
-  else if(score<=8)lines=[
-    '<span class="line2">เก่งมากครับ แต่ถ้ายังมีเรื่องที่ไม่เข้าใจ</span>',
-    'เกี่ยวกับสโตรก แนะนำให้อ่านเพิ่มเติม',
-    'แล้วมาอัพคะแนนให้เต็ม 10 กันเถอะ'
-  ];
-  else lines=[
-    '<span class="line3">สุดยอดเลย คนนี้รู้จริงเรื่องสโตรก</span>',
-    'อย่าลืมไปบอกคนใกล้ตัวด้วยนะครับ',
-    'ว่าสโตรกคืออะไร เพื่อคนที่เราห่วงใยได้รู้เท่า และมาทันรักษา'
-  ];
+  let msgLines;
+  if(score<=4)msgLines=['ไม่เป็นไรครับ ถ้ายังไม่รู้จักสโตรก','แนะนำอ่านความรู้ด้านบน','แล้วมาสอบใหม่'];
+  else if(score<=8)msgLines=['เก่งมาก แต่ยังมีบางเรื่อง','อ่านความรู้แล้วมาสอบใหม่','ให้เต็ม 10 กันเถอะ'];
+  else msgLines=['สุดยอด รู้ทันสโตรกแล้ว','อย่าลืมบอกคนรอบข้าง','มาแชร์ความรู้กัน!'];
   document.getElementById('resultMessage').innerHTML=
-    `<strong>คุณได้ ${score}/${questions.length} คะแนน</strong><br/>`+lines.join('<br/>');
-  // record + rank
-  const p=[
+    `<strong>คุณได้ ${score}/${questions.length} คะแนน</strong><br/>`+msgLines.join('<br/>');
+  let p=[
     'action=recordResult',
     `userId=${encodeURIComponent(userProfile.userId)}`,
-    'level=general',
+    `level=${questions.length===20?'asm':'general'}`,
     `score=${score}`,
     `full_score=${questions.length}`,
     'posttest=true',
     `wrong=${encodeURIComponent(wrongs.join(','))}`,
     'callback=cacheRank'
   ];
-  const s=document.createElement('script');
+  let s=document.createElement('script');
   s.src=`${GAS_URL}?${p.join('&')}`;
   document.head.appendChild(s);
 }
@@ -310,14 +367,11 @@ window.cacheRank=resp=>{
 };
 
 // SHARE FLEX
-document.getElementById('shareBtn').onclick=_=>{
-  // just in case recordResult again
-  window.handleShareRecord({status:'success'});
-};
+document.getElementById('shareBtn').onclick=_=>window.handleShareRecord({status:'success'});
 window.handleShareRecord=resp=>{
   if(resp.status!=='success')return;
-  const name=userProfile.displayName,pic=userProfile.pictureUrl;
-  const flex={
+  let name=userProfile.displayName,pic=userProfile.pictureUrl;
+  let flex={
     type:'flex',altText:`${name} รู้ทันสโตรก`,
     contents:{
       type:'bubble',size:'kilo',
@@ -330,7 +384,7 @@ window.handleShareRecord=resp=>{
         {type:'image',url:pic,aspectMode:'cover',aspectRatio:'1:1',size:'full',gravity:'center',
          cornerRadius:'999px',borderWidth:'4px',borderColor:'#FFFFFF'},
         {type:'text',text:`รู้เรื่องสโตรก ${score}/${questions.length}`,align:'center',size:'md',weight:'bold',margin:'md'},
-        {type:'text',text:`เก่งอันดับที่ ${cachedRank} จาก ${cachedTotal}`,align:'center',size:'sm',margin:'xs'},
+        {type:'text',text:`อันดับที่ ${cachedRank} จาก ${cachedTotal}`,align:'center',size:'sm',margin:'xs'},
         {type:'text',text:'คุณรู้จักสโตรกดีแค่ไหน ลองทำแบบทดสอบเลย',align:'center',color:'#D32F2F',size:'sm',margin:'md'}
       ]},
       footer:{type:'box',layout:'horizontal',backgroundColor:'#FFF9C4',spacing:'none',paddingAll:'0px',contents:[
@@ -339,87 +393,24 @@ window.handleShareRecord=resp=>{
       ]}
     }
   };
-  if(liff.isInClient()&&liff.isApiAvailable('shareTargetPicker')){
+  if(liff.isInClient()&&liff.isApiAvailable('shareTargetPicker'))
     liff.shareTargetPicker([flex]).catch(e=>console.error(e));
-  }else if(liff.isApiAvailable('sendMessages')){
+  else if(liff.isApiAvailable('sendMessages'))
     liff.sendMessages([flex]).catch(e=>console.error(e));
-  }else alert('โปรดลองแชร์ใน LINE app');
+  else alert('ไม่สามารถแชร์ได้ โปรดลองใน LINE app');
 };
 
 // Accordion logic
 document.querySelectorAll('.accordion-header').forEach(h=>{
-  h.onclick=()=>{ 
-    const open=h.classList.toggle('active');
+  h.onclick=_=>{
+    let open=h.classList.toggle('active');
     h.nextElementSibling.style.display=open?'block':'none';
     h.querySelector('.icon').textContent=open?'−':'＋';
   };
 });
 
-// ASM modal logic
-  const asmSlides = [
-    {
-      title: 'ทำความรู้จักโรคหลอดเลือดสมอง',
-      content: `<p>โรคหลอดเลือดสมอง (Stroke) เกิดจากเลือดไปเลี้ยงสมองไม่เพียงพอ …</p>`
-    },
-    {
-      title: 'ปัจจัยเสี่ยงและวิธีป้องกัน',
-      content: `<ul style="padding-left:1.2em;list-style:disc;">
-                  <li>ความดันโลหิตสูง</li>
-                  <li>เบาหวาน</li>
-                  <li>ไขมันในเลือดสูง</li>
-                  <li>สูบบุหรี่</li>
-                  <li>น้ำหนักเกิน–อ้วนลงพุง</li>
-                  <li>ขาดการออกกำลังกาย</li>
-                </ul>`
-    },
-    {
-      title: 'สังเกตสัญญาณเตือนด้วย BEFAST',
-      content: `<ul style="padding-left:1.2em;list-style:disc;">
-                  <li><strong>B</strong> Balance: เดินทรงตัวลำบาก</li>
-                  <li><strong>E</strong> Eyes: ตามัวทันที</li>
-                  <li><strong>F</strong> Face: หน้าเบี้ยว</li>
-                  <li><strong>A</strong> Arm: แขนอ่อนแรง</li>
-                  <li><strong>S</strong> Speech: พูดไม่ชัด</li>
-                  <li><strong>T</strong> Time: รีบไป รพ. ทันที</li>
-                </ul>`
-    },
-    {
-      title: 'วิธีวัดค่าพื้นฐานเพื่อประเมินความเสี่ยง',
-      content: `<ul style="padding-left:1.2em;list-style:disc;">
-                  <li>วัดความดันโลหิต (พัก 5 นาที, วัด 2 ครั้ง)</li>
-                  <li>วัดรอบเอว (สะดือ ขณะผ่อนหายใจ)</li>
-                  <li>ตรวจระดับน้ำตาล และไขมันในเลือดเมื่อมีโอกาส</li>
-                </ul>`
-    },
-    {
-      title: 'ประเมินความเสี่ยงด้วย “ตารางสี” และติดตามผล',
-      content: `<table style="width:100%;text-align:left;border-collapse:collapse;">
-                  <tr><th style="border:1px solid #ccc;padding:4px">สี</th>
-                      <th style="border:1px solid #ccc;padding:4px">ความเสี่ยง (%)</th>
-                      <th style="border:1px solid #ccc;padding:4px">คำแนะนำ</th></tr>
-                  <tr><td style="border:1px solid #ccc;padding:4px;background:#C8E6C9">เขียว</td>
-                      <td style="border:1px solid #ccc;padding:4px">< 10</td>
-                      <td style="border:1px solid #ccc;padding:4px">ติดตามปีละครั้ง</td></tr>
-                  <tr><td style="border:1px solid #ccc;padding:4px;background:#FFF9C4">เหลือง</td>
-                      <td style="border:1px solid #ccc;padding:4px">10–< 20</td>
-                      <td style="border:1px solid #ccc;padding:4px">ติดตามทุก 6 เดือน</td></tr>
-                  <tr><td style="border:1px solid #ccc;padding:4px;background:#FFE0B2">ส้ม</td>
-                      <td style="border:1px solid #ccc;padding:4px">20–< 30</td>
-                      <td style="border:1px solid #ccc;padding:4px">ปรับพฤติกรรมทุก 3 เดือน</td></tr>
-                  <tr><td style="border:1px solid #ccc;padding:4px;background:#FFCDD2">แดง</td>
-                      <td style="border:1px solid #ccc;padding:4px">≥ 30</td>
-                      <td style="border:1px solid #ccc;padding:4px">ส่งต่อ รพ. ทันที</td></tr>
-                </table>`
-    }
-  ];
-let asmIdx=0;
-document.querySelectorAll('#asm-menu li').forEach(li=>{
-  li.onclick=()=>{
-    asmIdx=+li.dataset.i;
-    document.querySelectorAll('#asm-menu li').forEach(x=>x.classList.toggle('active',x===li));
-    document.getElementById('asm-content').innerHTML=asmSlides[asmIdx].content;
-  };
-});
+// ASM GUIDE CLOSE
+document.getElementById('closeLearn').onclick=_=>document.getElementById('learn-card').style.display='none';
 document.getElementById('closeAsm').onclick=_=>document.getElementById('asm-guide').style.display='none';
 
 // LIFF init
@@ -430,5 +421,13 @@ document.addEventListener('DOMContentLoaded',async()=>{
   loadHistory();
 });
 </script>
+
+<!-- Answer Modal -->
+<div id="answerModal" class="modal">
+  <div class="modal-content">
+    <p id="modalMessage"></p>
+    <button id="modalNextBtn">ข้อต่อไป</button>
+  </div>
+</div>
 </body>
 </html>
