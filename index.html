@@ -258,47 +258,25 @@
     document.getElementById('shareBtn').onclick = () => {
       const name = userProfile.displayName, pic = userProfile.pictureUrl;
 const flex = {
-  type:   'flex',
-  altText:`${name} รู้ทันสโตรก`,
-  contents: {
-    type: 'bubble',
-    size: 'kilo',
-    header: {
-      type: 'box', layout: 'vertical', backgroundColor: '#FFF9C4', contents: [
-        { type:'text', text:`${name} รู้ทันสโตรก`, align:'center', weight:'bold', size:'lg' },
-        { type:'text', text:'👑',           align:'center',               size:'4xl' }
-      ]
-    },
-    body: {
-      type: 'box', layout:'vertical', backgroundColor:'#FFF9C4', spacing:'none', paddingAll:'0px', contents: [
-        { type:'image', url:pic, size:'full', aspectMode:'cover', cornerRadius:'999px' },
-        { type:'text',  text:`รู้เรื่องสโตรก ${score}/${questions.length}`, align:'center', size:'md', weight:'bold' },
-        { type:'text',  text:`อันดับ ${cachedRank} จาก ${cachedTotal}`,       align:'center', size:'sm', color:'#666666' }
-      ]
-    },
-    footer:{
-      type:          'box',
-      layout:        'horizontal',
-      spacing:       'sm',
-      paddingAll:    'sm',
-      backgroundColor:'#FFF9C4',
-      contents:[
-        {
-          type:'box', layout:'vertical', maxWidth:'50%', backgroundColor:'#FFFFFF',
-          cornerRadius:'md', paddingAll:'sm',
-          action:{ type:'uri', label:'ทดสอบความรู้สโตรก', uri:`https://liff.line.me/${LIFF_ID}` },
-          contents:[{ type:'text', text:'ทดสอบความรู้สโตรก', color:'#111111', size:'sm', align:'center' }]
-        },
-        {
-          type:'box', layout:'vertical', maxWidth:'50%', backgroundColor:'#FFFFFF',
-          cornerRadius:'md', paddingAll:'sm',
-          action:{ type:'uri', label:'สโตรกคืออะไร',       uri:'https://lin.ee/mQhHzLv' },
-          contents:[{ type:'text', text:'สโตรกคืออะไร',       color:'#111111', size:'sm', align:'center' }]
-        }
-      ]
-    }
+  type:'flex',altText:`${name} รู้ทันสโตรก`,
+  contents:{
+    type:'bubble',size:'mega',
+    header:{type:'box',layout:'vertical',backgroundColor:'#FFF9C4',contents:[
+      {type:'text',text:`${name} รู้ทันสโตรก`,align:'center',weight:'bold',size:'lg'},
+      {type:'text',text:'👑',align:'center',size:'4xl'}
+    ]},
+    body:{type:'box',layout:'vertical',backgroundColor:'#FFF9C4',spacing:'none',paddingAll:'0px',contents:[
+      {type:'image',url:pic,size:'full',aspectMode:'cover',cornerRadius:'999px'},
+      {type:'text',text:`รู้เรื่องสโตรก ${score}/${questions.length}`,align:'center',size:'md',weight:'bold'},
+      {type:'text',text:`อันดับ ${cachedRank} จาก ${cachedTotal}`,align:'center',size:'sm',color:'#666666'}
+    ]},  // ← comma here
+    footer:{type:'box',layout:'horizontal',spacing:'sm',paddingAll:'sm',backgroundColor:'#FFF9C4',contents:[
+      {type:'box',layout:'vertical',maxWidth:'50%',backgroundColor:'#FFFFFF',cornerRadius:'md',paddingAll:'sm',action:{type:'uri',label:'ทดสอบความรู้สโตรก',uri:`https://liff.line.me/${LIFF_ID}`},contents:[{type:'text',text:'ทดสอบความรู้สโตรก',color:'#111111',size:'sm',align:'center'}]},
+      {type:'box',layout:'vertical',maxWidth:'50%',backgroundColor:'#FFFFFF',cornerRadius:'md',paddingAll:'sm',action:{type:'uri',label:'สโตรกคืออะไร',uri:'https://lin.ee/mQhHzLv'},contents:[{type:'text',text:'สโตรกคืออะไร',color:'#111111',size:'sm',align:'center'}]}
+    ]}
   }
-}; 
+};
+
 
       console.log('Flex payload:',JSON.stringify(flex));
       liff.shareTargetPicker([flex])
