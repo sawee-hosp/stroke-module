@@ -255,41 +255,84 @@
       }
     };
 
-    document.getElementById('shareBtn').onclick = () => {
-      const name = userProfile.displayName, pic = userProfile.pictureUrl;
-const flex = {
-  type:'flex',altText:`${name} รู้ทันสโตรก`,
-  contents:{
-    type:'bubble',size:'mega',
-    header:{type:'box',layout:'vertical',backgroundColor:'#FFF9C4',contents:[
-      {type:'text',text:`${name} รู้ทันสโตรก`,align:'center',weight:'bold',size:'lg'},
-      {type:'text',text:'👑',align:'center',size:'4xl'}
-    ]},
-    body:{type:'box',layout:'vertical',backgroundColor:'#FFF9C4',spacing:'none',paddingAll:'0px',contents:[
-      {type:'image',url:pic,size:'full',aspectMode:'cover',cornerRadius:'999px'},
-      {type:'text',text:`รู้เรื่องสโตรก ${score}/${questions.length}`,align:'center',size:'md',weight:'bold'},
-      {type:'text',text:`อันดับ ${cachedRank} จาก ${cachedTotal}`,align:'center',size:'sm',color:'#666666'}
-    ]},  // ← comma here
-    footer:{type:'box',layout:'horizontal',spacing:'sm',paddingAll:'sm',backgroundColor:'#FFF9C4',contents:[
-      {type:'box',layout:'vertical',maxWidth:'50%',backgroundColor:'#FFFFFF',cornerRadius:'md',paddingAll:'sm',action:{type:'uri',label:'ทดสอบความรู้สโตรก',uri:`https://liff.line.me/${LIFF_ID}`},contents:[{type:'text',text:'ทดสอบความรู้สโตรก',color:'#111111',size:'sm',align:'center'}]},
-      {type:'box',layout:'vertical',maxWidth:'50%',backgroundColor:'#FFFFFF',cornerRadius:'md',paddingAll:'sm',action:{type:'uri',label:'สโตรกคืออะไร',uri:'https://lin.ee/mQhHzLv'},contents:[{type:'text',text:'สโตรกคืออะไร',color:'#111111',size:'sm',align:'center'}]}
-    ]}
-  }
+// เมื่อกดปุ่ม shareBtn → เรียก recordResult พร้อม callback=handleShareRecord
+document.getElementById('shareBtn').onclick = () => {
+  const params = [
+    'action=recordResult',
+    `userId=${encodeURIComponent(userProfile.userId)}`,
+    'level=general',
+    `score=${score}`,
+    `full_score=${questions.length}`,
+    'posttest=true',
+    `wrong=${encodeURIComponent(wrongs.join(','))}`,
+    'callback=handleShareRecord'
+  ];
+  const s = document.createElement('script');
+  s.src = `${GAS_URL}?${params.join('&')}`;
+  document.head.appendChild(s);
 };
 
+window.handleShareRecord = resp => {
+    if (resp.status !== 'success') return console.error(resp);
+    const rank         = resp.rank;
+    const totalPlayers = resp.totalPlayers;
+    const name         = userProfile.displayName || 'ผู้ทดสอบ';
+    const pictureUrl   = userProfile.pictureUrl;
 
-      console.log('Flex payload:',JSON.stringify(flex));
-      liff.shareTargetPicker([flex])
-        .then(()=>alert('แชร์สำเร็จ'))
-        .catch(e=>console.error(e));
+    const flex = {
+      type:    'flex',
+      altText: `${name} รู้ทันสโตรก`,
+      contents:{
+        type:       'bubble',
+        size:       'kilo',  // หรือ 'mega' ถ้าเจอ error
+        header: {
+          type:   'box', layout: 'vertical', contents:[
+            {
+              type:  'text',
+              text:  `👑 ${name} รู้ทันสโตรก`,
+              align: 'center', weight:'bold', size:'lg'
+            }
+          ]
+        },
+        hero:{
+          type:'image', url: pictureUrl,
+          size:'full', aspectMode:'cover', aspectRatio:'1:1', gravity:'center'
+        },
+        body:{
+          type:'box', layout:'vertical', contents:[
+            {type:'text',text:'ผลการทดสอบคะแนน',align:'center',size:'md'},
+            {type:'text',text:`${score}/${questions.length}`,align:'center',size:'xxl',weight:'bold'},
+            {type:'text',text:'คะแนนมากเป็น',align:'center',size:'sm',color:'#555555'},
+            {type:'text',text:`ลำดับที่ ${rank} จาก ${totalPlayers} คน`,align:'center',size:'sm',color:'#555555'}
+          ]
+        },
+        footer:{
+          type:'box', layout:'vertical', spacing:'sm', contents:[
+            {
+              type:'button', style:'primary',
+              action:{type:'uri',label:'ลองทำแบบทดสอบ',uri:`https://liff.line.me/${LIFF_ID}`}
+            },
+            {
+              type:'button', style:'secondary',
+              action:{type:'uri',label:'สโตรกคืออะไร',uri:'https://lin.ee/mQhHzLv'}
+            }
+          ]
+        }
+      }
     };
 
-    document.addEventListener('DOMContentLoaded',async()=>{
-      await liff.init({liffId:LIFF_ID});
-      if(!liff.isLoggedIn()) liff.login();
-      userProfile = await liff.getProfile();
-      loadHistory();
-    });
+    liff.shareTargetPicker([ flex ])
+      .then(() => console.log('แชร์เรียบร้อย'))
+      .catch(err => console.error(err));
+  };
+
+  // … แล้วตามด้วย LIFF init …
+  document.addEventListener('DOMContentLoaded', async () => {
+    await liff.init({liffId:LIFF_ID});
+    if (!liff.isLoggedIn()) liff.login();
+    userProfile = await liff.getProfile();
+    loadHistory();
+  });
   </script>
 </body>
 </html>
