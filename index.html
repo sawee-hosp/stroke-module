@@ -5,92 +5,101 @@
 <title>คุณรู้ทันสโตรกหรือยัง?</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet"/>
 <style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-body,button,label,input{font-family:'Noto Sans Thai',sans-serif!important}
-body{background:#f0f2f5;display:flex;justify-content:center;padding:40px 0}
-.container{width:100%;max-width:480px;padding:0 16px}
-h1{text-align:center;font-size:28px;color:#1a237e;margin-bottom:24px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
-.card{background:#fff;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.05);
-  padding:20px;text-align:center;cursor:pointer;min-height:140px;
-  display:flex;flex-direction:column;justify-content:center;transition:transform .2s}
-.card:hover{transform:translateY(-4px)}
-.card .emoji{font-size:36px;margin-bottom:8px}
-.card .title{font-size:18px;font-weight:700;color:#333}
-#quiz-card,#result-card,#learn-card,#asm-guide{display:none}
-#progress{position:relative;height:8px;background:#e0e0e0;border-radius:4px;margin-bottom:16px}
-#progress-bar{height:100%;width:0;background:#1e88e5;transition:width .3s}
-#qindex{position:absolute;top:4px;left:50%;transform:translateX(-50%);font-size:14px;font-weight:700;color:#333}
-.question{font-size:28px;font-weight:700;color:#1a237e;margin:24px 0}
-.choices label{display:block;font-size:22px;padding:12px;background:#f7f7f7;
-  border-radius:6px;margin-bottom:12px;cursor:pointer;transition:background .2s;text-align:left}
-.choices label:hover{background:#ececec}
-.choices input{margin-right:12px;transform:scale(1.2)}
-#submitBtn{display:none;width:100%;padding:12px;margin-top:16px;
-  background:#5e35b1;color:#fff;border:none;border-radius:6px;font-size:18px;
-  font-weight:700;cursor:pointer;transition:background .2s}
-#submitBtn:hover{background:#512da8}
-.link-note{font-size:14px;color:#666;margin-top:12px;text-align:left}
-.link-note span{color:#1e88e5;cursor:pointer}
-.modal{position:fixed;top:0;left:0;right:0;bottom:0;
-  background:rgba(0,0,0,0.4);display:flex;justify-content:center;
-  align-items:center;z-index:1000}
-.modal-content{background:#fff;padding:24px;border-radius:6px;
-  max-width:360px;width:90%;text-align:center}
-.modal-content p{font-size:22px;margin-bottom:16px}
-.modal-content button{padding:10px 24px;font-size:18px;font-weight:700;
-  color:#fff;background:#1e88e5;border:none;border-radius:6px;cursor:pointer;transition:.2s}
-.modal-content button:hover{background:#1565c0}
-.accordion{margin:16px 0}
-.accordion-item:not(:last-child){border-bottom:1px solid #ddd}
-.accordion-header{padding:12px;font-size:18px;font-weight:700;cursor:pointer;
-  background:#e3f2fd;display:flex;justify-content:space-between;align-items:center}
-.accordion-body{padding:12px;font-size:16px;line-height:1.6;display:none}
-.accordion-header.active{background:#bbdefb}
-.accordion-header .icon{font-size:20px}
-#shareBtn{display:none;width:100%;padding:12px;margin-top:16px;
-  background:linear-gradient(45deg,#fb8c00,#ffb74d);color:#fff;border:none;
-  border-radius:6px;font-size:18px;font-weight:700;cursor:pointer;transition:.2s}
-#shareBtn:hover{background:linear-gradient(45deg,#f57c00,#ffa726)}
-.asm-quiz-btn{display:none;padding:12px;width:100%;font-size:18px;
-  font-weight:700;color:#fff;background:#795548;border:none;border-radius:6px;
-  cursor:pointer;transition:.2s;margin-top:12px}
-.asm-quiz-btn:hover{background:#5d4037}
-.card.active { /* สไตล์การไฮไลต์เมื่อเลือก */
-  border: 2px solid #1e88e5;
-  box-shadow: 0 4px 12px rgba(30, 136, 229, 0.3);
-  background: #e8f0fe;
-}
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  body,button,label,input{font-family:'Noto Sans Thai',sans-serif!important}
+  body{background:#f0f2f5;display:flex;justify-content:center;padding:40px 0}
+  .container{width:100%;max-width:480px;padding:0 16px}
+  h1{text-align:center;font-size:28px;color:#1a237e;margin-bottom:16px}
 
+  /* History Card */
+  #history-card{background:#fff;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.05);
+    padding:20px;text-align:center;margin-bottom:24px;min-height:120px;display:flex;
+    align-items:center;justify-content:center;font-size:20px;color:#333}
+
+  /* Grid of 4 cards */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+  .card{background:#fff;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.05);
+    padding:20px;text-align:center;cursor:pointer;min-height:140px;display:flex;
+    flex-direction:column;justify-content:center;transition:transform .2s}
+  .card:hover{transform:translateY(-4px)}
+  .card.active{border:2px solid #1e88e5;background:#e8f0fe}
+  .emoji{font-size:36px;margin-bottom:8px}
+  .title{font-size:18px;font-weight:700;color:#333}
+
+  /* Quiz Card */
+  #quiz-card,#result-card,#learn-card,#asm-guide{display:none}
+  #quiz-card{min-height:500px;padding-top:20px}
+  #progress{position:relative;height:8px;background:#e0e0e0;border-radius:4px;margin:0 0 16px}
+  #progress-bar{height:100%;width:0;background:#1e88e5;transition:width .3s}
+  #qindex{position:absolute;top:-4px;left:50%;transform:translateX(-50%);font-size:14px;font-weight:700;color:#333}
+  .question{font-size:28px;font-weight:700;color:#1a237e;margin:24px 0}
+  .choices label{display:block;font-size:22px;padding:12px;background:#f7f7f7;
+    border-radius:6px;margin-bottom:12px;cursor:pointer;transition:background .2s;text-align:left}
+  .choices label:hover{background:#ececec}
+  .choices input{margin-right:12px;transform:scale(1.2)}
+  #submitBtn{display:none;width:100%;padding:12px;margin-top:16px;
+    background:#5e35b1;color:#fff;border:none;border-radius:6px;font-size:18px;font-weight:700;
+    cursor:pointer;transition:background .2s}
+  #submitBtn:hover{background:#512da8}
+  .link-note{font-size:14px;color:#666;margin-top:12px;text-align:left}
+  .link-note span{color:#1e88e5;cursor:pointer}
+
+  /* Result Card */
+  #result-card{min-height:500px;padding-top:20px;text-align:center}
+  .result-emoji{font-size:64px;margin-bottom:16px}
+  .result-message{font-size:22px;line-height:1.6}
+
+  #shareBtn{display:none;width:100%;padding:12px;margin-top:24px;
+    background:linear-gradient(45deg,#fb8c00,#ffb74d);color:#fff;border:none;border-radius:6px;
+    font-size:18px;font-weight:700;cursor:pointer;transition:background .2s}
+  #shareBtn:hover{background:linear-gradient(45deg,#f57c00,#ffa726)}
+
+  /* Modal (Answer) */
+  .modal{position:fixed;top:0;left:0;right:0;bottom:0;
+    background:rgba(0,0,0,0.4);display:flex;justify-content:center;
+    align-items:center;z-index:1000}
+  .modal-content{background:#fff;padding:24px;border-radius:6px;
+    max-width:360px;width:90%;text-align:center}
+  .modal-emoji{font-size:48px;margin-bottom:12px}
+  .modal-text{font-size:22px;margin-bottom:16px}
+  .modal-content button{padding:10px 24px;font-size:18px;font-weight:700;
+    color:#fff;background:#1e88e5;border:none;border-radius:6px;cursor:pointer;transition:.2s}
+  .modal-content button:hover{background:#1565c0}
+
+  /* Accordion */
+  .accordion{margin:16px 0}
+  .accordion-item:not(:last-child){border-bottom:1px solid #ddd}
+  .accordion-header{padding:12px;font-size:18px;font-weight:700;cursor:pointer;
+    background:#e3f2fd;display:flex;justify-content:space-between;align-items:center}
+  .accordion-header.active{background:#bbdefb}
+  .accordion-header .icon{font-size:20px}
+  .accordion-body{padding:12px;font-size:16px;line-height:1.6;display:none}
+  .emoji-large {
+  font-size: 64px;
+  text-align: center;
+  margin-bottom: 16px;
+}
 </style>
 </head>
 <body>
 <div class="container">
   <h1>คุณรู้ทันสโตรกหรือยัง?</h1>
-    <div id="start-text" style="display:none;"></div>
 
-  <!-- 4 Cards Grid -->
-  <div class="grid">
-    <div id="cardGeneralQuiz" class="card">
-      <div class="emoji">❓</div>
-      <div class="title">ทดสอบความรู้ทั่วไป</div>
-    </div>
-    <div id="cardGeneralLearn" class="card">
-      <div class="emoji">📖</div>
-      <div class="title">อ่านความรู้เรื่องสโตรก</div>
-    </div>
-    <div id="cardAsmQuiz" class="card">
-      <div class="emoji">🩺</div>
-      <div class="title">ทดสอบความรู้ อสม.สโตรก</div>
-    </div>
-    <div id="cardAsmGuide" class="card">
-      <div class="emoji">📋</div>
-      <div class="title">แนวปฏิบัติ อสม.สโตรก</div>
-    </div>
+  <!-- 1) History Card -->
+  <div id="history-card">
+    <div id="history-text">กำลังโหลดประวัติ…</div>
   </div>
 
-  <!-- Quiz Card -->
-  <div id="quiz-card" class="card" style="min-height:500px">
+  <!-- 2) 4 Cards Grid -->
+  <div class="grid">
+    <div id="cardGeneralQuiz" class="card"><div class="emoji">❓</div><div class="title">ทดสอบความรู้ทั่วไป</div></div>
+    <div id="cardGeneralLearn" class="card"><div class="emoji">📖</div><div class="title">อ่านความรู้เรื่องสโตรก</div></div>
+    <div id="cardAsmQuiz" class="card"><div class="emoji">🩺</div><div class="title">ทดสอบความรู้ อสม.สโตรก</div></div>
+    <div id="cardAsmGuide" class="card"><div class="emoji">📋</div><div class="title">แนวปฏิบัติ อสม.สโตรก</div></div>
+  </div>
+
+  <!-- 3) Quiz Card -->
+  <div id="quiz-card" class="card">
     <div id="progress"><span id="qindex">1/10</span><div id="progress-bar"></div></div>
     <div id="questionText" class="question"></div>
     <div id="choicesContainer" class="choices"></div>
@@ -98,11 +107,19 @@ h1{text-align:center;font-size:28px;color:#1a237e;margin-bottom:24px}
     <div class="link-note">ถ้าไม่แน่ใจ กดอ่านความรู้ก่อนที่นี่ <span id="openLearn">📖</span></div>
   </div>
 
-  <!-- Result Card -->
-  <div id="result-card" class="card" style="min-height:500px">
-    <h2>สรุปผล</h2>
-    <div id="resultMessage" style="font-size:18px;line-height:1.6"></div>
-    <button id="shareBtn">บันทึกผลและแชร์คะแนน</button>
+  <!-- 4) Result Card -->
+<div id="result-card" class="card" style="min-height:500px">
+  <div id="resultEmoji" class="emoji-large"></div>
+  <div id="resultMessage" style="font-size:18px;line-height:1.6"></div>
+  <button id="shareBtn">บันทึกผลและแชร์คะแนน</button>
+</div>
+
+<!-- Answer Modal -->
+<div id="answerModal" class="modal" style="display:none">
+  <div class="modal-content">
+    <div id="modalEmoji" class="modal-emoji"></div>
+    <div id="modalMessage" class="modal-text"></div>
+    <button id="modalNextBtn">ข้อต่อไป</button>
   </div>
 </div>
 
@@ -254,38 +271,63 @@ h1{text-align:center;font-size:28px;color:#1a237e;margin-bottom:24px}
     <button id="closeAsm" class="btn" style="background:#f44336">ปิด</button>
   </div>
 </div>
-<div id="answerModal" class="modal" style="display: none;">
-  <div class="modal-content">
-    <p id="modalMessage"></p>
-    <button id="modalNextBtn">ข้อต่อไป</button>
-  </div>
-</div>
+
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script>
 const GAS_URL='https://script.google.com/macros/s/AKfycbwt4O6aTK_NqGGdYaIF6gRbv5f37dgFeQYZ7ZLxZIRYGBEz54EnJx1hS36XPhET1AOgHg/exec',LIFF_ID='2005789397-ROQvjpYk';
 let userProfile,questions=[],idx=0,score=0,wrongs=[],cachedRank,cachedTotal;
 // SHUFFLE
 const shuffle=a=>{for(let i=a.length-1;i>0;i--){let j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;};
-
+// 1) โหลดประวัติ ทบทวน logic เดิม
+async function init() {
+  await liff.init({liffId:LIFF_ID});
+  if(!liff.isLoggedIn()) await liff.login();
+  userProfile = await liff.getProfile();
+  loadHistory();
+}
 // HISTORY
 function loadHistory(){
   let s=document.createElement('script');
-  s.src=`${GAS_URL}?action=getHistory&userId=${encodeURIComponent(userProfile.userId)}&level=general&callback=handleHistory`;
+  s.src=`${GAS_URL}?action=getHistory&userId=${encodeURIComponent(userProfile.userId)}&level=general&callback=handleHistoryGen`;
   document.head.appendChild(s);
+  // ASM
+  let s2=document.createElement('script');
+  s2.src=`${GAS_URL}?action=getHistory&userId=${encodeURIComponent(userProfile.userId)}&level=asm&callback=handleHistoryAsm`;
+  document.head.appendChild(s2);
 }
-  window.handleHistory = data => {
-    // **Guard**: ถ้าไม่มี element start-text ให้หยุดเลย
-    const txt = document.getElementById('start-text');
-    if (!txt) return;
-    if (data?.length){
-      window._last = data.pop();
-      const s2 = document.createElement('script');
-      s2.src = `${GAS_URL}?action=getUserName&userId=${encodeURIComponent(userProfile.userId)}&callback=handleUserName`;
-      document.head.appendChild(s2);
+window.handleHistoryGen=data=>{
+  window.histGen = data||[];
+  renderHistory();
+};
+window.handleHistoryAsm=data=>{
+  window.histAsm = data||[];
+  renderHistory();
+};
+function renderHistory(){
+  if(!histGen||!histAsm) return; // รอทั้งสอง
+  const txt = document.getElementById('history-text');
+  const gen = histGen.pop();
+  const asm = histAsm.pop();
+  const nameCallback = ()=>{
+    const nm=window._name||userProfile.displayName;
+    if(asm){
+      txt.innerHTML = `สวัสดีคุณ ${nm}<br/>ครั้งที่แล้วคุณได้คะแนนสอบ อสม.สโตรกไป ${asm.score}/20<br/>วันนี้ต้องการแก้ตัวหรือไม่`;
+    } else if(gen){
+      txt.innerHTML = `สวัสดีคุณ ${nm}<br/>ครั้งที่แล้วคุณได้คะแนนสโตรกพื้นฐานไป ${gen.score}/10<br/>วันนี้ต้องการแก้ตัวหรือไม่`;
     } else {
-      txt.innerHTML = '<span class="highlight">ยินดีต้อนรับสู่แบบทดสอบ</span><br>เริ่มทำข้อสอบได้เลย';
+      txt.innerHTML = `มาทดสอบความรู้สโตรกกันหน่อย<br/>คลิกเลือกข้อสอบได้เลยครับ<br/>ถ้าไม่ชัวร์ สามารถเปิดหนังสือดูคำตอบได้ตลอดเวลา`;
     }
   };
+  if(gen||asm){
+    // ถ้ามี history ใดๆ ดึงชื่อ
+    let s=document.createElement('script');
+    s.src=`${GAS_URL}?action=getUserName&userId=${encodeURIComponent(userProfile.userId)}&callback=resp=>{window._name=resp.name;nameCallback()}`;
+    document.head.appendChild(s);
+  } else {
+    nameCallback();
+  }
+}
+
 window.handleUserName=resp=>{
   let nm=resp.name||userProfile.displayName;
   let txt=document.getElementById('start-text');
@@ -352,42 +394,81 @@ function showQuestion(){
   let sb=document.getElementById('submitBtn');sb.style.display='none';
   sb.onclick=_=>checkAnswer(q);
 }
-function checkAnswer(q){
-  let sel=document.querySelector('input[name="choice"]:checked');
-  if(!sel)return;
-  let ch=sel.value.trim(),co=q.correct_choice.trim();
-  let m=document.getElementById('modalMessage');
-  if(ch===co){score++;m.textContent='✅ ถูกต้อง!'}else{wrongs.push(q.test_id);m.textContent=`😞 คำตอบคือ ${co}`;}
-  document.getElementById('answerModal').style.display='flex';
-  document.getElementById('modalNextBtn').onclick=_=>{
-    document.getElementById('answerModal').style.display='none';
-    idx<questions.length-1?showQuestionAt(idx+1):finishQuiz();
+function checkAnswer(q) {
+  const sel = document.querySelector('input[name="choice"]:checked');
+  if (!sel) return;
+  document.getElementById('submitBtn').disabled = true;
+  document.querySelectorAll('.choices label').forEach(l => l.style.pointerEvents = 'none');
+
+  const chosen = sel.value.trim();
+  const correct = q.correct_choice.trim();
+  console.log('chosen:', chosen, 'correct:', correct);
+
+  // เลือก emoji และข้อความ
+  const isCorrect = chosen === correct;
+  const emoji    = isCorrect ? '✅' : '😞';
+  const text     = isCorrect ? 'ถูกต้อง!' : `คำตอบคือ ${correct}`;
+
+  // ใส่ค่า
+  document.getElementById('modalEmoji').textContent   = emoji;
+  document.getElementById('modalMessage').textContent = text;
+
+  // แสดง modal
+  const modal = document.getElementById('answerModal');
+  modal.style.display = 'flex';
+
+  // ปุ่มข้อต่อไป
+  document.getElementById('modalNextBtn').onclick = () => {
+    modal.style.display = 'none';
+    document.getElementById('submitBtn').disabled = false;
+    idx < questions.length - 1 ? showQuestionAt(idx + 1) : finishQuiz();
   };
 }
+
 function showQuestionAt(i){idx=i;document.getElementById('submitBtn').style.display='none';showQuestion();}
 function finishQuiz(){
-  document.getElementById('quiz-card').style.display='none';
-  document.getElementById('result-card').style.display='block';
-  let msgLines;
-  if(score<=4)msgLines=['ไม่เป็นไรครับ ถ้ายังไม่รู้จักสโตรก','แนะนำอ่านความรู้ด้านบน','แล้วมาสอบใหม่'];
-  else if(score<=8)msgLines=['เก่งมาก แต่ยังมีบางเรื่อง','อ่านความรู้แล้วมาสอบใหม่','ให้เต็ม 10 กันเถอะ'];
-  else msgLines=['สุดยอด รู้ทันสโตรกแล้ว','อย่าลืมบอกคนรอบข้าง','มาแชร์ความรู้กัน!'];
-  document.getElementById('resultMessage').innerHTML=
-    `<strong>คุณได้ ${score}/${questions.length} คะแนน</strong><br/>`+msgLines.join('<br/>');
-  let p=[
+  // ซ่อนหน้า quiz แล้วโชว์หน้า result
+  document.getElementById('quiz-card').style.display = 'none';
+  document.getElementById('result-card').style.display = 'block';
+
+  // เลือก emoji ตามคะแนน
+  let emo;
+  if (score >= 9)      emo = '🥇';
+  else if (score >= 6) emo = '🥈';
+  else if (score >= 3) emo = '🥉';
+  else                  emo = '👍';
+
+  // แสดง emoji
+  document.getElementById('resultEmoji').textContent = emo;
+
+  // สร้างข้อความผล
+  const msgLines = score <= 4
+    ? ['ไม่เป็นไรครับ ถ้ายังไม่รู้จักสโตรก', 'แนะนำอ่านความรู้ด้านบน', 'แล้วมาสอบใหม่']
+    : score <= 8
+      ? ['เก่งมาก แต่ยังมีบางเรื่อง', 'อ่านความรู้แล้วมาสอบใหม่', 'ให้เต็ม 10 กันเถอะ']
+      : ['สุดยอด รู้ทันสโตรกแล้ว', 'อย่าลืมบอกคนรอบข้าง', 'มาแชร์ความรู้กัน!'];
+
+  // แสดงข้อความผล
+  document.getElementById('resultMessage').innerHTML =
+    `<strong style="font-size:24px">คุณได้ ${score}/${questions.length} คะแนน</strong><br/>` +
+    msgLines.join('<br/>');
+
+  // ส่งบันทึกไป GAS
+  const params = [
     'action=recordResult',
     `userId=${encodeURIComponent(userProfile.userId)}`,
-    `level=${questions.length===20?'asm':'general'}`,
+    `level=${questions.length === 20 ? 'asm' : 'general'}`,
     `score=${score}`,
     `full_score=${questions.length}`,
     'posttest=true',
     `wrong=${encodeURIComponent(wrongs.join(','))}`,
     'callback=cacheRank'
   ];
-  let s=document.createElement('script');
-  s.src=`${GAS_URL}?${p.join('&')}`;
+  const s = document.createElement('script');
+  s.src = `${GAS_URL}?${params.join('&')}`;
   document.head.appendChild(s);
 }
+
 window.cacheRank=resp=>{
   if(resp.status==='success'){
     cachedRank=resp.rank;cachedTotal=resp.totalPlayers;
@@ -396,38 +477,137 @@ window.cacheRank=resp=>{
 };
 
 // SHARE FLEX
-document.getElementById('shareBtn').onclick=_=>window.handleShareRecord({status:'success'});
-window.handleShareRecord=resp=>{
-  if(resp.status!=='success')return;
-  let name=userProfile.displayName,pic=userProfile.pictureUrl;
-  let flex={
-    type:'flex',altText:`${name} รู้ทันสโตรก`,
-    contents:{
-      type:'bubble',size:'kilo',
-      header:{type:'box',layout:'vertical',backgroundColor:'#FFF9C4',contents:[
-        {type:'text',text:`${name} รู้ทันสโตรก`,align:'center',weight:'bold',size:'lg'},
-        {type:'text',text:'รู้จักและมาทัน ป้องกันอัมพาต',align:'center',color:'#FF9800',size:'sm'}
-      ]},
-      body:{type:'box',layout:'vertical',backgroundColor:'#FFF9C4',spacing:'sm',paddingAll:'0px',contents:[
-        {type:'text',text:'👑',align:'center',size:'4xl',margin:'md'},
-        {type:'image',url:pic,aspectMode:'cover',aspectRatio:'1:1',size:'full',gravity:'center',
-         cornerRadius:'999px',borderWidth:'4px',borderColor:'#FFFFFF'},
-        {type:'text',text:`รู้เรื่องสโตรก ${score}/${questions.length}`,align:'center',size:'md',weight:'bold',margin:'md'},
-        {type:'text',text:`อันดับที่ ${cachedRank} จาก ${cachedTotal}`,align:'center',size:'sm',margin:'xs'},
-        {type:'text',text:'คุณรู้จักสโตรกดีแค่ไหน ลองทำแบบทดสอบเลย',align:'center',color:'#D32F2F',size:'sm',margin:'md'}
-      ]},
-      footer:{type:'box',layout:'horizontal',backgroundColor:'#FFF9C4',spacing:'none',paddingAll:'0px',contents:[
-        {type:'button',style:'primary',color:'#FBC02D',action:{type:'uri',label:'ทำข้อสอบ',uri:`https://liff.line.me/${LIFF_ID}`}},
-        {type:'button',style:'secondary',color:'#FFFFFF',action:{type:'uri',label:'สวีรู้ทันสโตรก',uri:'https://lin.ee/mQhHzLv'}}
-      ]}
+window.handleShareRecord = resp => {
+  if (resp.status !== 'success') return console.error(resp);
+  const name = userProfile.displayName || 'ผู้ทดสอบ';
+  const pic  = userProfile.pictureUrl;
+
+  const flex = {
+    type: 'flex',
+    altText: `${name} รู้ทันสโตรก`,
+    contents: {
+      type: 'bubble',
+      size: 'kilo',
+      header: {
+        type: 'box',
+        layout: 'vertical',
+        backgroundColor: '#FFF9C4',
+        paddingAll: '12px',
+        contents: [
+          {
+            type: 'text',
+            text: `${name} รู้ทันสโตรก`,
+            align: 'center',
+            weight: 'bold',
+            size: 'lg'
+          },
+          {
+            type: 'text',
+            text: 'รู้จักและมาทัน ป้องกันอัมพาต',
+            align: 'center',
+            color: '#FF9800',
+            size: 'sm'
+          }
+        ]
+      },
+      body: {
+        type: 'box',
+        layout: 'vertical',
+        backgroundColor: '#FFF9C4',
+        spacing: 'sm',
+        paddingAll: '0px',
+        contents: [
+          {
+            type: 'text',
+            text: '👑',
+            align: 'center',
+            size: '4xl',
+            margin: 'md'
+          },
+          {
+            type: 'image',
+            url: pic,
+            size: 'full',
+            aspectMode: 'cover',
+            aspectRatio: '1:1',
+            gravity: 'center',
+            cornerRadius: '999px',
+            margin: 'md'
+          },
+          {
+            type: 'text',
+            text: `รู้เรื่องสโตรก ${score}/${questions.length}`,
+            align: 'center',
+            weight: 'bold',
+            size: 'md',
+            margin: 'md'
+          },
+          {
+            type: 'text',
+            text: `อันดับที่ ${cachedRank} จาก ${cachedTotal}`,
+            align: 'center',
+            color: '#666666',
+            size: 'sm',
+            margin: 'xs'
+          },
+          {
+            type: 'text',
+            text: 'คุณรู้จักสโตรกดีแค่ไหน ลองทำแบบทดสอบเลย',
+            align: 'center',
+            color: '#D32F2F',
+            size: 'sm',
+            margin: 'md'
+          }
+        ]
+      },
+      footer: {
+        type: 'box',
+        layout: 'horizontal',
+        backgroundColor: '#FFF9C4',
+        spacing: 'none',
+        paddingAll: '0px',
+        contents: [
+          {
+            type: 'button',
+            style: 'primary',
+            color: '#FBC02D',
+            action: {
+              type: 'uri',
+              label: 'ทำข้อสอบ',
+              uri: `https://liff.line.me/${LIFF_ID}`
+            }
+          },
+          {
+            type: 'button',
+            style: 'secondary',
+            color: '#FFFFFF',
+            action: {
+              type: 'uri',
+              label: 'สวีรู้ทันสโตรก',
+              uri: 'https://lin.ee/mQhHzLv'
+            }
+          }
+        ]
+      }
     }
   };
-  if(liff.isInClient()&&liff.isApiAvailable('shareTargetPicker'))
-    liff.shareTargetPicker([flex]).catch(e=>console.error(e));
-  else if(liff.isApiAvailable('sendMessages'))
-    liff.sendMessages([flex]).catch(e=>console.error(e));
-  else alert('ไม่สามารถแชร์ได้ โปรดลองใน LINE app');
+
+  // พยายามแชร์ด้วย shareTargetPicker (ใน LINE client)
+  if (liff.isInClient() && liff.isApiAvailable('shareTargetPicker')) {
+    liff.shareTargetPicker([flex])
+      .then(() => console.log('แชร์สำเร็จ'))
+      .catch(err => console.error('shareTargetPicker error', err));
+  }
+  // ถ้าไม่ใช่ LINE client หรือไม่มี API นี้ ให้ fallback ไป sendMessages
+  else if (liff.isApiAvailable('sendMessages')) {
+    liff.sendMessages([flex])
+      .then(() => console.log('ส่งข้อความสำเร็จ (fallback)'))
+      .catch(err => console.error('sendMessages error', err));
+  } else {
+    alert('ไม่สามารถแชร์ได้ โปรดลองใน LINE app');
+  }
 };
+
 
 // Accordion logic
 document.querySelectorAll('.accordion-header').forEach(h=>{
