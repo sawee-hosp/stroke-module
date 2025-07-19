@@ -12,14 +12,17 @@
          align-items:flex-start;padding:40px 0}
     .container{width:100%;max-width:480px;padding:0 16px}
     button,input,label,a{font-family:'Noto Sans Thai',sans-serif!important}
-    .card{background:#fff;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.05);
+    .card{background:#fff;border-radius:8px;
+          box-shadow:0 2px 6px rgba(0,0,0,0.05);
           padding:20px;margin-bottom:20px;text-align:center;
-          min-height:500px;display:flex;flex-direction:column;justify-content:center}
+          min-height:300px;display:flex;flex-direction:column;
+          justify-content:center}
     h1{font-size:28px;color:#1a237e;margin-bottom:16px}
-    .intro{line-height:1.6;color:#333;margin-bottom:16px}
+    .intro{line-height:1.6;color:#333;margin-bottom:16px;font-size:20px}
+    .intro .highlight{font-weight:700;color:#FF5722}
     .button-group{display:flex;gap:12px}
-    .btn{flex:1;padding:12px;font-size:18px;font-weight:700;color:#fff;
-         border:none;border-radius:6px;cursor:pointer;
+    .btn{flex:1;padding:12px;font-size:18px;font-weight:700;
+         color:#fff;border:none;border-radius:6px;cursor:pointer;
          background:linear-gradient(45deg,#1e88e5,#42a5f5);
          transition:background .2s}
     .btn:hover{background:linear-gradient(45deg,#1565c0,#1e7ae1)}
@@ -27,30 +30,36 @@
     #progress{position:relative;height:8px;background:#e0e0e0;
              border-radius:4px;margin-bottom:16px}
     #progress-bar{height:100%;width:0;background:#1e88e5;transition:width .3s}
-    #qindex{position:absolute;top:-24px;left:50%;transform:translateX(-50%);
+    #qindex{position:absolute;top:20px;left:50%;transform:translateX(-50%);
             font-size:16px;font-weight:700;color:#333}
-    .question{font-size:28px;font-weight:700;color:#1a237e;margin-bottom:16px}
-    .choices label{display:block;font-size:22px;margin-bottom:12px;padding:12px;
-                   background:#f7f7f7;border-radius:6px;cursor:pointer;
-                   transition:background .2s;text-align:left}
+    .question{font-size:28px;font-weight:700;color:#1a237e;margin:24px 0}
+    .choices label{display:block;font-size:22px;margin-bottom:12px;
+                   padding:12px;background:#f7f7f7;border-radius:6px;
+                   cursor:pointer;transition:background .2s;text-align:left}
     .choices label:hover{background:#ececec}
     .choices input{margin-right:12px;transform:scale(1.2)}
     #submitBtn{display:none;width:100%;padding:12px;margin-top:16px;
                background:#5e35b1;color:#fff;border:none;border-radius:6px;
-               font-size:18px;font-weight:700;cursor:pointer;transition:background .2s}
+               font-size:18px;font-weight:700;cursor:pointer;
+               transition:background .2s}
     #submitBtn:hover{background:#512da8}
     .modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;
-           background:rgba(0,0,0,0.4);justify-content:center;align-items:center;
-           z-index:1000}
+           background:rgba(0,0,0,0.4);justify-content:center;
+           align-items:center;z-index:1000}
     .modal-content{background:#fff;padding:24px;border-radius:6px;
                    text-align:center;width:90%;max-width:360px}
     .modal-content p{font-size:22px;margin-bottom:16px}
-    .modal-content button{padding:10px 24px;font-size:18px;font-weight:700;
-                          color:#fff;background:#1e88e5;border:none;
-                          border-radius:6px;cursor:pointer;transition:background .2s}
+    .modal-content button{padding:10px 24px;font-size:18px;
+                          font-weight:700;color:#fff;
+                          background:#1e88e5;border:none;
+                          border-radius:6px;cursor:pointer;
+                          transition:background .2s}
     .modal-content button:hover{background:#1565c0}
     #result-card h2{font-size:22px;margin-bottom:16px}
-    #result-card p{font-size:18px;margin-bottom:12px}
+    #result-card p{font-size:18px;margin-bottom:12px;line-height:1.6}
+    #result-card p .line1{font-weight:700;color:#FF9800}
+    #result-card p .line2{font-weight:700;color:#4CAF50}
+    #result-card p .line3{font-weight:700;color:#E91E63}
     #btnLearn{display:inline-block;padding:8px 16px;font-size:16px;
               color:#1e88e5;background:none;border:1px solid #1e88e5;
               border-radius:4px;text-decoration:none;margin-bottom:16px}
@@ -65,6 +74,7 @@
   <div class="container">
     <h1>คุณรู้ทันสโตรกหรือยัง?</h1>
 
+    <!-- Start Card -->
     <div id="start-card" class="card">
       <div id="start-text" class="intro">กำลังโหลดประวัติ…</div>
       <div class="button-group">
@@ -72,6 +82,7 @@
       </div>
     </div>
 
+    <!-- Quiz Card -->
     <div id="quiz-card" class="card">
       <div id="progress">
         <span id="qindex">1/10</span>
@@ -82,6 +93,7 @@
       <button id="submitBtn">ส่งคำตอบ</button>
     </div>
 
+    <!-- Result Card -->
     <div id="result-card" class="card">
       <h2>สรุปผล</h2>
       <p id="resultMessage"></p>
@@ -90,6 +102,7 @@
     </div>
   </div>
 
+  <!-- Answer Modal -->
   <div id="answerModal" class="modal">
     <div class="modal-content">
       <p id="modalMessage"></p>
@@ -99,99 +112,128 @@
 
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script>
-    const GAS_URL='https://script.google.com/macros/s/AKfycbwt4O6aTK_NqGGdYaIF6gRbv5f37dgFeQYZ7ZLxZIRYGBEz54EnJx1hS36XPhET1AOgHg/exec';
-    const LIFF_ID='2005789397-ROQvjpYk';
-    let userProfile,questions=[],idx=0,score=0,wrongs=[],cachedRank,cachedTotal;
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbwt4O6aTK_NqGGdYaIF6gRbv5f37dgFeQYZ7ZLxZIRYGBEz54EnJx1hS36XPhET1AOgHg/exec';
+    const LIFF_ID = '2005789397-ROQvjpYk';
+    let userProfile, questions = [], idx = 0, score = 0, wrongs = [], cachedRank, cachedTotal;
 
     function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 
     function loadHistory(){
       const s=document.createElement('script');
-      s.src=`${GAS_URL}?action=getHistory&userId=${encodeURIComponent(userProfile.userId)}&level=general&callback=handleHistory`;
+      s.src = `${GAS_URL}?action=getHistory&userId=${encodeURIComponent(userProfile.userId)}&level=general&callback=handleHistory`;
       document.head.appendChild(s);
     }
-    window.handleHistory=data=>{
-      const txt=document.getElementById('start-text');
-      if(data?.length){
-        window._last=data[data.length-1];
-        const s2=document.createElement('script');
-        s2.src=`${GAS_URL}?action=getUserName&userId=${encodeURIComponent(userProfile.userId)}&callback=handleUserName`;
+    window.handleHistory = data => {
+      const txt = document.getElementById('start-text');
+      if (data?.length) {
+        window._last = data[data.length - 1];
+        const s2 = document.createElement('script');
+        s2.src = `${GAS_URL}?action=getUserName&userId=${encodeURIComponent(userProfile.userId)}&callback=handleUserName`;
         document.head.appendChild(s2);
       } else {
-        txt.innerHTML='มาทดสอบความรู้ครั้งแรกกัน<br/>รู้จักสโตรกจะห่างอัมพาต';
+        txt.innerHTML = `<span class="highlight">ยินดีต้อนรับสู่แบบทดสอบความรู้เรื่องสโตรกนะครับ</span><br/>
+                         สำหรับมาครั้งแรก เริ่มทำข้อสอบได้เลยครับ<br/>
+                         ได้เท่าไหร่ไม่ว่ากัน เดี๋ยวแนะนำให้ครับ`;
       }
     };
-    window.handleUserName=resp=>{
-      const nm=resp.name||userProfile.displayName;
-      const txt=document.getElementById('start-text');
-      txt.innerHTML=`ครั้งที่แล้วคุณ ${nm} ทำได้ ${_last.score}/${_last.full_score}<br/>มาแก้มือกัน!`;
+    window.handleUserName = resp => {
+      const nm = resp.name || userProfile.displayName;
+      const txt = document.getElementById('start-text');
+      if (_last.score < _last.full_score) {
+        txt.innerHTML = `<span class="highlight">ยินดีต้อนรับอีกครั้ง</span><br/>
+                         ครั้งที่แล้วคุณ ${nm} ทำได้ ${_last.score}/${_last.full_score}<br/>
+                         มาแก้มือกัน!`;
+      } else {
+        txt.innerHTML = `<span class="highlight">ยินดีต้อนรับคุณ ${nm} อีกครั้ง</span><br/>
+                         คนนี้คนเก่งนี่นา ครั้งที่แล้วก็ได้เต็ม ${_last.full_score}<br/>
+                         แต่ถ้าอยากทดสอบกันใหม่<br/>
+                         ก็คลิกเริ่มทำข้อสอบได้เลย`;
+      }
     };
 
-    document.getElementById('btnQuiz').onclick=()=>{
-      const s=document.createElement('script');
-      s.src=`${GAS_URL}?action=getQuiz&level=general&callback=handleQuiz`;
+    document.getElementById('btnQuiz').onclick = () => {
+      const s = document.createElement('script');
+      s.src = `${GAS_URL}?action=getQuiz&level=general&callback=handleQuiz`;
       document.head.appendChild(s);
     };
-    window.handleQuiz=data=>{
-      questions=data;idx=0;score=0;wrongs=[];
-      document.getElementById('start-card').style.display='none';
-      document.getElementById('quiz-card').style.display='block';
+    window.handleQuiz = data => {
+      questions = data; idx = 0; score = 0; wrongs = [];
+      document.getElementById('start-card').style.display = 'none';
+      document.getElementById('quiz-card').style.display  = 'block';
       showQuestion();
     };
     function showQuestion(){
-      const q=questions[idx];
-      document.getElementById('qindex').textContent=`${idx+1}/${questions.length}`;
-      document.getElementById('progress-bar').style.width=`${(idx+1)/questions.length*100}%`;
-      document.getElementById('questionText').textContent=q.question;
-      const cont=document.getElementById('choicesContainer');cont.innerHTML='';
+      const q = questions[idx];
+      document.getElementById('qindex').textContent = `${idx+1}/${questions.length}`;
+      document.getElementById('progress-bar').style.width = `${(idx+1)/questions.length*100}%`;
+      document.getElementById('questionText').textContent = q.question;
+      const cont = document.getElementById('choicesContainer'); cont.innerHTML = '';
       shuffle(['choice1','choice2','choice3','choice4']).forEach(k=>{
-        const lbl=document.createElement('label');
-        lbl.textContent=q[k];
-        lbl.onclick=()=>{
-          document.getElementById('submitBtn').style.display='block';
+        const lbl = document.createElement('label');
+        lbl.textContent = q[k];
+        lbl.onclick = () => {
+          document.getElementById('submitBtn').style.display = 'block';
           document.querySelectorAll('.choices label').forEach(l=>l.classList.remove('selected'));
           lbl.classList.add('selected');
         };
         cont.appendChild(lbl);
       });
       cont.querySelectorAll('label').forEach(l=>{
-        const inp=document.createElement('input');
-        inp.type='radio';inp.name='choice';inp.value=l.textContent;
+        const inp = document.createElement('input');
+        inp.type='radio'; inp.name='choice'; inp.value=l.textContent;
         l.prepend(inp);
       });
-      const sb=document.getElementById('submitBtn');
-      sb.style.display='none';
-      sb.onclick=()=>checkAnswer(questions[idx]);
+      const sb = document.getElementById('submitBtn');
+      sb.style.display = 'none';
+      sb.onclick = () => checkAnswer(questions[idx]);
     }
     function checkAnswer(q){
-      const sel=document.querySelector('input[name="choice"]:checked');
-      if(!sel)return;
-      const chosen=sel.value.trim(),correct=q.correct_choice.trim();
-      const modal=document.getElementById('answerModal'),msg=document.getElementById('modalMessage');
-      if(chosen===correct){
+      const sel = document.querySelector('input[name="choice"]:checked');
+      if (!sel) return;
+      const chosen = sel.value.trim(), correct = q.correct_choice.trim();
+      const modal = document.getElementById('answerModal'), msg = document.getElementById('modalMessage');
+      if (chosen === correct) {
         score++;
-        msg.textContent='✅ ถูกต้อง!';
+        msg.textContent = '✅ ถูกต้อง!';
       } else {
         wrongs.push(q.test_id);
-        msg.textContent=`😞 คำตอบคือ ${correct}`;
+        msg.textContent = `😞 คำตอบคือ ${correct}`;
       }
-      modal.style.display='flex';
-      document.getElementById('modalNextBtn').onclick=()=>{
-        modal.style.display='none';
-        idx<questions.length-1?showQuestionAt(idx+1):finishQuiz();
+      modal.style.display = 'flex';
+      document.getElementById('modalNextBtn').onclick = () => {
+        modal.style.display = 'none';
+        idx < questions.length - 1 ? showQuestionAt(idx+1) : finishQuiz();
       };
     }
-    function showQuestionAt(i){idx=i;document.getElementById('submitBtn').style.display='none';showQuestion();}
+    function showQuestionAt(i){ idx = i; document.getElementById('submitBtn').style.display = 'none'; showQuestion(); }
 
     function finishQuiz(){
       document.getElementById('quiz-card').style.display='none';
       document.getElementById('result-card').style.display='block';
-      let msg;
-      if(score<=4)msg='ไม่เป็นไร มาเรียนรู้ก่อนแล้วค่อยสอบใหม่';
-      else if(score<=8)msg='เก่งแล้ว แต่มีบางเรื่อง… มาอ่านกัน';
-      else msg='สุดยอด! ช่วยบอกคนอื่นด้วย';
-      document.getElementById('resultMessage').innerHTML=
-        `<strong>คุณได้ ${score}/${questions.length} คะแนน</strong><br/>${msg}`;
+      let lines;
+      if(score <= 4) {
+        lines = [
+          `<span class="line1">ไม่เป็นไรครับ ถ้ายังไม่รู้จักสโตรก</span>`,
+          `แนะนำอ่านบทความข้างล่าง`,
+          `รับรอง รู้ครบ จบหลักสูตรสโตรกเลยครับ`
+        ];
+      } else if(score <= 8) {
+        lines = [
+          `<span class="line2">เก่งมากครับ แต่ถ้ายังมีเรื่องที่ไม่เข้าใจ</span>`,
+          `เกี่ยวกับสโตรก แนะนำให้อ่านเพิ่มเติม`,
+          `แล้วมาอัพคะแนนให้เต็ม 10 กันเถอะ`
+        ];
+      } else {
+        lines = [
+          `<span class="line3">สุดยอดเลย คนนี้รู้จริงเรื่องสโตรก</span>`,
+          `อย่าลืมไปบอกคนใกล้ตัวด้วยนะครับ`,
+          `ว่าสโตรกคืออะไร เพื่อคนที่เราห่วงใยได้รู้เท่า และมาทันรักษา`
+        ];
+      }
+      document.getElementById('resultMessage').innerHTML =
+        `<strong>คุณได้ ${score}/${questions.length} คะแนน</strong><br/>` +
+        lines.join('<br/>');
+
       const p=[
         'action=recordResult',
         `userId=${encodeURIComponent(userProfile.userId)}`,
@@ -202,20 +244,20 @@
         `wrong=${encodeURIComponent(wrongs.join(','))}`,
         'callback=cacheRank'
       ];
-      const s=document.createElement('script');
-      s.src=`${GAS_URL}?${p.join('&')}`;
+      const s = document.createElement('script');
+      s.src = `${GAS_URL}?${p.join('&')}`;
       document.head.appendChild(s);
     }
-    window.cacheRank=resp=>{
+    window.cacheRank = resp => {
       if(resp.status==='success'){
-        cachedRank=resp.rank;cachedTotal=resp.totalPlayers;
+        cachedRank=resp.rank; cachedTotal=resp.totalPlayers;
         document.getElementById('shareBtn').style.display='block';
       }
     };
 
-    document.getElementById('shareBtn').onclick=()=>{
-      const name=userProfile.displayName,pic=userProfile.pictureUrl;
-      const flex={
+    document.getElementById('shareBtn').onclick = () => {
+      const name = userProfile.displayName, pic = userProfile.pictureUrl;
+      const flex = {
         type:'flex',altText:`${name} รู้ทันสโตรก`,
         contents:{
           type:'bubble',size:'kilo',
@@ -228,10 +270,15 @@
             {type:'text',text:`รู้เรื่องสโตรก ${score}/${questions.length}`,align:'center',size:'md',weight:'bold'},
             {type:'text',text:`อันดับ ${cachedRank} จาก ${cachedTotal}`,align:'center',size:'sm',color:'#666666'}
           ]},
-          footer:{type:'box',layout:'vertical',backgroundColor:'#FFF9C4',spacing:'none',paddingAll:'0px',contents:[
-            {type:'button',style:'primary',action:{type:'uri',label:'ทดสอบความรู้สโตรก',uri:`https://liff.line.me/${LIFF_ID}`}},
-            {type:'button',style:'link',action:{type:'uri',label:'สวีรู้ทันสโตรก',uri:'https://lin.ee/mQhHzLv'}}
-          ]}
+footer:{
+  type:'box',layout:'horizontal',spacing:'sm',paddingAll:'sm',backgroundColor:'#FFF9C4',
+  contents:[
+    {type:'box',layout:'vertical',maxWidth:'50%',backgroundColor:'#FFFFFF',cornerRadius:'md',paddingAll:'sm',action:{type:'uri',label:'ทดสอบความรู้สโตรก',uri:`https://liff.line.me/${LIFF_ID}`},contents:[{type:'text',text:'ทดสอบความรู้สโตรก',color:'#111111',size:'sm',align:'center'}]},
+    {type:'box',layout:'vertical',maxWidth:'50%',backgroundColor:'#FFFFFF',cornerRadius:'md',paddingAll:'sm',action:{type:'uri',label:'สโตรกคืออะไร',uri:'https://lin.ee/mQhHzLv'},contents:[{type:'text',text:'สโตรกคืออะไร',color:'#111111',size:'sm',align:'center'}]}
+  ]
+}
+
+
         }
       };
       console.log('Flex payload:',JSON.stringify(flex));
@@ -242,8 +289,8 @@
 
     document.addEventListener('DOMContentLoaded',async()=>{
       await liff.init({liffId:LIFF_ID});
-      if(!liff.isLoggedIn())liff.login();
-      userProfile=await liff.getProfile();
+      if(!liff.isLoggedIn()) liff.login();
+      userProfile = await liff.getProfile();
       loadHistory();
     });
   </script>
