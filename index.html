@@ -276,6 +276,9 @@
 <script>
 const GAS_URL='https://script.google.com/macros/s/AKfycbwt4O6aTK_NqGGdYaIF6gRbv5f37dgFeQYZ7ZLxZIRYGBEz54EnJx1hS36XPhET1AOgHg/exec',LIFF_ID='2005789397-ROQvjpYk';
 let userProfile,questions=[],idx=0,score=0,wrongs=[],cachedRank,cachedTotal;
+let histGen = [], histAsm = [];
+
+
 // SHUFFLE
 const shuffle=a=>{for(let i=a.length-1;i>0;i--){let j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;};
 // 1) โหลดประวัติ ทบทวน logic เดิม
@@ -291,20 +294,26 @@ function loadHistory(){
   s.src=`${GAS_URL}?action=getHistory&userId=${encodeURIComponent(userProfile.userId)}&level=general&callback=handleHistoryGen`;
   document.head.appendChild(s);
   // ASM
-  let s2=document.createElement('script');
-  s2.src=`${GAS_URL}?action=getHistory&userId=${encodeURIComponent(userProfile.userId)}&level=asm&callback=handleHistoryAsm`;
-  document.head.appendChild(s2);
+let s2 = document.createElement('script');
+s2.src = `${GAS_URL}?action=getUserName&userId=${encodeURIComponent(userProfile.userId)}&callback=handleUserNameHistory`;
+document.head.appendChild(s2);
+
 }
-window.handleHistoryGen=data=>{
-  window.histGen = data||[];
+window.handleHistoryGen = data => {
+  histGen = data || [];
   renderHistory();
 };
-window.handleHistoryAsm=data=>{
-  window.histAsm = data||[];
+window.handleHistoryAsm = data => {
+  histAsm = data || [];
   renderHistory();
 };
+window.handleUserNameHistory = resp => {
+  window._name = resp.name;
+  nameCallback();
+};
+
 function renderHistory(){
-  if(!histGen||!histAsm) return; // รอทั้งสอง
+ if (!histGen.length && !histAsm.length) return; // รอทั้งสอง
   const txt = document.getElementById('history-text');
   const gen = histGen.pop();
   const asm = histAsm.pop();
