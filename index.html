@@ -8,9 +8,9 @@
         rel="stylesheet"/>
   <style>
     /* Reset & Base */
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
     body {
-      font-family: 'Noto Sans Thai', sans-serif;
+      font-family:'Noto Sans Thai',sans-serif!important;
       font-size:18px;
       background:#f0f2f5;
       display:flex;
@@ -18,10 +18,11 @@
       padding:40px 0;
     }
     .container {
-      width:100%;
-      max-width:480px;
-      padding:0 16px;
+      width:100%; max-width:480px; padding:0 16px;
     }
+
+    /* Ensure all interactive elements inherit Noto */
+    button,input,label,a { font-family:'Noto Sans Thai',sans-serif!important; }
 
     /* Card */
     .card {
@@ -32,7 +33,6 @@
       margin-bottom:20px;
       text-align:center;
     }
-
     h1 {
       font-size:28px;
       color:#1a237e;
@@ -46,8 +46,7 @@
       margin-bottom:16px;
     }
     .button-group {
-      display:flex;
-      gap:12px;
+      display:flex; gap:12px;
     }
     .btn {
       flex:1;
@@ -68,32 +67,22 @@
     /* Quiz */
     #quiz-card { display:none; }
     #progress {
-      position:relative;
-      height:8px;
-      background:#e0e0e0;
-      border-radius:4px;
+      position:relative; height:8px;
+      background:#e0e0e0; border-radius:4px;
       margin-bottom:16px;
     }
     #progress-bar {
-      height:100%;
-      width:0;
-      background:#1e88e5;
-      transition:width .3s;
+      height:100%; width:0;
+      background:#1e88e5; transition:width .3s;
     }
     #qindex {
-      position:absolute;
-      top:-24px;
-      left:50%;
-      transform:translateX(-50%);
-      font-size:16px;
-      font-weight:700;
-      color:#333;
+      position:absolute; top:-24px;
+      left:50%; transform:translateX(-50%);
+      font-size:16px; font-weight:700; color:#333;
     }
     .question {
-      font-size:20px;
-      font-weight:700;
-      color:#1a237e;
-      margin-bottom:16px;
+      font-size:20px; font-weight:700;
+      color:#1a237e; margin-bottom:16px;
     }
     .choices label {
       display:block;
@@ -112,16 +101,11 @@
       transform:scale(1.2);
     }
     #submitBtn {
-      display:none;
-      width:100%;
-      padding:12px;
-      margin-top:16px;
-      background:#5e35b1;
-      color:#fff;
-      border:none;
-      border-radius:6px;
-      font-size:18px;
-      font-weight:700;
+      display:none; width:100%;
+      padding:12px; margin-top:16px;
+      background:#5e35b1; color:#fff;
+      border:none; border-radius:6px;
+      font-size:18px; font-weight:700;
       cursor:pointer;
       transition:background .2s;
     }
@@ -129,48 +113,36 @@
 
     /* Modal */
     .modal {
-      display:none;
-      position:fixed;
-      top:0;left:0;right:0;bottom:0;
+      display:none; position:fixed;
+      top:0; left:0; right:0; bottom:0;
       background:rgba(0,0,0,0.4);
-      justify-content:center;
-      align-items:center;
+      justify-content:center; align-items:center;
       z-index:1000;
     }
     .modal-content {
-      background:#fff;
-      padding:24px;
-      border-radius:6px;
-      text-align:center;
-      width:90%;
-      max-width:360px;
+      background:#fff; padding:24px;
+      border-radius:6px; text-align:center;
+      width:90%; max-width:360px;
     }
     .modal-content p {
-      font-size:22px;
-      margin-bottom:16px;
+      font-size:22px; margin-bottom:16px;
     }
     .modal-content button {
       padding:10px 24px;
-      font-size:18px;
-      font-weight:700;
-      color:#fff;
-      background:#1e88e5;
-      border:none;
-      border-radius:6px;
-      cursor:pointer;
-      transition:background .2s;
+      font-size:18px; font-weight:700;
+      color:#fff; background:#1e88e5;
+      border:none; border-radius:6px;
+      cursor:pointer; transition:background .2s;
     }
     .modal-content button:hover { background:#1565c0; }
 
     /* Result */
     #result-card { display:none; }
     #result-card h2 {
-      font-size:22px;
-      margin-bottom:16px;
+      font-size:22px; margin-bottom:16px;
     }
     #result-card p {
-      font-size:18px;
-      margin-bottom:12px;
+      font-size:18px; margin-bottom:12px;
     }
     #btnLearn {
       display:inline-block;
@@ -184,17 +156,12 @@
       margin-bottom:16px;
     }
     #shareBtn {
-      display:none;
-      width:100%;
-      padding:12px;
+      display:none; width:100%;
+      padding:12px; margin-top:16px;
       background:linear-gradient(45deg,#fb8c00,#ffb74d);
-      color:#fff;
-      border:none;
-      border-radius:6px;
-      font-size:18px;
-      font-weight:700;
-      cursor:pointer;
-      transition:background .2s;
+      color:#fff; border:none; border-radius:6px;
+      font-size:18px; font-weight:700;
+      cursor:pointer; transition:background .2s;
     }
     #shareBtn:hover { background:linear-gradient(45deg,#f57c00,#ffa726); }
   </style>
@@ -206,8 +173,8 @@
     <!-- Start Card -->
     <div id="start-card" class="card">
       <div class="intro">
-        มาทดสอบความรู้ครั้งแรกกันเถอะ<br/>
-        รู้จักสโตรก จะห่างโรคอัมพาต
+        มาทดสอบความรู้ครั้งแรกกัน<br/>
+        ว่าคุณรู้ทันสโตรกแค่ไหน?
       </div>
       <div class="button-group">
         <button id="btnQuiz" class="btn">เริ่มทำข้อสอบ</button>
@@ -244,104 +211,100 @@
 
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script>
-    const GAS_URL = 'https://script.google.com/macros/s/AKfycbwt4O6aTK_NqGGdYaIF6gRbv5f37dgFeQYZ7ZLxZIRYGBEz54EnJx1hS36XPhET1AOgHg/exec';
+    const GAS_URL = 'https://script.google.com/macros/s/.../exec';
     const LIFF_ID = '2005789397-ROQvjpYk';
     let userProfile, questions = [], idx = 0, score = 0, wrongs = [], cachedRank, cachedTotal;
 
-    function shuffle(a) {
-      for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
+    function shuffle(a){
+      for(let i=a.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [a[i],a[j]]=[a[j],a[i]];
       }
       return a;
     }
 
-    // 1) Attach start button
+    // 1) Start button
     document.getElementById('btnQuiz').onclick = () => {
       const s = document.createElement('script');
       s.src = `${GAS_URL}?action=getQuiz&level=general&callback=handleQuiz`;
       document.head.appendChild(s);
     };
 
-    // 2) Handle quiz load
+    // 2) Load quiz
     window.handleQuiz = data => {
       questions = data;
       idx = 0; score = 0; wrongs = [];
       document.getElementById('start-card').style.display = 'none';
-      document.getElementById('quiz-card').style.display = 'block';
+      document.getElementById('quiz-card').style.display  = 'block';
       showQuestion();
     };
 
-    function showQuestion() {
+    function showQuestion(){
       const q = questions[idx];
       document.getElementById('qindex').textContent = `${idx+1}/${questions.length}`;
       document.getElementById('progress-bar').style.width = `${(idx+1)/questions.length*100}%`;
       document.getElementById('questionText').textContent = q.question;
-      const container = document.getElementById('choicesContainer');
-      container.innerHTML = '';
-      shuffle(['choice1','choice2','choice3','choice4']).forEach(key => {
+      const cont = document.getElementById('choicesContainer');
+      cont.innerHTML = '';
+      shuffle(['choice1','choice2','choice3','choice4']).forEach(key=>{
         const lbl = document.createElement('label');
         lbl.textContent = q[key];
         lbl.onclick = () => {
-          document.getElementById('submitBtn').style.display = 'block';
+          document.getElementById('submitBtn').style.display='block';
           document.querySelectorAll('.choices label').forEach(l=>l.classList.remove('selected'));
           lbl.classList.add('selected');
         };
-        container.appendChild(lbl);
+        cont.appendChild(lbl);
       });
-      container.querySelectorAll('label').forEach(lbl=>{
-        const inp = document.createElement('input');
+      cont.querySelectorAll('label').forEach(lbl=>{
+        const inp=document.createElement('input');
         inp.type='radio'; inp.name='choice'; inp.value=lbl.textContent;
         lbl.prepend(inp);
       });
-      const sb = document.getElementById('submitBtn');
-      sb.style.display = 'none';
+      const sb=document.getElementById('submitBtn');
+      sb.style.display='none';
       sb.onclick = () => checkAnswer(q);
     }
 
-    function checkAnswer(q) {
+    function checkAnswer(q){
       const sel = document.querySelector('input[name="choice"]:checked');
-      if (!sel) return;
+      if(!sel) return;
       const chosen = sel.value.trim();
-      const correct = q.correct_choice.trim();
-      const modal = document.getElementById('answerModal');
-      const msg = document.getElementById('modalMessage');
-      msg.textContent = chosen === correct
+      const correct= q.correct_choice.trim();  // strict ===
+      const modal=document.getElementById('answerModal');
+      const msg=document.getElementById('modalMessage');
+      msg.textContent = (chosen===correct)
         ? '✅ ถูกต้อง!'
         : `😞 คำตอบที่ถูกคือ ${correct}`;
-      if (chosen !== correct) wrongs.push(q.test_id);
-      modal.style.display = 'flex';
-      document.getElementById('modalNextBtn').onclick = () => {
-        modal.style.display = 'none';
-        idx < questions.length-1
+      if(chosen!==correct) wrongs.push(q.test_id);
+      modal.style.display='flex';
+      document.getElementById('modalNextBtn').onclick = ()=>{
+        modal.style.display='none';
+        idx<questions.length-1
           ? showQuestionAt(idx+1)
           : finishQuiz();
       };
     }
 
-    function showQuestionAt(i) {
-      idx = i;
-      document.getElementById('submitBtn').style.display = 'none';
+    function showQuestionAt(i){
+      idx=i;
+      document.getElementById('submitBtn').style.display='none';
       showQuestion();
     }
 
     // 3) Finish
-    function finishQuiz() {
-      document.getElementById('quiz-card').style.display = 'none';
-      document.getElementById('result-card').style.display = 'block';
-      let msgText;
-      if (score <= 4) {
-        msgText = 'ไม่เป็นไรครับ เรามาเรียนรู้เรื่องสโตรกกันก่อน แล้วค่อยมาสอบใหม่';
-      } else if (score <= 8) {
-        msgText = 'ถือว่าเก่งเลย แต่มีบางเรื่องยังไม่เข้าใจ มาอ่านความรู้กันหน่อย';
-      } else {
-        msgText = 'สุดยอดเลยครับ รู้จักสโตรกแล้ว อย่าลืมบอกคนอื่นด้วย!';
-      }
+    function finishQuiz(){
+      document.getElementById('quiz-card').style.display='none';
+      document.getElementById('result-card').style.display='block';
+      let msgTxt;
+      if(score<=4) msgTxt='ไม่เป็นไรครับ… มาเรียนรู้ก่อนแล้วค่อยสอบใหม่';
+      else if(score<=8) msgTxt='เก่งแล้ว แต่มีบางเรื่อง… มาอ่านความรู้กัน';
+      else msgTxt='สุดยอด! อย่าลืมช่วยเตือนคนอื่นด้วย';
       document.getElementById('resultMessage').innerHTML =
-        `<strong>คุณได้ ${score}/${questions.length} คะแนน</strong><br/>${msgText}`;
+        `<strong>คุณได้ ${score}/${questions.length} คะแนน</strong><br/>${msgTxt}`;
 
-      // auto-record
-      const params = [
+      // Auto‐record
+      const params=[
         'action=recordResult',
         `userId=${userProfile.userId}`,
         'level=general',
@@ -351,60 +314,62 @@
         `wrong=${encodeURIComponent(wrongs.join(','))}`,
         'callback=cacheRank'
       ];
-      const s = document.createElement('script');
-      s.src = `${GAS_URL}?${params.join('&')}`;
+      const s=document.createElement('script');
+      s.src=`${GAS_URL}?${params.join('&')}`;
       document.head.appendChild(s);
     }
 
     window.cacheRank = resp => {
-      if (resp.status === 'success') {
-        cachedRank = resp.rank;
-        cachedTotal = resp.totalPlayers;
-        document.getElementById('shareBtn').style.display = 'block';
+      if(resp.status==='success'){
+        cachedRank=resp.rank;
+        cachedTotal=resp.totalPlayers;
+        document.getElementById('shareBtn').style.display='block';
       }
     };
 
     // 4) Share flex
     document.getElementById('shareBtn').onclick = () => {
-      const name = userProfile.displayName;
-      const pic  = userProfile.pictureUrl;
-      const flex = {
-        type:'flex', altText:`${name} รู้ทันสโตรก`,
+      const name=userProfile.displayName;
+      const pic=userProfile.pictureUrl;
+      const flex={
+        type:'flex',altText:`${name} รู้ทันสโตรก`,
         contents:{
-          type:'bubble', size:'kilo',
-          header:{ type:'box', layout:'vertical', backgroundColor:'#FFF9C4',
+          type:'bubble',size:'kilo',
+          header:{
+            type:'box',layout:'vertical',backgroundColor:'#FFF9C4',
             contents:[
-              { type:'text', text:`${name} รู้ทันสโตรก`, align:'center', weight:'bold', size:'lg' },
-              { type:'text', text:'👑', align:'center', size:'4xl' }
+              {type:'text',text:`${name} รู้ทันสโตรก`,align:'center',weight:'bold',size:'lg'},
+              {type:'text',text:'👑',align:'center',size:'4xl'}
             ]
           },
-          body:{ type:'box', layout:'vertical', backgroundColor:'#FFF9C4', spacing:'none', paddingAll:'0px',
+          body:{
+            type:'box',layout:'vertical',backgroundColor:'#FFF9C4',spacing:'none',paddingAll:'0px',
             contents:[
-              { type:'image', url:pic, size:'full', aspectMode:'cover', cornerRadius:'999px' },
-              { type:'text', text:`รู้เรื่องสโตรกคะแนน ${score}/${questions.length}`, align:'center', size:'md', weight:'bold' },
-              { type:'text', text:`อันดับ ${cachedRank} จาก ${cachedTotal}`, align:'center', size:'sm', color:'#666666' }
+              {type:'image',url:pic,size:'full',aspectMode:'cover',cornerRadius:'999px'},
+              {type:'text',text:`รู้เรื่องสโตรก ${score}/${questions.length}`,align:'center',size:'md',weight:'bold'},
+              {type:'text',text:`อันดับ ${cachedRank} จาก ${cachedTotal}`,align:'center',size:'sm',color:'#666666'}
             ]
           },
-          footer:{ type:'box', layout:'vertical', backgroundColor:'#FFF9C4', spacing:'none', paddingAll:'0px',
+          footer:{
+            type:'box',layout:'vertical',backgroundColor:'#FFF9C4',spacing:'none',paddingAll:'0px',
             contents:[
-              { type:'button', style:'primary',
-                action:{ type:'uri', label:'ทดสอบความรู้สโตรก', uri:`https://liff.line.me/${LIFF_ID}` }
-              },
-              { type:'text', text:'สวีรู้ทันสโตรก', align:'center', size:'sm', color:'#1e88e5',
-                action:{ type:'uri', uri:'https://lin.ee/mQhHzLv' }
-              }
+              {type:'button',style:'primary',action:{type:'uri',label:'ทดสอบความรู้สโตรก',uri:`https://liff.line.me/${LIFF_ID}`}},
+              {type:'text',text:'สวีรู้ทันสโตรก',align:'center',size:'sm',color:'#1e88e5',action:{type:'uri',uri:'https://lin.ee/mQhHzLv'}}
             ]
           }
         }
       };
-      liff.shareTargetPicker([flex]).catch(e=>console.error(e));
+      console.log('Flex payload:',JSON.stringify(flex));
+      liff.shareTargetPicker([flex])
+        .then(()=>alert('แชร์ผลลัพธ์สำเร็จ!'))
+        .catch(e=>console.error(e));
     };
 
     // LIFF init
-    document.addEventListener('DOMContentLoaded', async () => {
-      await liff.init({ liffId:LIFF_ID });
-      if (!liff.isLoggedIn()) liff.login();
-      userProfile = await liff.getProfile();
+    document.addEventListener('DOMContentLoaded',async()=>{
+      await liff.init({liffId:LIFF_ID});
+      if(!liff.isLoggedIn()) liff.login();
+      userProfile=await liff.getProfile();
     });
   </script>
 </body>
