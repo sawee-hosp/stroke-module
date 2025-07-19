@@ -285,204 +285,349 @@ async function init() {
   userProfile = await liff.getProfile();
   loadHistory();
 }
-// HISTORY
-function tryRenderHistory(){
-  if (histGen!==undefined && histAsm!==undefined && _name!==undefined){
-    const txt = document.getElementById('history-text');
-    const nm  = _name || userProfile.displayName;
-    const gen = histGen.pop();
-    const asm = histAsm.pop();
-    if (asm){
-      txt.innerHTML = `สวัสดีคุณ ${nm}<br/>ครั้งที่แล้วคุณได้คะแนนสอบ อสม.สโตรกไป ${asm.score}/20<br/>วันนี้ต้องการแก้ตัวหรือไม่`;
-    } else if (gen){
-      txt.innerHTML = `สวัสดีคุณ ${nm}<br/>ครั้งที่แล้วคุณได้คะแนนสโตรกพื้นฐานไป ${gen.score}/10<br/>วันนี้ต้องการแก้ตัวหรือไม่`;
-    } else {
-      txt.innerHTML = `มาทดสอบความรู้สโตรกกันหน่อย<br/>คลิกเลือกข้อสอบได้เลยครับ<br/>ถ้าไม่ชัวร์ สามารถเปิดหนังสือดูคำตอบได้ตลอดเวลา`;
+const instructionText = `*ข้อควรปฏิบัติขณะเดินทางมาโรงพยาบาล*
+
+*1. ทันทีที่สงสัยว่ามีอาการสโตรก*
+• โทรแจ้งเหตุฉุกเฉินทันที (1669)
+• แจ้งว่า “สงสัยสโตรก”, แจ้งชื่อผู้ป่วย, เวลาเริ่มมีอาการครั้งแรก, และที่อยู่ปัจจุบัน
+• หากส่งข้อมูลผ่านแอปแล้วให้แจ้งว่า "ได้ส่งข้อมูลทาง Line สวีรู้ทันสโตรกแล้ว"
+
+*2. ขณะรอรถพยาบาล*
+• ให้นอนราบหรือเอนศีรษะสูงเล็กน้อย (15-30°)
+• คลายเสื้อผ้าให้หายใจสะดวก
+• **ห้ามกินยาหรือดื่มน้ำเด็ดขาด**
+• เฝ้าสังเกตอาการและการหายใจ
+
+*3. ระหว่างเดินทางและเมื่อถึงโรงพยาบาล*
+• ไม่ควรขับรถเอง ให้รอรถพยาบาล
+• เตรียมข้อมูลสำคัญ: ชื่อ, ประวัติโรคประจำตัว, ยาที่ใช้, เบอร์ติดต่อญาติ
+• เตรียมบัตรประชาชน
+
+*4. เมื่อถึงโรงพยาบาล*
+• รีบแจ้งแพทย์/พยาบาลว่า “สงสัยสโตรก” และบอกเวลาที่เริ่มมีอาการครั้งแรก`;
+
+function doGet(e) {
+  const lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    const action = e.parameter.action;
+    const callback = e.parameter.callback;
+
+    if (action === 'getUserData' && e.parameter.userId) {
+      const userRecord = checkUserRegistration(e.parameter.userId);
+      return ContentService.createTextOutput(`${callback}(${JSON.stringify(userRecord)})`).setMimeType(ContentService.MimeType.JAVASCRIPT);
     }
+    if (action === 'getVolunteerData' && e.parameter.areaKey) {
+      const volunteerRecord = getVolunteerContacts(e.parameter.areaKey);
+      return ContentService.createTextOutput(`${callback}(${JSON.stringify(volunteerRecord)})`).setMimeType(ContentService.MimeType.JAVASCRIPT);
+    }
+    if (action === 'saveData' && e.parameter.data) {
+      const data = JSON.parse(decodeURIComponent(e.parameter.data));
+      saveDailyCheckData(data);
+
+      if (data.isEmergency) {
+        try {
+          const props = PropertiesService.getScriptProperties();
+          const CHANNEL_ACCESS_TOKEN = props.getProperty('CHANNEL_ACCESS_TOKEN');
+
+          const emergencyFlex = sendEmergencyFlex(data, true); 
+          const plainTextSummary = { type: 'text', text: createPlainTextSummary(data) };
+          const instructionTextMessage = { type: 'text', text: instructionText };
+
+          const messages = [emergencyFlex, plainTextSummary, instructionTextMessage];
+          
+          // Your original code sends messages to the user (data.userID)
+          // If you want to send to a group, replace data.userID with your Group ID
+          pushMessage(data.userID, messages, CHANNEL_ACCESS_TOKEN);
+
+        } catch (lineError) {
+          console.error("CRITICAL: Failed to send LINE notification. Error: " + lineError.toString());
+        }
+      } else {
+        sendNonUrgentFlex(data);
+      }
+      return ContentService.createTextOutput(`${callback}(${JSON.stringify({ status: 'success' })})`).setMimeType(ContentService.MimeType.JAVASCRIPT);
+    }
+    return HtmlService.createHtmlOutputFromFile('index').setTitle("ประเมินอาการสโตรก").setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  } catch (err) {
+    console.error(err);
+    if (e.parameter.callback) {
+      return ContentService.createTextOutput(`${e.parameter.callback}(${JSON.stringify({ status: 'error', message: err.message })})`).setMimeType(ContentService.MimeType.JAVASCRIPT);
+    }
+  } finally {
+    lock.releaseLock();
   }
 }
 
-// โหลดประวัติ + ชื่อ
-function loadHistory(){
-  histGen = undefined; histAsm = undefined; _name = undefined;
-  const uid = encodeURIComponent(userProfile.userId);
-  // general history
-  let s1 = document.createElement('script');
-  s1.src = `${GAS_URL}?action=getHistory&userId=${uid}&level=general&callback=handleHistoryGen`;
-  document.head.appendChild(s1);
-  // asm history
-  let s2 = document.createElement('script');
-  s2.src = `${GAS_URL}?action=getHistory&userId=${uid}&level=asm&callback=handleHistoryAsm`;
-  document.head.appendChild(s2);
-  // user name
-  let s3 = document.createElement('script');
-  s3.src = `${GAS_URL}?action=getUserName&userId=${uid}&callback=handleUserNameHistory`;
-  document.head.appendChild(s3);
+function getSpreadsheet() {
+  const props = PropertiesService.getScriptProperties();
+  const SPREADSHEET_ID = props.getProperty('SHEET_ID');
+  if (!SPREADSHEET_ID) throw new Error("SHEET_ID is not set in Script Properties.");
+  return SpreadsheetApp.openById(SPREADSHEET_ID);
 }
-window.handleHistoryGen = data => { histGen = data||[]; tryRenderHistory(); };
-window.handleHistoryAsm = data => { histAsm = data||[]; tryRenderHistory(); };
-window.handleUserNameHistory = resp => { _name = resp.name; tryRenderHistory(); };
 
-window.handleHistoryGen = data => {
-  histGen = data || [];
-  renderHistory();
-};
-window.handleHistoryAsm = data => {
-  histAsm = data || [];
-  renderHistory();
-};
-window.handleUserNameHistory = resp => {
-  window._name = resp.name;
-  nameCallback();
-};
+function saveDailyCheckData(data) {
+    const ss = getSpreadsheet();
+    const sheet = ss.getSheetByName("daily_check");
+    if (!sheet) throw new Error("Sheet 'daily_check' not found.");
 
-function renderHistory(){
- if (!histGen.length && !histAsm.length) return; // รอทั้งสอง
-  const txt = document.getElementById('history-text');
-  const gen = histGen.pop();
-  const asm = histAsm.pop();
-  const nameCallback = ()=>{
-    const nm=window._name||userProfile.displayName;
-    if(asm){
-      txt.innerHTML = `สวัสดีคุณ ${nm}<br/>ครั้งที่แล้วคุณได้คะแนนสอบ อสม.สโตรกไป ${asm.score}/20<br/>วันนี้ต้องการแก้ตัวหรือไม่`;
-    } else if(gen){
-      txt.innerHTML = `สวัสดีคุณ ${nm}<br/>ครั้งที่แล้วคุณได้คะแนนสโตรกพื้นฐานไป ${gen.score}/10<br/>วันนี้ต้องการแก้ตัวหรือไม่`;
+    const HEADERS = [
+        "timestamp", "eventId", "userID", "userName", "BEFAST", "symptom", "frequency", "time", 
+        "location", "distance", "duration", "tel_sawee", "tel_1669",
+        "tel_asm1", "tel_asm2", "tel_header", "tel_pcu", 
+        "arrivalDeadline", "rtpaDeadline", "ambulanceEstimate", "selfTravelEstimate", "notificationSent"
+    ];
+
+    if (sheet.getLastRow() < 1) {
+        sheet.appendRow(HEADERS);
+    }
+
+    const eventId = data.eventId;
+    if (!eventId) {
+        const newRowData = HEADERS.map(header => mapDataToHeader(header, data, true));
+        sheet.appendRow(newRowData);
+        return;
+    }
+
+    const eventIdCol = HEADERS.indexOf("eventId") + 1;
+    const dataRange = sheet.getDataRange();
+    const values = dataRange.getValues();
+    let rowToUpdate = -1;
+
+    for (let i = values.length - 1; i > 0; i--) {
+        if (values[i][eventIdCol - 1] === eventId) {
+            rowToUpdate = i + 1;
+            break;
+        }
+    }
+
+    if (rowToUpdate > -1) {
+        const existingRow = values[rowToUpdate - 1];
+        const updatedRowData = HEADERS.map((header, index) => {
+            const newValue = mapDataToHeader(header, data, false);
+            if (header.startsWith("tel_") && existingRow[index]) {
+                return existingRow[index];
+            }
+            if (header === "timestamp" && existingRow[index]) {
+                return existingRow[index];
+            }
+            return newValue || existingRow[index];
+        });
+        sheet.getRange(rowToUpdate, 1, 1, HEADERS.length).setValues([updatedRowData]);
     } else {
-      txt.innerHTML = `มาทดสอบความรู้สโตรกกันหน่อย<br/>คลิกเลือกข้อสอบได้เลยครับ<br/>ถ้าไม่ชัวร์ สามารถเปิดหนังสือดูคำตอบได้ตลอดเวลา`;
+        const newRowData = HEADERS.map(header => mapDataToHeader(header, data, true));
+        sheet.appendRow(newRowData);
+    }
+}
+
+function mapDataToHeader(header, data, isNewRow) {
+    if (header === "timestamp" && isNewRow) return new Date();
+    switch(header) {
+        case "eventId": return data.eventId || "";
+        case "BEFAST": return data.symptomCategory || "";
+        case "symptom": return data.symptomDetail || "";
+        case "time": return data.onsetTime || "";
+        default:
+            return data[header] || "";
+    }
+}
+
+function checkUserRegistration(userId) {
+  const response = { status: 'not_found', data: null };
+  if (!userId) return response;
+  try {
+    const ss = getSpreadsheet();
+    const sheet = ss.getSheetByName("database");
+    if (!sheet) return response;
+    const data = sheet.getDataRange().getValues();
+    const headerRow = data[0].map(h => h.toString().trim());
+    const colMap = {};
+    headerRow.forEach((h, i) => { colMap[h] = i; });
+    const userIdCol = colMap['userId'];
+    if (userIdCol === undefined) return { status: 'error', message: 'Column "userId" not found.' };
+    const timestampCol = colMap['timestamp'];
+
+    for (let i = data.length - 1; i > 0; i--) {
+      if (data[i][userIdCol] && data[i][userIdCol].toString().trim() === userId.toString().trim()) {
+        response.status = 'found';
+        response.data = {
+          name: data[i][colMap['name']] || '',
+          thai_cv_risk_score: data[i][colMap['thai_cv_risk_score']] || 'N/A',
+          risk_group: data[i][colMap['risk_group']] || 'N/A',
+          district: data[i][colMap['district']] || '',
+          village: data[i][colMap['village']] || '',
+          timestamp: (timestampCol !== undefined && data[i][timestampCol]) ? data[i][timestampCol] : ''
+        };
+        return response;
+      }
+    }
+    return response;
+  } catch (e) {
+    console.error('ERROR in checkUserRegistration: ' + e.toString());
+    response.status = 'error'; response.data = e.toString();
+    return response;
+  }
+}
+
+function getVolunteerContacts(areaKey) {
+  const response = { status: 'not_found', data: null };
+  if (!areaKey) return response;
+  try {
+    const ss = getSpreadsheet();
+    const sheet = ss.getSheetByName("volunteer_list");
+    if (!sheet) return response;
+    const data = sheet.getDataRange().getValues();
+    const headerRow = data[0].map(h => h.toString().trim());
+    const colMap = {};
+    headerRow.forEach((h, i) => { colMap[h] = i; });
+    const areaCol = colMap['area'];
+    if (areaCol === undefined) return { status: 'error', message: 'Column "area" not found.' };
+    for (let i = 1; i < data.length; i++) {
+      if (data[i][areaCol] && data[i][areaCol].toString().trim() === areaKey.toString().trim()) {
+        response.status = 'found';
+        response.data = {
+          volunteer1_tel: data[i][colMap['volunteer1_tel']] || '',
+          volunteer2_tel: data[i][colMap['volunteer2_tel']] || '',
+          headman_tel: data[i][colMap['headman_tel']] || '',
+          pcu_tel: data[i][colMap['pcu_tel']] || '',
+          pcu_name: data[i][colMap['pcu_name']] || ''
+        };
+        return response;
+      }
+    }
+    return response;
+  } catch (e) {
+    console.error("Error in getVolunteerContacts: " + e.toString());
+    response.status = 'error'; response.data = e.toString();
+    return response;
+  }
+}
+
+function sendNonUrgentFlex(data) {
+  const props = PropertiesService.getScriptProperties();
+  const CHANNEL_ACCESS_TOKEN = props.getProperty('CHANNEL_ACCESS_TOKEN');
+  const DAILY_CHECK_LIFF_ID = "2005789397-WRm1lYd9";
+  const HEALTH_INFO_LIFF_ID = "2005789397-RLAGXrBJ";
+  if (!CHANNEL_ACCESS_TOKEN || !data.userID) return;
+  let bodyText = data.randomGreeting ? data.randomGreeting : data.symptomDetail || 'ไม่มีอาการผิดปกติ';
+  let headerColor = data.randomGreeting ? "#007BFF" : "#28A745";
+  const flexMessage = {
+    type: "flex", altText: "สรุปการประเมินอาการรายวัน",
+    contents: {
+      type: "bubble",
+      header: {
+        type: "box", layout: "vertical", backgroundColor: headerColor, contents: [
+          { type: "text", text: "ประเมินอาการสโตรกประจำวัน", color: "#ffffff", weight: "bold", size: "lg" },
+          { type: "text", text: `ของคุณ ${data.userName}`, color: "#ffffffcc", size: "sm" }
+        ]
+      },
+      body: {
+        type: "box", layout: "vertical", spacing: "md", contents: [
+          { type: "text", text: "ผลการประเมิน:", weight: "bold" },
+          { type: "text", text: bodyText, wrap: true, size: "md" },
+          { type: "text", text: `เวลาประเมิน: ${new Date().toLocaleString('th-TH', { timeZone: 'Asia/Bangkok' })}`, size: "xs", color: "#aaaaaa", margin: "lg" }
+        ]
+      },
+      footer: {
+        type: "box", layout: "vertical", spacing: "sm", contents: [
+          { type: "button", style: "primary", color: headerColor, height: "sm", action: { type: "uri", label: "ประเมินซ้ำอีกครั้ง", uri: `https://liff.line.me/${DAILY_CHECK_LIFF_ID}` } },
+          { "type": "button", "style": "secondary", "height": "sm", "action": { "type": "uri", "label": "ดูข้อมูลสุขภาพ", "uri": `https://liff.line.me/${HEALTH_INFO_LIFF_ID}` } },
+          { "type": "text", "text": "จัดทำโดย สวีรู้ทันสโตรก", "size": "xxs", "color": "#cccccc", "align": "center", "margin": "md" }
+        ]
+      }
     }
   };
-  if(gen||asm){
-    // ถ้ามี history ใดๆ ดึงชื่อ
-    let s=document.createElement('script');
-    s.src=`${GAS_URL}?action=getUserName&userId=${encodeURIComponent(userProfile.userId)}&callback=resp=>{window._name=resp.name;nameCallback()}`;
-    document.head.appendChild(s);
-  } else {
-    nameCallback();
+  if (data.frequency === 'อาจไม่เข้าข่ายสโตรกเฉียบพลัน') {
+    flexMessage.contents.footer.contents.splice(1, 0, { "type": "button", "style": "secondary", "height": "sm", "action": { "type": "uri", "label": "โทรปรึกษา 1669", "uri": "tel:1669" } });
   }
+  pushMessage(data.userID, [flexMessage], CHANNEL_ACCESS_TOKEN);
 }
 
-window.handleUserName=resp=>{
-  let nm=resp.name||userProfile.displayName;
-  let txt=document.getElementById('start-text');
-  let{score:ls,full_score:lf}=window._last;
-  txt.innerHTML=ls<lf
-    ?`<span class="highlight">ยินดีต้อนรับอีกครั้ง คุณ ${nm}</span><br/>ครั้งที่แล้วทำได้ ${ls}/${lf}`
-    :`<span class="highlight">สวัสดีคุณ ${nm}!</span><br/>ทำเต็ม ${lf} แล้ว`;
-};
-
-// CARD CLICKS
-document.getElementById('cardGeneralQuiz').onclick=_=>{
-  let s=document.createElement('script');
-  s.src=`${GAS_URL}?action=getQuiz&level=general&callback=handleQuiz`;
-  document.head.appendChild(s);
-  
-};
-document.getElementById('cardGeneralLearn').onclick=_=>{
-  document.getElementById('learn-card').style.display='flex';
-};
-document.getElementById('cardAsmQuiz').onclick=_=>{
-  let s=document.createElement('script');
-  s.src=`${GAS_URL}?action=getQuiz&level=asm&callback=handleQuiz`;
-  document.head.appendChild(s);
-};
-document.getElementById('cardAsmGuide').onclick=_=>{
-  document.getElementById('asm-guide').style.display='flex';
-};
-// หลังจากประกาศ click‐handlers ของแต่ละ card ให้เพิ่มโค้ดนี้
-const gridCards = document.querySelectorAll('.grid .card');
-gridCards.forEach(card => {
-  card.addEventListener('click', () => {
-    // ลบ active จากทุกใบ
-    gridCards.forEach(c => c.classList.remove('active'));
-    // แล้วเพิ่ม active เฉพาะใบนี้
-    card.classList.add('active');
-  });
-});
-
-
-// QUIZ CALLBACK
-window.handleQuiz=data=>{
-  questions=data;idx=0;score=0;wrongs=[];
-  document.getElementById('quiz-card').style.display='block';
-  showQuestion();
-};
-function showQuestion(){
-  let q=questions[idx];
-  document.getElementById('qindex').textContent=`${idx+1}/${questions.length}`;
-  document.getElementById('progress-bar').style.width=`${(idx+1)/questions.length*100}%`;
-  document.getElementById('questionText').textContent=q.question;
-  let ct=document.getElementById('choicesContainer');ct.innerHTML='';
-  shuffle(['choice1','choice2','choice3','choice4']).forEach(k=>{
-    let lbl=document.createElement('label');
-    lbl.textContent=q[k];
-    lbl.onclick=_=>{
-      document.getElementById('submitBtn').style.display='block';
-      document.querySelectorAll('.choices label').forEach(l=>l.classList.remove('selected'));
-      lbl.classList.add('selected');
-    };
-    let inp=document.createElement('input');
-    inp.type='radio';inp.name='choice';inp.value=lbl.textContent;
-    lbl.prepend(inp);ct.appendChild(lbl);
-  });
-  let sb=document.getElementById('submitBtn');sb.style.display='none';
-  sb.onclick=_=>checkAnswer(q);
+function sendEmergencyFlex(data, returnObject = false) {
+  const props = PropertiesService.getScriptProperties();
+  const CHANNEL_ACCESS_TOKEN = props.getProperty('CHANNEL_ACCESS_TOKEN');
+  const HEALTH_INFO_LIFF_ID = "2005789397-RLAGXrBJ";
+  const hospitalCoords = "10.2300226,99.1087481";
+  const gmapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${hospitalCoords}`;
+  const flexMessage = {
+    "type": "flex", "altText": "สรุปข้อมูลแจ้งเหตุฉุกเฉินโรคหลอดเลือดสมอง",
+    "contents": {
+      "type": "bubble", "size": "mega",
+      "header": {
+        "type": "box", "layout": "vertical", "backgroundColor": "#D32F2F", "paddingAll": "20px", "contents": [
+          { "type": "text", "text": "สรุปแจ้งเหตุฉุกเฉิน (สโตรก)", "color": "#ffffff", "weight": "bold", "size": "xl" },
+          { "type": "text", "text": `ของคุณ ${data.registeredName || data.userName}`, "color": "#ffffffcc", "size": "md", "margin": "sm" }
+        ]
+      },
+      "body": {
+        "type": "box", "layout": "vertical", "spacing": "lg", "paddingAll": "20px", "backgroundColor": "#FFF0F0", "contents": [
+          createFlexSection("ข้อมูลอาการ", [createKeyValueRow("อาการ:", data.symptomDetail), createKeyValueRow("เริ่มเมื่อ:", data.onsetTime)]),
+          { "type": "separator" },
+          createFlexSection("ข้อมูลเวลา", [
+            createKeyValueRow("ต้องถึง รพ. ภายใน (3.5ชม.)", data.arrivalDeadline),
+            createKeyValueRow("ต้องได้รับยาภายใน (4.5ชม.)", data.rtpaDeadline)
+          ]),
+          { "type": "separator" },
+          createFlexSection("คาดการณ์การเดินทาง", [
+            createKeyValueRow("ระยะทาง:", data.distance || "ไม่ได้ระบุพิกัด"),
+            createKeyValueRow("เดินทางมาเอง:", data.selfTravelEstimate || "-"),
+            createKeyValueRow("รถ รพ. ไปรับ:", data.ambulanceEstimate || "-")
+          ])
+        ]
+      },
+      "footer": {
+        "type": "box", "layout": "vertical", "spacing": "sm", "paddingAll": "10px", "contents": [
+          { "type": "button", "style": "primary", "color": "#34A853", "height": "sm", "action": { "type": "uri", "label": "เส้นทางไป รพ.สวี", "uri": gmapsUrl } },
+          { "type": "button", "style": "primary", "color": "#D32F2F", "height": "sm", "action": { "type": "uri", "label": "โทรฉุกเฉิน 1669", "uri": "tel:1669" } },
+          { "type": "button", "style": "secondary", "height": "sm", "action": { "type": "uri", "label": "ดูข้อมูลสุขภาพ", "uri": `https://liff.line.me/${HEALTH_INFO_LIFF_ID}` } },
+          { "type": "text", "text": "จัดทำโดย สวีรู้ทันสโตรก", "wrap": true, "size": "xxs", "align": "center", "color": "#888888", "margin": "md" }
+        ]
+      }
+    }
+  };
+  if (returnObject) {
+    return flexMessage;
+  }
+  pushMessage(data.userID, [flexMessage], CHANNEL_ACCESS_TOKEN);
 }
-function checkAnswer(q){
-  const sel = document.querySelector('input[name="choice"]:checked');
-  if(!sel) return;
-  document.getElementById('submitBtn').disabled = true;
-  document.querySelectorAll('.choices label').forEach(l=>l.style.pointerEvents='none');
-  const chosen = sel.value.trim(), correct = q.correct_choice.trim();
-  const isCorrect = chosen === correct;
-  document.getElementById('modalEmoji').textContent   = isCorrect?'✅':'😞';
-  document.getElementById('modalMessage').textContent = isCorrect?'ถูกต้อง!':`คำตอบคือ ${correct}`;
-  document.getElementById('answerModal').style.display='flex';
-  document.getElementById('modalNextBtn').onclick = ()=>{
-    document.getElementById('answerModal').style.display='none';
-    document.getElementById('submitBtn').disabled = false;
-    idx < questions.length-1
-      ? showQuestionAt(idx+1)
-      : finishQuiz();
+
+function createPlainTextSummary(data) {
+  return `สรุปข้อมูลผู้ป่วยต้องสงสัยสโตรก:
+👤 ชื่อ: ${data.registeredName || data.userName}
+🏠 พื้นที่: ต.${data.district || 'N/A'} ม.${data.village || 'N/A'}
+🚨 อาการ: ${data.symptomDetail} (${data.symptomCategory})
+⏱️ เริ่มเป็นเมื่อ: ${data.onsetTime}
+📍 พิกัด: ${data.location || 'ไม่ได้ระบุ'}
+☎️ กดโทรหา: ${data.contactedVia || 'N/A'}`;
+}
+
+function createFlexSection(title, contentRows) {
+  return {
+    "type": "box", "layout": "vertical", "contents": [
+      { "type": "text", "text": title, "weight": "bold", "size": "lg", "margin": "md", "color": "#555555" },
+      { "type": "box", "layout": "vertical", "margin": "lg", "spacing": "sm", "contents": contentRows }
+    ]
   };
 }
 
-function showQuestionAt(i){idx=i;document.getElementById('submitBtn').style.display='none';showQuestion();}
-function finishQuiz(){
-  document.getElementById('quiz-card').style.display='none';
-  document.getElementById('result-card').style.display='block';
-  let emo = score>=9?'🥇':score>=6?'🥈':score>=3?'🥉':'👍';
-  document.getElementById('resultEmoji').textContent = emo;
-  const msgs = score<=4
-    ? ['ไม่เป็นไรครับ ถ้ายังไม่รู้จักสโตรก','แนะนำอ่านความรู้ด้านบน','แล้วมาสอบใหม่']
-    : score<=8
-      ? ['เก่งมาก แต่ยังมีบางเรื่อง','อ่านความรู้แล้วมาสอบใหม่','ให้เต็ม 10 กันเถอะ']
-      : ['สุดยอด รู้ทันสโตรกแล้ว','อย่าลืมบอกคนรอบข้าง','มาแชร์ความรู้กัน!'];
-  document.getElementById('resultMessage').innerHTML =
-    `<strong style="font-size:24px">คุณได้ ${score}/${questions.length} คะแนน</strong><br/>`
-    + msgs.join('<br/>');
-
-  // ส่งบันทึกไป GAS
-  const params = [
-    'action=recordResult',
-    `userId=${encodeURIComponent(userProfile.userId)}`,
-    `level=${questions.length === 20 ? 'asm' : 'general'}`,
-    `score=${score}`,
-    `full_score=${questions.length}`,
-    'posttest=true',
-    `wrong=${encodeURIComponent(wrongs.join(','))}`,
-    'callback=cacheRank'
-  ];
-  const s = document.createElement('script');
-  s.src = `${GAS_URL}?${params.join('&')}`;
-  document.head.appendChild(s);
+function createKeyValueRow(key, value) {
+  const isUrgent = value && value.includes && value.includes("ไม่ทัน");
+  return {
+    type: "box", layout: "baseline", spacing: "sm", contents: [
+      { type: "text", text: key, color: "#aaaaaa", size: "sm", flex: 3, "wrap": true },
+      { type: "text", text: value || 'N/A', color: isUrgent ? "#D32F2F" : "#666666", size: "sm", flex: 5, wrap: true, weight: isUrgent ? "bold" : "regular" }
+    ]
+  };
 }
 
-window.cacheRank=resp=>{
-  if(resp.status==='success'){
-    cachedRank=resp.rank;cachedTotal=resp.totalPlayers;
-    document.getElementById('shareBtn').style.display='block';
-  }
-};
+function pushMessage(userId, messages, token) {
+  UrlFetchApp.fetch('https://api.line.me/v2/bot/message/push', {
+    method: 'post', contentType: 'application/json',
+    headers: { 'Authorization': 'Bearer ' + token },
+    payload: JSON.stringify({ to: userId, messages: messages }),
+    muteHttpExceptions: true
+  });
+}
 
 // SHARE FLEX
 window.handleShareRecord = resp => {
