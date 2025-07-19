@@ -68,6 +68,35 @@
               color:#fff;border:none;border-radius:6px;
               font-size:18px;font-weight:700;cursor:pointer;transition:background .2s}
     #shareBtn:hover{background:linear-gradient(45deg,#f57c00,#ffa726)}
+    /* Ensure .btn uses Noto and looks consistent */
+#learn-card .btn {
+  font-family: 'Noto Sans Thai', sans-serif !important;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background .2s;
+}
+#learn-card .btn:hover {
+  opacity: 0.9;
+}
+.asm-quiz-btn {
+  background: #795548;     /* brown */
+  color: #fff;
+  margin-top: 24px;
+  width: 100%;
+  padding: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background .2s;
+}
+.asm-quiz-btn:hover {
+  background: #5d4037;
+}
+
+
   </style>
 </head>
 <body>
@@ -101,6 +130,19 @@
       <button id="shareBtn">บันทึกผลและแชร์คะแนน</button>
     </div>
   </div>
+<!-- Learn Stroke Module (hidden until invoked) -->
+<div id="learn-card" class="card" style="display:none; flex-direction:column; align-items:center;">
+  <h2 id="learn-title" style="margin-bottom:12px; font-size:24px;"></h2>
+  <div id="learn-content" style="font-size:18px; line-height:1.6; text-align:left; max-width:100%;"></div>
+  <div class="button-group" style="margin-top:20px; width:100%; justify-content:center;">
+    <button id="prevLearnBtn" class="btn" style="flex:1; padding:8px 16px; font-size:16px; background:#ccc; color:#333;">ก่อนหน้า</button>
+    <button id="nextLearnBtn" class="btn" style="flex:1; padding:8px 16px; font-size:16px; background:#1e88e5; color:#fff; margin:0 8px;">ถัดไป</button>
+    <button id="closeLearnBtn" class="btn" style="flex:1; padding:8px 16px; font-size:16px; background:#f44336; color:#fff;">ปิด</button>
+  </div>
+</div>
+<button id="btnAsmQuiz" class="asm-quiz-btn">แบบทดสอบ อสม.สโตรก</button>
+
+
 
   <!-- Answer Modal -->
   <div id="answerModal" class="modal">
@@ -254,7 +296,27 @@
         document.getElementById('shareBtn').style.display='block';
       }
     };
+let currentLevel = 'general';  // default
 
+// utility to load any level
+function loadQuiz(level) {
+  currentLevel = level;
+  // hide any visible cards
+  document.getElementById('start-card').style.display = 'none';
+  document.getElementById('learn-card').style.display = 'none';
+  document.getElementById('quiz-card').style.display = 'none';
+  document.getElementById('result-card').style.display = 'none';
+  // fetch quiz
+  const cb = 'handleQuiz'; // your existing callback
+  const s = document.createElement('script');
+  s.src = `${GAS_URL}?action=getQuiz&level=${level}&callback=${cb}`;
+  document.head.appendChild(s);
+}
+
+// wire up the new ASM button
+document.getElementById('btnAsmQuiz').onclick = () => {
+  loadQuiz('asm');
+};
 // เมื่อกดปุ่ม shareBtn → เรียก recordResult พร้อม callback=handleShareRecord
 document.getElementById('shareBtn').onclick = () => {
   const params = [
@@ -273,66 +335,175 @@ document.getElementById('shareBtn').onclick = () => {
 };
 
 window.handleShareRecord = resp => {
-    if (resp.status !== 'success') return console.error(resp);
-    const rank         = resp.rank;
-    const totalPlayers = resp.totalPlayers;
-    const name         = userProfile.displayName || 'ผู้ทดสอบ';
-    const pictureUrl   = userProfile.pictureUrl;
+  if (resp.status !== 'success') return console.error(resp);
 
-    const flex = {
-      type:    'flex',
-      altText: `${name} รู้ทันสโตรก`,
-      contents:{
-        type:       'bubble',
-        size:       'kilo',  // หรือ 'mega' ถ้าเจอ error
-        header: {
-          type:   'box', layout: 'vertical', contents:[
-            {
-              type:  'text',
-              text:  `👑 ${name} รู้ทันสโตรก`,
-              align: 'center', weight:'bold', size:'lg'
-            }
-          ]
-        },
-        hero:{
-          type:'image', url: pictureUrl,
-          size:'full', aspectMode:'cover', aspectRatio:'1:1', gravity:'center'
-        },
-        body:{
-          type:'box', layout:'vertical', contents:[
-            {type:'text',text:'ผลการทดสอบคะแนน',align:'center',size:'md'},
-            {type:'text',text:`${score}/${questions.length}`,align:'center',size:'xxl',weight:'bold'},
-            {type:'text',text:'คะแนนมากเป็น',align:'center',size:'sm',color:'#555555'},
-            {type:'text',text:`ลำดับที่ ${rank} จาก ${totalPlayers} คน`,align:'center',size:'sm',color:'#555555'}
-          ]
-        },
-        footer:{
-          type:'box', layout:'vertical', spacing:'sm', contents:[
-            {
-              type:'button', style:'primary',
-              action:{type:'uri',label:'ลองทำแบบทดสอบ',uri:`https://liff.line.me/${LIFF_ID}`}
-            },
-            {
-              type:'button', style:'secondary',
-              action:{type:'uri',label:'สโตรกคืออะไร',uri:'https://lin.ee/mQhHzLv'}
-            }
-          ]
-        }
+  // ดึงชื่อและรูปก่อน
+  const name       = userProfile.displayName || 'ผู้ทดสอบ';
+  const pictureUrl = userProfile.pictureUrl;
+
+  // สร้าง payload ตามที่ปรับแล้ว
+  const flex = {
+    type:    'flex',
+    altText: `${name} รู้ทันสโตรก`,
+    contents: {
+      type:       'bubble',
+      size:       'mega',
+      header: {
+        type:           'box',
+        layout:         'vertical',
+        backgroundColor:'#FFF9C4',
+        contents: [
+          {
+            type:   'text',
+            text:   `${name} รู้ทันสโตรก`,
+            align:  'center',
+            weight: 'bold',
+            size:   'lg'
+          }
+        ]
+      },
+      hero: {
+        type:       'image',
+        url:        pictureUrl,
+        size:       'full',
+        aspectMode: 'cover',
+        aspectRatio:'1:1',
+        gravity:    'center'
+      },
+      body: {
+        type:           'box',
+        layout:         'vertical',
+        backgroundColor:'#FFF9C4',
+        spacing:        'sm',
+        contents: [
+          { type:'text', text:'👑', align:'center', size:'4xl' },
+          { type:'text', text:`รู้เรื่องสโตรก ${score}/${questions.length}`, align:'center', size:'md', weight:'bold' },
+          { type:'text', text:`เก่งเป็นอันดับที่ ${cachedRank} จาก ${cachedTotal}`, align:'center', size:'sm' }
+        ]
+      },
+      footer: {
+        type:           'box',
+        layout:         'horizontal',
+        backgroundColor:'#FFF9C4',
+        spacing:        'none',
+        paddingAll:     '0px',
+        contents: [
+          {
+            type:'button', style:'primary', color:'#FBC02D',
+            action:{ type:'uri', label:'ลองทำแบบทดสอบ', uri:`https://liff.line.me/${LIFF_ID}` }
+          },
+          {
+            type:'button', style:'secondary', color:'#FFFFFF',
+            action:{ type:'uri', label:'สโตรกคืออะไร', uri:'https://lin.ee/mQhHzLv' }
+          }
+        ]
       }
-    };
-
-    liff.shareTargetPicker([ flex ])
-      .then(() => console.log('แชร์เรียบร้อย'))
-      .catch(err => console.error(err));
+    }
   };
 
-  // … แล้วตามด้วย LIFF init …
-  document.addEventListener('DOMContentLoaded', async () => {
-    await liff.init({liffId:LIFF_ID});
-    if (!liff.isLoggedIn()) liff.login();
-    userProfile = await liff.getProfile();
-    loadHistory();
-  });
+  // แชร์ flex (ตรวจว่ามี API ให้ใช้หรือไม่)
+  if (liff.isInClient() && liff.isApiAvailable('shareTargetPicker')) {
+    liff.shareTargetPicker([flex])
+      .then(()=>console.log('แชร์สำเร็จ'))
+      .catch(err=>console.error('shareTargetPicker error',err));
+  } else if (liff.isApiAvailable('sendMessages')) {
+    // fallback สำหรับ browser หรือกรณีแชร์ไม่ได้
+    liff.sendMessages([flex])
+      .then(()=>console.log('ส่งข้อความสำเร็จ (fallback)'))
+      .catch(err=>console.error('sendMessages error',err));
+  } else {
+    alert('ไม่สามารถแชร์ได้ โปรดลองใน LINE app');
+  }
+};
+
+
+// ให้แน่ใจว่า LIFF init เสร็จสมบูรณ์ก่อน
+document.addEventListener('DOMContentLoaded', async () => {
+  await liff.init({ liffId: LIFF_ID });
+  if (!liff.isLoggedIn()) await liff.login();
+  userProfile = await liff.getProfile();
+      loadHistory();
+});
+// 1. Define the 4 chapters
+const learnSlides = [
+  {
+    title: 'โรคสโตรกคืออะไร',
+    content: `<p>โรคสโตรก (Stroke) หรืออัมพาตครึ่งซีก เกิดจากการขาดเลือดไปเลี้ยงสมอง
+              เนื่องจากหลอดเลือดสมองอุดตันหรือแตก ทำให้เซลล์สมองเสียหายอย่างรวดเร็ว
+              จำเป็นต้องได้รับการรักษาอย่างทันท่วงที</p>`
+  },
+  {
+    title: 'ปัจจัยทำให้เกิดสโตรก',
+    content: `<ul style="padding-left:1.2em;list-style-type:disc;">
+                <li>ความดันโลหิตสูง</li>
+                <li>เบาหวาน</li>
+                <li>ไขมันในเลือดสูง</li>
+                <li>สูบบุหรี่</li>
+                <li>หัวใจเต้นผิดจังหวะ (AF)</li>
+                <li>โรคอ้วน</li>
+                <li>ขาดการออกกำลังกาย</li>
+              </ul>`
+  },
+  {
+    title: 'อาการ BEFAST',
+    content: `<p><strong>B</strong> (Balance): เดินทรงตัวลำบาก<br/>
+              <strong>E</strong> (Eyes): เห็นภาพซ้อน/พร่ามัว<br/>
+              <strong>F</strong> (Face): หน้าเบี้ยว<br/>
+              <strong>A</strong> (Arm): แขนขาอ่อนแรง<br/>
+              <strong>S</strong> (Speech): พูดไม่ชัด<br/>
+              <strong>T</strong> (Time): มีอาการ รีบไป รพ. ทันที</p>`
+  },
+  {
+    title: 'ความสำคัญของยาสลายลิ่มเลือด',
+    content: `<p>ยาสลายลิ่มเลือด เช่น tPA ช่วยเปิดหลอดเลือดที่อุดตัน
+              เพื่อป้องกันความเสียหายของสมอง แต่ต้องได้รับภายใน
+              4.5 ชั่วโมงแรกหลังอาการเริ่มต้น จึงจะได้ผลดีที่สุด</p>`
+  }
+];
+
+// 2. State
+let learnIdx = 0;
+
+// 3. Grab DOM elements
+const learnCard      = document.getElementById('learn-card');
+const learnTitle     = document.getElementById('learn-title');
+const learnContent   = document.getElementById('learn-content');
+const prevBtn        = document.getElementById('prevLearnBtn');
+const nextBtn        = document.getElementById('nextLearnBtn');
+const closeBtn       = document.getElementById('closeLearnBtn');
+const resultCard     = document.getElementById('result-card');
+
+// 4. Render slide
+function showLearnSlide(i) {
+  const slide = learnSlides[i];
+  learnTitle.innerHTML   = slide.title;
+  learnContent.innerHTML = slide.content;
+  prevBtn.style.display  = i === 0 ? 'none' : 'block';
+  nextBtn.textContent    = i === learnSlides.length - 1 ? 'จบบทเรียน' : 'ถัดไป';
+}
+prevBtn.onclick = () => { learnIdx--; showLearnSlide(learnIdx); };
+nextBtn.onclick = () => {
+  if (learnIdx < learnSlides.length - 1) {
+    learnIdx++; showLearnSlide(learnIdx);
+  } else {
+    closeBtn.click();
+  }
+};
+closeBtn.onclick = () => {
+  learnCard.style.display = 'none';
+  resultCard.style.display = 'block';
+};
+
+// 5. Hook up the “สโตรกคืออะไร” button
+// Replace your existing btnLearn href with this:
+document.getElementById('btnLearn').onclick = () => {
+  resultCard.style.display = 'none';
+  learnIdx = 0;
+  showLearnSlide(learnIdx);
+  learnCard.style.display = 'flex';
+};
+
+
   </script>
 </body>
 </html>
