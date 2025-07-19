@@ -279,64 +279,88 @@ let gotGen = false, gotAsm = false, gotName = false;
 // SHUFFLE
 const shuffle=a=>{for(let i=a.length-1;i>0;i--){let j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;};
 // 1) โหลดประวัติ ทบทวน logic เดิม
-async function init() {
-  await liff.init({liffId:LIFF_ID});
-  if(!liff.isLoggedIn()) await liff.login();
-  userProfile = await liff.getProfile();
-  loadHistory();
-}
-// HISTORY
-// โหลด history ทั้ง general และ asm พร้อมดึงชื่อ
-function loadHistory(){
+function loadHistory() {
   const uid = encodeURIComponent(userProfile.userId);
-  // general
-  let s1 = document.createElement('script');
-  s1.src = `${GAS_URL}?action=getHistory&userId=${uid}&level=general&callback=handleHistoryGen`;
-  document.head.appendChild(s1);
-  // asm
-  let s2 = document.createElement('script');
-  s2.src = `${GAS_URL}?action=getHistory&userId=${uid}&level=asm&callback=handleHistoryAsm`;
-  document.head.appendChild(s2);
+  ['general','asm'].forEach(level => {
+    const cb = level === 'general' ? 'handleHistoryGen' : 'handleHistoryAsm';
+    const s = document.createElement('script');
+    s.src = `${GAS_URL}?action=getHistory&userId=${uid}&level=${level}&callback=${cb}`;
+    document.head.appendChild(s);
+  });
   // ชื่อ
-  let s3 = document.createElement('script');
-  s3.src = `${GAS_URL}?action=getUserName&userId=${uid}&callback=handleUserNameHistory`;
+  const s3 = document.createElement('script');
+  s3.src = `${GAS_URL}?action=getUserName&userId=${uid}&callback=handleUserNameHistory}`;
   document.head.appendChild(s3);
 }
 
-window.handleHistoryGen = data => {
-  histGen = data || [];
-  gotGen = true;
-  tryRenderHistory();
-};
-window.handleHistoryAsm = data => {
-  histAsm = data || [];
-  gotAsm = true;
-  tryRenderHistory();
-};
-window.handleUserNameHistory = resp => {
-  _name = resp.name;
-  gotName = true;
-  tryRenderHistory();
-};
-
 function tryRenderHistory(){
-  if (!(gotGen && gotAsm && gotName)) return;  // ยังไม่พร้อมทั้งหมด
+  if (!(gotGen && gotAsm && gotName)) return;
   const txt = document.getElementById('history-text');
   const nameToShow = _name || userProfile.displayName;
   const lastGen = histGen.pop();
   const lastAsm = histAsm.pop();
   if (lastAsm) {
-    txt.innerHTML = `สวัสดีคุณ ${nameToShow}<br>
-      ครั้งที่แล้วคุณได้คะแนนสอบ อสม.สโตรก ${lastAsm.score}/20<br>
-      วันนี้ต้องการแก้ตัวหรือไม่`;
+    txt.innerHTML = `สวัสดีคุณ ${nameToShow}<br>ครั้งที่แล้ว... ${lastAsm.score}/20...`;
   } else if (lastGen) {
-    txt.innerHTML = `สวัสดีคุณ ${nameToShow}<br>
-      ครั้งที่แล้วคุณได้คะแนนสอบพื้นฐาน ${lastGen.score}/10<br>
-      วันนี้ต้องการแก้ตัวหรือไม่`;
+    txt.innerHTML = `สวัสดีคุณ ${nameToShow}<br>ครั้งที่แล้ว... ${lastGen.score}/10...`;
   } else {
     txt.innerHTML = `มาทดสอบความรู้สโตรกกันหน่อย…`;
   }
 }
+
+window.handleHistoryGen = data => { histGen = data||[]; gotGen = true; tryRenderHistory(); };
+window.handleHistoryAsm = data => { histAsm = data||[]; gotAsm = true; tryRenderHistory(); };
+window.handleUserNameHistory = resp => { _name = resp.name; gotName = true; tryRenderHistory(); };
+
+// ฟังก์ชันโหลดข้อสอบ
+function loadQuiz(level) {
+  const s = document.createElement('script');
+  s.src = `${GAS_URL}?action=getQuiz&level=${level}&callback=handleQuiz`;
+  document.head.appendChild(s);
+}
+
+document.addEventListener('DOMContentLoaded', async ()=> {
+  // 1) INIT LIFF + load history
+  await liff.init({ liffId: LIFF_ID });
+  if (!liff.isLoggedIn()) await liff.login();
+  userProfile = await liff.getProfile();
+  loadHistory();
+
+  // 2) ผูก click handlers ให้ 4 การ์ด
+  const gridCards     = document.querySelectorAll('.grid .card');
+  const quizCard      = document.getElementById('quiz-card');
+  const resultCard    = document.getElementById('result-card');
+  const learnModal    = document.getElementById('learn-card');
+  const asmGuideModal = document.getElementById('asm-guide');
+
+  gridCards.forEach(card => {
+    card.addEventListener('click', () => {
+      gridCards.forEach(c=>c.classList.remove('active'));
+      card.classList.add('active');
+      // ซ่อนทั้งหมดก่อน
+      [quizCard, resultCard].forEach(el=>el.style.display='none');
+      learnModal.style.display = asmGuideModal.style.display = 'none';
+
+      // แสดงตามที่คลิก
+      switch (card.id) {
+        case 'cardGeneralQuiz':
+          quizCard.style.display = 'block';
+          loadQuiz('general');
+          break;
+        case 'cardGeneralLearn':
+          learnModal.style.display = 'flex';
+          break;
+        case 'cardAsmQuiz':
+          quizCard.style.display = 'block';
+          loadQuiz('asm');
+          break;
+        case 'cardAsmGuide':
+          asmGuideModal.style.display = 'flex';
+          break;
+      }
+    });
+  });
+});
 
 // แสดงคำถาม
 window.handleQuiz = data => {
