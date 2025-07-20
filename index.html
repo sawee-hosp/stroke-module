@@ -295,42 +295,86 @@ window.handleShareRecord = () => {
             size: 'xs', color: '#666666', margin: 'lg', wrap: true, align: 'center' }
         ]
       },
-      footer: {
-        type: 'box',
-        layout: 'vertical',
-        backgroundColor: '#fffde7', // สีเหลืองอ่อน
-        paddingAll: 'md',
-        spacing: 'sm',
-        contents: [
-          {
-            type: 'box',
-            layout: 'horizontal',
-            spacing: 'sm',
-            contents: [
-              { type: 'button', style: 'primary', color: '#1E88E5', action: { type: 'uri', label: 'ทำข้อสอบ', uri: 'https://liff.line.me/2005789397-ROQvjpYk'} },
-              { type: 'button', style: 'primary', color: '#ff9800', action: { type: 'uri', label: 'เช็คอาการ', uri: 'https://liff.line.me/2005789397-WRm1lYd9'} }
-            ]
-          },
-          {
-            type: 'box',
-            layout: 'horizontal',
-            spacing: 'sm',
-            contents: [
-              { type: 'button', style: 'secondary', action: { type: 'uri', label: 'ประเมินความเสี่ยง', uri: 'https://liff.line.me/2005789397-nebQ8oJy'} },
-               {
-                 type: 'box',
-                 layout: 'vertical',
-                 maxWidth: '48%',
-                 backgroundColor: '#FFFFFF',
-                 cornerRadius: 'md',
-                 paddingAll: 'xs',
-                 action: { type: 'uri', label: 'ลงทะเบียน', uri: 'https://liff.line.me/2005789397-RLAGXrBJ' },
-                 contents: [{ type: 'text', text: 'ลงทะเบียน', color: '#111111', size: 'sm', align: 'center', gravity: 'center' }]
-               }
-            ]
-          }
-        ]
-      }
+footer: {
+  type: 'box',
+  layout: 'vertical',
+  backgroundColor: '#fffde7',
+  paddingAll: 'md',
+  spacing: 'sm',
+  contents: [
+    {
+      type: 'box',
+      layout: 'horizontal',
+      spacing: 'sm',
+      contents: [
+        {
+          type: 'box',
+          layout: 'vertical',
+          flex: 1,
+          backgroundColor: '#1E88E5',
+          cornerRadius: 'md',
+          paddingAll: 'sm',
+          action: { type: 'uri', label: 'ทำข้อสอบ', uri: 'https://liff.line.me/2005789397-ROQvjpYk' },
+          justifyContent: 'center',
+          contents: [
+            { type: 'text', text: 'ทำข้อสอบ', color: '#FFFFFF', align: 'center', weight: 'bold', size: 'sm' }
+          ]
+        },
+        {
+          type: 'box',
+          layout: 'vertical',
+          flex: 1,
+          backgroundColor: '#ff9800',
+          cornerRadius: 'md',
+          paddingAll: 'sm',
+          action: { type: 'uri', label: 'เช็คอาการ', uri: 'https://liff.line.me/2005789397-WRm1lYd9' },
+          justifyContent: 'center',
+          contents: [
+            { type: 'text', text: 'เช็คอาการ', color: '#FFFFFF', align: 'center', weight: 'bold', size: 'sm' }
+          ]
+        }
+      ]
+    },
+    {
+      type: 'box',
+      layout: 'horizontal',
+      spacing: 'sm',
+      contents: [
+        {
+          type: 'box',
+          layout: 'vertical',
+          flex: 1,
+          backgroundColor: '#FFFFFF',
+          cornerRadius: 'md',
+          paddingAll: 'sm',
+          borderColor: '#CCCCCC',
+          borderWidth: '1px',
+          action: { type: 'uri', label: 'ประเมินความเสี่ยง', uri: 'https://liff.line.me/2005789397-nebQ8oJy' },
+          justifyContent: 'center',
+          contents: [
+            { type: 'text', text: 'ประเมินความเสี่ยง', color: '#111111', align: 'center', size: 'sm' }
+          ]
+        },
+        {
+          type: 'box',
+          layout: 'vertical',
+          flex: 1,
+          backgroundColor: '#FFFFFF',
+          cornerRadius: 'md',
+          paddingAll: 'sm',
+          borderColor: '#CCCCCC',
+          borderWidth: '1px',
+          action: { type: 'uri', label: 'ลงทะเบียน', uri: 'https://liff.line.me/2005789397-RLAGXrBJ' },
+          justifyContent: 'center',
+          contents: [
+            { type: 'text', text: 'ลงทะเบียน', color: '#111111', align: 'center', size: 'sm' }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
     }
   };
 
