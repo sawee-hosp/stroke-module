@@ -6,7 +6,7 @@
 <title>คุณรู้ทันสโตรกหรือยัง?</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet"/>
 <style>
-  :root { --primary-color: #1a237e; --secondary-color: #1e88e5; --light-yellow: #fffde7; }
+  :root { --primary-color: #1a237e; --secondary-color: #1e88e5; }
   html { scroll-behavior: smooth; }
   *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
   body,button,label,input{font-family:'Noto Sans Thai',sans-serif!important}
@@ -17,7 +17,8 @@
   /* History Card */
   #history-card{background:#fff;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.05);
     padding:20px;text-align:center;margin-bottom:24px;min-height:120px;display:flex;
-    align-items:center;justify-content:center;font-size:18px;color:#333; line-height: 1.6;}
+    flex-direction: column; align-items:center;justify-content:center;font-size:18px;color:#333; line-height: 1.6;}
+  #history-card .register-btn { display: inline-block; margin-top: 10px; padding: 8px 16px; background-color: var(--secondary-color); color: white; text-decoration: none; border-radius: 5px; font-weight: bold; }
 
   /* Grid of 4 cards */
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
@@ -83,10 +84,7 @@
 <body>
 <div class="container">
   <h1>คุณรู้ทันสโตรกหรือยัง?</h1>
-
-  <div id="history-card">
-    <div id="history-text">กำลังโหลดข้อมูล...</div>
-  </div>
+  <div id="history-card"><div id="history-text">กำลังโหลดข้อมูล...</div></div>
 
   <div class="grid">
     <div id="cardGeneralQuiz" class="card"><div class="emoji">❓</div><div class="title">ทดสอบความรู้สโตรก</div></div>
@@ -100,7 +98,7 @@
     <div id="questionText" class="question"></div>
     <div id="choicesContainer" class="choices"></div>
     <button id="submitBtn">ส่งคำตอบ</button>
-    <div class="link-note">ถ้าไม่แน่ใจคำตอบ <span id="openLearn">คลิกอ่านที่รูปหนังสือด้านบนได้เลย</span></div>
+    <div class="link-note"><span id="openLearn">ถ้าไม่แน่ใจคำตอบ คลิกอ่านที่นี่</span></div>
   </div>
 
   <div id="result-card" class="card">
@@ -111,9 +109,8 @@
 </div>
 
 <div id="answerModal" class="modal"><div class="modal-content"><div id="modalEmoji" class="modal-emoji"></div><div id="modalMessage" class="modal-text"></div><button id="modalNextBtn">ข้อต่อไป</button></div></div>
-<div id="learn-card" class="modal"><div class="modal-content" style="max-height:80vh;overflow:auto;text-align:left"><h2>ความรู้เรื่องสโตรก</h2><div class="accordion"><div class="accordion-item"><div class="accordion-header">1. รู้จัก “สโตรก”<span class="icon">＋</span></div><div class="accordion-body"><p>โรคหลอดเลือดสมอง คือภาวะที่สมองขาดเลือดไปเลี้ยง เกิดจากหลอดเลือดตีบ/อุดตัน หรือแตก ทำให้เซลล์สมองถูกทำลาย อาจเกิดอัมพฤกษ์ อัมพาต หรือเสียชีวิตได้</p></div></div><div class="accordion-item"><div class="accordion-header">2. ปัจจัยเสี่ยง<span class="icon">＋</span></div><div class="accordion-body"><p><strong>ปรับเปลี่ยนได้:</strong> ความดันสูง, เบาหวาน, ไขมันสูง, สูบบุหรี่, โรคอ้วน, ขาดการออกกำลังกาย</p></div></div><div class="accordion-item"><div class="accordion-header">3. สัญญาณเตือน BEFAST<span class="icon">＋</span></div><div class="accordion-body"><ul style="padding-left:1em"><li><strong>B</strong> (Balance): เดินเซ</li><li><strong>E</strong> (Eyes): มองไม่เห็น</li><li><strong>F</strong> (Face): หน้าเบี้ยว</li><li><strong>A</strong> (Arm): แขนขาอ่อนแรง</li><li><strong>S</strong> (Speech): พูดไม่ชัด</li><li><strong>T</strong> (Time): รีบโทร 1669 ทันที</li></ul></div></div></div><button class="close-btn">ปิด</button></div></div>
-<div id="asm-guide" class="modal"><div class="modal-content" style="max-height:80vh;overflow:auto;text-align:left"><h2>แนวปฏิบัติ อสม.สโตรก</h2><div class="accordion"><div class="accordion-item"><div class="accordion-header">1. การคัดกรองกลุ่มเสี่ยง<span class="icon">＋</span></div><div class="accordion-body"><p>อสม. ควรคัดกรองประชาชนในพื้นที่ โดยเฉพาะผู้สูงอายุและผู้มีโรคประจำตัว (ความดัน, เบาหวาน)</p></div></div><div class="accordion-item"><div class="accordion-header">2. การให้ความรู้<span class="icon">＋</span></div><div class="accordion-body"><p>สื่อสารความรู้เรื่องโรค ปัจจัยเสี่ยง และสัญญาณเตือน BEFAST เพื่อให้คนในชุมชนตระหนักและไปโรงพยาบาลได้ทันเวลา</p></div></div><div class="accordion-item"><div class="accordion-header">3. เมื่อพบผู้ป่วยต้องสงสัย<span class="icon">＋</span></div><div class="accordion-body"><p>หากพบผู้มีอาการตามหลัก BEFAST ให้รีบโทรแจ้ง 1669 ทันที จัดท่าผู้ป่วยให้นอนราบ ไม่ให้ยาหรืออาหารทางปาก และรอความช่วยเหลือ</p></div></div></div><button class="close-btn">ปิด</button></div></div>
-
+<div id="learn-card" class="modal"><div class="modal-content" style="max-height:80vh;overflow:auto;text-align:left"><h2>5 บทเรียนต้องรู้! สู้สโตรก</h2><div class="accordion"><div class="accordion-item"><div class="accordion-header">บทที่ 1: สโตรกคืออะไร? ภัยร้ายใกล้ตัว<span class="icon">＋</span></div><div class="accordion-body"><p><strong>สโตรก (Stroke)</strong> หรือ <strong>โรคหลอดเลือดสมอง</strong> คือภาวะที่สมอง "ขาดเลือด" ไปหล่อเลี้ยงอย่างกะทันหัน ทำให้เซลล์สมองตายอย่างรวดเร็ว ส่งผลให้เกิดภาวะอัมพฤกษ์ อัมพาตถาวร หรืออาจรุนแรงถึงขั้นเสียชีวิตได้</p></div></div><div class="accordion-item"><div class="accordion-header">บทที่ 2: ใครบ้างที่เสี่ยง? รู้ทันปัจจัย<span class="icon">＋</span></div><div class="accordion-body"><p><strong>ปัจจัยเสี่ยงที่ "ปรับเปลี่ยนได้":</strong></p><ul style="padding-left:1em"><li><strong>การสูบบุหรี่:</strong> เป็นตัวการสำคัญที่ทำให้หลอดเลือดเสียหาย</li><li><strong>โรคประจำตัว:</strong> ทั้งความดันโลหิตสูง, เบาหวาน, และไขมันในเลือดสูง</li></ul></div></div><div class="accordion-item"><div class="accordion-header">บทที่ 3: สังเกตอาการ "เฉียบพลัน" ด้วย BEFAST<span class="icon">＋</span></div><div class="accordion-body"><p>หัวใจสำคัญคืออาการต้องเกิดขึ้น <strong>"ทันทีทันใด"</strong> ไม่ใช่อาการที่เป็นมานาน (เช่น ตามัวมาเป็นปีไม่ใช่สโตรก) ลองทดสอบอาการง่ายๆ ดังนี้:</p><ul style="padding-left:1em"><li><strong>B (Balance) - ทรงตัวลำบาก</strong></li><li><strong>E (Eyes) - มองเห็นผิดปกติ</strong></li><li><strong>F (Face) - ใบหน้าเบี้ยว</strong></li><li><strong>A (Arm) - แขนขาอ่อนแรง</strong></li><li><strong>S (Speech) - พูดลำบาก</strong></li></ul></div></div><div class="accordion-item"><div class="accordion-header">บทที่ 4: เวลาคือชีวิต! 4.5 ชั่วโมงทอง<span class="icon">＋</span></div><div class="accordion-body"><p><strong>"4.5 ชั่วโมง"</strong> คือ "เวลาทอง" สำหรับการให้ยาละลายลิ่มเลือด หากช้ากว่านี้ เนื้อสมองจะถูกทำลายถาวร สิ่งที่ควรทำ "ทันที" คือโทร <strong>1669</strong> และห้ามทำสิ่งอื่น เช่น นวด หรือให้ยาเอง</p></div></div><div class="accordion-item"><div class="accordion-header">บทที่ 5: วิธีใช้ไลน์ "สวีรู้ทันสโตรก"<span class="icon">＋</span></div><div class="accordion-body"><p>ไลน์นี้เป็นผู้ช่วยส่วนตัวในการดูแลคุณและคนรอบข้างให้ห่างไกลสโตรก</p><ol style="padding-left:1em"><li><strong>เพิ่มเพื่อน:</strong> เริ่มต้นง่ายๆ ด้วยการแอดไลน์</li><li><strong>ประเมินความเสี่ยง:</strong> ไปที่เมนู "ข้อมูลส่วนตัว" เพื่อทำแบบประเมินและ "ปักหมุดบ้าน"</li><li><strong>เช็คอาการประจำวัน:</strong> ใช้เมนู "ประเมินอาการ" เพื่อตรวจสอบร่างกาย</li><li><strong>โทรฉุกเฉิน:</strong> กดปุ่ม "โทรโรงพยาบาล" จากในไลน์ได้ทันที</li><li><strong>ส่งต่อความห่วงใย:</strong> ใช้สติกเกอร์ให้ความรู้ ส่งให้คนในครอบครัว</li></ol></div></div></div><button class="close-btn">ปิด</button></div></div>
+<div id="asm-guide" class="modal"><div class="modal-content" style="max-height:80vh;overflow:auto;text-align:left"><h2>5 ภารกิจ อสม. พิชิตสโตรก</h2><div class="accordion"><div class="accordion-item"><div class="accordion-header">บทที่ 1: รู้ลึกเรื่องสโตรก<span class="icon">＋</span></div><div class="accordion-body"><p><strong>โรคหลอดเลือดสมอง (Stroke)</strong> คือภาวะฉุกเฉินที่สมองขาดเลือด ย้ำเตือนชุมชนถึงความสำคัญของเวลา <strong>4.5 ชั่วโมงครึ่ง</strong> เพื่อโอกาสรอดสูงสุด</p></div></div><div class="accordion-item"><div class="accordion-header">บทที่ 2: คัดกรองแม่นยำ<span class="icon">＋</span></div><div class="accordion-body"><p><strong>การวัดความดัน:</strong> ให้ผู้ป่วยนั่งพัก 5 นาที, วัด 2 ครั้งหาค่าเฉลี่ย ค่าเสี่ยงคือ ≥ 140/90 mmHg</p><p><strong>การวัดรอบเอว:</strong> วัดระดับสะดือ เกณฑ์อ้วนลงพุงคือ ชาย > 90 ซม., หญิง > 80 ซม.</p><p><strong>ตารางสี:</strong> ใช้ประเมินความเสี่ยง 10 ปี โดยใช้เพศ, อายุ, ความดัน, การสูบบุหรี่, เบาหวาน, และผลเลือด (หรือ BMI แทน)</p></div></div><div class="accordion-item"><div class="accordion-header">บทที่ 3: ให้คำแนะนำด้วย 3อ. 2ส.<span class="icon">＋</span></div><div class="accordion-body"><p>ยึดหลัก <strong>3อ. (อาหาร, ออกกำลังกาย, อารมณ์)</strong> และ <strong>2ส. (ไม่สูบบุหรี่, ไม่ดื่มสุรา)</strong> ในการให้คำแนะนำ</p><p><strong>สีเหลือง (เสี่ยงปานกลาง):</strong> ติดตามทุก 3-6 เดือน เน้นปรับพฤติกรรม</p><p><strong>สีแดง (เสี่ยงสูง):</strong> แนะนำให้พบแพทย์ด่วน</p></div></div><div class="accordion-item"><div class="accordion-header">บทที่ 4: การจัดการเมื่อพบผู้ป่วย<span class="icon">＋</span></div><div class="accordion-body"><p>เมื่อพบผู้ต้องสงสัย ให้ตั้งสติ, ประเมินด้วย BEFAST, โทร 1669, บันทึกเวลาที่เริ่มมีอาการ, และจัดท่าผู้ป่วยให้นอนอย่างปลอดภัย</p></div></div><div class="accordion-item"><div class="accordion-header">บทที่ 5: ใช้แอปฯ ช่วยทำงาน<span class="icon">＋</span></div><div class="accordion-body"><p>ใช้แอปพลิเคชันเพื่อ "สมัครเป็น อสม.สโตรก", "ดูรายชื่อลูกบ้านในเขต", และใช้ข้อมูลเพื่อวางแผน "นัดหมายเยี่ยมบ้าน" และให้ความรู้</p></div></div></div><button class="close-btn">ปิด</button></div></div>
 
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script>
@@ -142,14 +139,18 @@ window.handleUserHistory = (data) => {
   const txt = document.getElementById('history-text');
   _name = data.name || userProfile.displayName;
   let msg = '';
-  if (data.lastScore === null) {
-    msg = `สวัสดี, <strong>${_name}</strong>!<br>มาทดสอบความรู้กัน คลิกที่ 'ทดสอบความรู้สโตรก' แล้วทำข้อสอบ ถ้าสงสัยคลิกอ่านความรู้ที่รูปหนังสือได้ตลอดเวลาเลยครับ`;
-  } else {
+
+  // ✅ FIX:เงื่อนไขสำหรับผู้ใช้ใหม่ที่ยังไม่มีใน DB
+  if (!data.name && data.lastScore === null) {
+    msg = `เพื่อประโยชน์สูงสุดในการใช้แอปนี้ โปรด<a href="https://liff.line.me/2005789397-RLAGXrBJ" class="register-btn">ลงทะเบียนที่นี่</a>`;
+  } else if (data.lastScore !== null) {
     if (data.lastLevel === 'asm') {
       msg = `คุณ <strong>${_name}</strong><br>เคยทำข้อสอบ อสม.สโตรก ได้ <strong>${data.lastScore}</strong> คะแนน<br>ถ้าอยากแก้มือ คลิก 'ทดสอบความรู้ อสม.' อีกครั้งได้เลย`;
     } else {
       msg = `คุณ <strong>${_name}</strong><br>เคยทำข้อสอบสโตรก ได้ <strong>${data.lastScore}</strong> คะแนน<br>ถ้าอยากแก้มือ คลิก 'ทดสอบความรู้สโตรก' ได้เลย`;
     }
+  } else {
+    msg = `สวัสดี, <strong>${_name}</strong>!<br>มาทดสอบความรู้กัน คลิกที่ 'ทดสอบความรู้สโตรก' ได้เลย`;
   }
   txt.innerHTML = msg;
 };
@@ -199,6 +200,12 @@ function showQuestion() {
 
   document.getElementById('submitBtn').style.display = 'none';
   document.getElementById('submitBtn').onclick = () => checkAnswer(q);
+
+  // ✅ FIX: เปลี่ยน onclick ของ link ให้เปิด modal ตามประเภทข้อสอบ
+  document.getElementById('openLearn').onclick = () => {
+    const modalId = currentQuizLevel === 'asm' ? 'asm-guide' : 'learn-card';
+    document.getElementById(modalId).classList.add('show');
+  };
 }
 
 function checkAnswer(question) {
@@ -266,19 +273,21 @@ window.handleShareRecord = () => {
     contents: {
       type: 'bubble',
       size: 'kilo',
+      // ✅ FIX: เปลี่ยนสีพื้นหลังส่วน Header
       header: {
         type: 'box',
         layout: 'vertical',
-        backgroundColor: '#fffde7', // สีเหลืองอ่อน
+        backgroundColor: '#FFF3E0', // สีเหลืองส้ม
         paddingAll: '12px',
         contents: [
           { type: 'text', text: `${name} รู้ทันสโตรก`, align: 'center', weight: 'bold', size: 'lg' }
         ]
       },
+      // ✅ FIX: เปลี่ยนสีพื้นหลังส่วน Body
       body: {
         type: 'box',
         layout: 'vertical',
-        backgroundColor: '#fffde7', // สีเหลืองอ่อน
+        backgroundColor: '#FFF3E0', // สีเหลืองส้ม
         spacing: 'md',
         paddingAll: '12px',
         alignItems: 'center',
@@ -295,86 +304,56 @@ window.handleShareRecord = () => {
             size: 'xs', color: '#666666', margin: 'lg', wrap: true, align: 'center' }
         ]
       },
-footer: {
-  type: 'box',
-  layout: 'vertical',
-  backgroundColor: '#fffde7',
-  paddingAll: 'md',
-  spacing: 'sm',
-  contents: [
-    {
-      type: 'box',
-      layout: 'horizontal',
-      spacing: 'sm',
-      contents: [
-        {
-          type: 'box',
-          layout: 'vertical',
-          flex: 1,
-          backgroundColor: '#1E88E5',
-          cornerRadius: 'md',
-          paddingAll: 'sm',
-          action: { type: 'uri', label: 'ทำข้อสอบ', uri: 'https://liff.line.me/2005789397-ROQvjpYk' },
-          justifyContent: 'center',
-          contents: [
-            { type: 'text', text: 'ทำข้อสอบ', color: '#FFFFFF', align: 'center', weight: 'bold', size: 'sm' }
-          ]
-        },
-        {
-          type: 'box',
-          layout: 'vertical',
-          flex: 1,
-          backgroundColor: '#ff9800',
-          cornerRadius: 'md',
-          paddingAll: 'sm',
-          action: { type: 'uri', label: 'เช็คอาการ', uri: 'https://liff.line.me/2005789397-WRm1lYd9' },
-          justifyContent: 'center',
-          contents: [
-            { type: 'text', text: 'เช็คอาการ', color: '#FFFFFF', align: 'center', weight: 'bold', size: 'sm' }
-          ]
-        }
-      ]
-    },
-    {
-      type: 'box',
-      layout: 'horizontal',
-      spacing: 'sm',
-      contents: [
-        {
-          type: 'box',
-          layout: 'vertical',
-          flex: 1,
-          backgroundColor: '#FFFFFF',
-          cornerRadius: 'md',
-          paddingAll: 'sm',
-          borderColor: '#CCCCCC',
-          borderWidth: '1px',
-          action: { type: 'uri', label: 'ประเมินความเสี่ยง', uri: 'https://liff.line.me/2005789397-nebQ8oJy' },
-          justifyContent: 'center',
-          contents: [
-            { type: 'text', text: 'ประเมินความเสี่ยง', color: '#111111', align: 'center', size: 'sm' }
-          ]
-        },
-        {
-          type: 'box',
-          layout: 'vertical',
-          flex: 1,
-          backgroundColor: '#FFFFFF',
-          cornerRadius: 'md',
-          paddingAll: 'sm',
-          borderColor: '#CCCCCC',
-          borderWidth: '1px',
-          action: { type: 'uri', label: 'ลงทะเบียน', uri: 'https://liff.line.me/2005789397-RLAGXrBJ' },
-          justifyContent: 'center',
-          contents: [
-            { type: 'text', text: 'ลงทะเบียน', color: '#111111', align: 'center', size: 'sm' }
-          ]
-        }
-      ]
-    }
-  ]
-}
-
+      // ✅ FIX: เปลี่ยนสีพื้นหลังและสไตล์ปุ่มใน Footer
+      footer: {
+        type: 'box',
+        layout: 'vertical',
+        backgroundColor: '#FFF3E0', // สีเหลืองส้ม
+        paddingAll: 'md',
+        spacing: 'sm',
+        contents: [
+          {
+            type: 'box',
+            layout: 'horizontal',
+            spacing: 'sm',
+            contents: [
+              {
+                type: 'box',
+                layout: 'vertical',
+                flex: 1,
+                backgroundColor: '#F57C00', // สีส้มเข้ม
+                cornerRadius: 'md',
+                paddingAll: 'sm',
+                action: { type: 'uri', label: 'ทำข้อสอบ', uri: 'https://liff.line.me/2005789397-ROQvjpYk' },
+                justifyContent: 'center',
+                contents: [ { type: 'text', text: 'ทำข้อสอบ', color: '#FFFFFF', align: 'center', weight: 'bold', size: 'sm' } ]
+              },
+              {
+                type: 'box',
+                layout: 'vertical',
+                flex: 1,
+                backgroundColor: '#FFFFFF', // สีขาว
+                cornerRadius: 'md',
+                paddingAll: 'sm',
+                borderColor: '#CCCCCC',     // มีขอบ
+                borderWidth: '1px',
+                action: { type: 'uri', label: 'เช็คอาการ', uri: 'https://liff.line.me/2005789397-WRm1lYd9' },
+                justifyContent: 'center',
+                contents: [ { type: 'text', text: 'เช็คอาการ', color: '#111111', align: 'center', weight: 'bold', size: 'sm' } ]
+              }
+            ]
+          },
+          {
+            type: 'box',
+            layout: 'horizontal',
+            spacing: 'sm',
+            contents: [
+              { type: 'button', style: 'secondary', flex:2, action: { type: 'uri', label: 'ประเมินความเสี่ยง', uri: 'https://liff.line.me/2005789397-nebQ8oJy'} },
+              { type: 'button', style: 'secondary', flex:1, action: { type: 'uri', label: 'ลงทะเบียน', uri: 'https://liff.line.me/2005789397-RLAGXrBJ' }}
+            ]
+          }
+        ]
+      }
     }
   };
 
@@ -382,7 +361,6 @@ footer: {
     liff.shareTargetPicker([flex]).catch(err => console.error('Share Error', err));
   }
 };
-
 
 // --- Main App Initialization ---
 document.addEventListener('DOMContentLoaded', async () => {
@@ -425,8 +403,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
   
-  // Link & Modal Close Buttons
-  document.getElementById('openLearn').onclick = () => document.getElementById('learn-card').classList.add('show');
+  // Modal Close Buttons
   document.querySelectorAll('.modal .close-btn').forEach(btn => {
     btn.onclick = () => btn.closest('.modal').classList.remove('show');
   });
