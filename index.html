@@ -250,13 +250,30 @@ const shuffle = a => {
   return a;
 };
 function loadUserHistory() {
-  if (!userProfile?.userId) return;
-  const script = document.createElement('script');
-  script.src = `${GAS_URL}?action=getUserHistory&userId=${encodeURIComponent(userProfile.userId)}&callback=handleUserHistory`;
-  document.head.appendChild(script);
+  if (!userProfile?.userId) return;
+  const script = document.createElement('script');
+  script.src = `${GAS_URL}?action=getUserHistory&userId=${encodeURIComponent(userProfile.userId)}&callback=handleUserHistory`;
+  
+  // เพิ่มตัวดักจับ Error กรณีโหลดสคริปต์ไม่สำเร็จ
+  script.onerror = function() {
+    console.error("Failed to load user history script.");
+    document.getElementById('history-text').innerHTML = 'เกิดข้อผิดพลาดในการเชื่อมต่อ<br>กรุณาลองรีเฟรชหน้าอีกครั้ง';
+  };
+
+  document.head.appendChild(script);
 }
 
 window.handleUserHistory = (data) => {
+  // ตรวจสอบก่อนว่า Server ส่ง Error กลับมาหรือไม่
+  if (data.error) {
+    console.error("Error from Google Apps Script:", data.error);
+    document.getElementById('history-text').innerHTML = `เกิดข้อผิดพลาดฝั่งเซิร์ฟเวอร์:<br><small>${data.error}</small>`;
+    // ซ่อนการ์ด อสม. ไว้ก่อนถ้ามีปัญหา
+    document.getElementById('cardAsmQuiz').style.display = 'none';
+    document.getElementById('cardAsmGuide').style.display = 'none';
+    return;
+  }
+  
   const txt = document.getElementById('history-text');
   _name = data.name || userProfile.displayName;
   let msg = '';
@@ -274,7 +291,6 @@ window.handleUserHistory = (data) => {
   }
   txt.innerHTML = msg;
 
-  // ⭐️ START: ส่วนที่เพิ่มเข้ามาเพื่อซ่อน/แสดงการ์ด
   const cardAsmQuiz = document.getElementById('cardAsmQuiz');
   const cardAsmGuide = document.getElementById('cardAsmGuide');
   if (data.isAsmUser) {
@@ -284,7 +300,6 @@ window.handleUserHistory = (data) => {
     cardAsmQuiz.style.display = 'none';
     cardAsmGuide.style.display = 'none';
   }
-  // ⭐️ END: ส่วนที่เพิ่มเข้ามา
 };
 function loadQuiz(level) {
   document.getElementById('loader-overlay').style.display = 'flex';
