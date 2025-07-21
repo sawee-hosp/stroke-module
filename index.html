@@ -257,8 +257,8 @@ function loadUserHistory() {
 }
 
 window.handleUserHistory = (data) => {
-  const txt = document.getElementById('history-text');
-  _name = data.name || userProfile.displayName;
+  const txt = document.getElementById('history-text');
+  _name = data.name || userProfile.displayName;
   let msg = '';
 
   if (!data.name && data.lastScore === null) {
@@ -273,6 +273,18 @@ window.handleUserHistory = (data) => {
     msg = `สวัสดี, <strong>${_name}</strong>!<br>มาทดสอบความรู้กัน คลิกที่ 'ทดสอบความรู้สโตรก' ได้เลย`;
   }
   txt.innerHTML = msg;
+
+  // ⭐️ START: ส่วนที่เพิ่มเข้ามาเพื่อซ่อน/แสดงการ์ด
+  const cardAsmQuiz = document.getElementById('cardAsmQuiz');
+  const cardAsmGuide = document.getElementById('cardAsmGuide');
+  if (data.isAsmUser) {
+    cardAsmQuiz.style.display = 'flex';
+    cardAsmGuide.style.display = 'flex';
+  } else {
+    cardAsmQuiz.style.display = 'none';
+    cardAsmGuide.style.display = 'none';
+  }
+  // ⭐️ END: ส่วนที่เพิ่มเข้ามา
 };
 function loadQuiz(level) {
   document.getElementById('loader-overlay').style.display = 'flex';
