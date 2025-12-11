@@ -1,575 +1,370 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>คุณรู้ทันสโตรกหรือยัง?</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet"/>
-<style>
-  :root { --primary-color: #1a237e; --secondary-color: #1e88e5; }
-  html { scroll-behavior: smooth; }
-  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-  body,button,label,input{font-family:'Noto Sans Thai',sans-serif!important}
-  body{background:#f0f2f5;display:flex;justify-content:center;padding:40px 0}
-  .container{width:100%;max-width:480px;padding:0 16px}
-  h1{text-align:center;font-size:28px;color:var(--primary-color);margin-bottom:16px}
-  #history-card{background:#fff;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.05); padding:20px;text-align:center;margin-bottom:24px;min-height:120px;display:flex; flex-direction: column; align-items:center;justify-content:center;font-size:18px;color:#333; line-height: 1.6;}
-  #history-card .register-btn { display: inline-block; margin-top: 10px; padding: 8px 16px; background-color: var(--secondary-color); color: white; text-decoration: none; border-radius: 5px; font-weight: bold; }
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
-  .card{background:#fff;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.05); padding:20px;text-align:center;cursor:pointer;min-height:140px;display:flex; flex-direction:column;justify-content:center;transition:transform .2s; border: 2px solid transparent;}
-  .card:hover{transform:translateY(-4px)}
-  .card.active{border:2px solid var(--secondary-color); background:#e8f0fe}
-  .emoji{font-size:36px;margin-bottom:8px}
-  .title{font-size:18px;font-weight:700;color:#333}
-  #quiz-card,#result-card {display:none}
-  #quiz-card{min-height:500px;padding-top:20px}
-  #progress{position:relative;height:8px;background:#e0e0e0;border-radius:4px;margin:0 0 16px}
-  #progress-bar{height:100%;width:0;background:var(--secondary-color);transition:width .3s}
-  #qindex{position:absolute;top:-4px;left:50%;transform:translateX(-50%);font-size:14px;font-weight:700;color:#333}
-  .question{font-size:24px;font-weight:700;color:var(--primary-color);margin:24px 0}
-  .choices label{display:block;font-size:18px;padding:12px;background:#f7f7f7; border-radius:6px;margin-bottom:12px;cursor:pointer;transition:background .2s;text-align:left}
-  .choices label:hover{background:#ececec}
-  .choices label.selected{background:#d1eaff;border:1px solid var(--secondary-color);}
-  .choices input{margin-right:12px;transform:scale(1.2)}
-  #submitBtn{display:none;width:100%;padding:12px;margin-top:16px; background:#5e35b1;color:#fff;border:none;border-radius:6px;font-size:18px;font-weight:700; cursor:pointer;transition:background .2s}
-  #submitBtn:hover{background:#512da8}
-  .link-note{font-size:16px; color:var(--secondary-color); font-weight: bold; margin-top:20px; text-align:center;}
-  .link-note span{cursor:pointer;text-decoration:underline;}
-  #result-card{padding-top:20px;text-align:center}
-  .result-emoji{font-size:64px;margin-bottom:16px}
-  .result-message{font-size:22px;line-height:1.6}
-  #shareBtn{display:none;width:100%;padding:12px;margin-top:24px; background:linear-gradient(45deg,#fb8c00,#ffb74d);color:#fff;border:none;border-radius:6px; font-size:18px;font-weight:700;cursor:pointer}
-  .modal{position:fixed;top:0;left:0;right:0;bottom:0; background:rgba(0,0,0,0.5);display:none;justify-content:center; align-items:center;z-index:1000}
-  .modal.show {display: flex;}
-  .modal-content{background:#fff;padding:24px;border-radius:8px; max-width: calc(100% - 32px); width:400px; text-align:center; box-shadow:0 4px 20px rgba(0,0,0,0.15);}
-  .modal-emoji{font-size:64px;margin-bottom:16px}
-  .modal-text{font-size:24px;margin-bottom:24px}
-  .modal-content button{width:100%; padding:10px 24px;font-size:18px;font-weight:700; color:#fff;background:var(--secondary-color);border:none;border-radius:6px;cursor:pointer;transition:.2s}
-  .modal-content button.close-btn {background-color: #f44336; margin-top: 10px;}
-  #loader-overlay {position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center; z-index: 2000;}
-  .spinner {border: 8px solid #f3f3f3; border-top: 8px solid #3498db; border-radius: 50%; width: 60px; height: 60px; animation: spin 1s linear infinite;}
-  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-  .accordion{margin:16px 0}
-  .accordion-item:not(:last-child){border-bottom:1px solid #ddd}
-  .accordion-header{padding:12px;font-size:18px;font-weight:700;cursor:pointer; background:#e3f2fd;display:flex;justify-content:space-between;align-items:center}
-  .accordion-header.active{background:#bbdefb}
-  .accordion-header .icon{font-size:20px; transition: transform 0.2s;}
-  .accordion-header.active .icon{transform: rotate(45deg);}
-  .accordion-body{padding:12px;font-size:16px;line-height:1.6;display:none; border-top: 1px solid #ddd;}
-</style>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>ทดสอบความรู้เรื่อง stroke</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        /* --- Global & Typography (Elderly Friendly) --- */
+        :root { --primary-color: #1a237e; --secondary-color: #1e88e5; --bg-color: #f5f5f5; }
+        body { 
+            font-family: 'Noto Sans Thai', sans-serif !important; 
+            background: var(--bg-color); 
+            margin: 0; padding: 20px; 
+            font-size: 22px; /* Base font ใหญ่ขึ้น */
+            line-height: 1.6;
+            color: #333;
+        }
+        .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        h1 { font-size: 36px; text-align: center; color: var(--primary-color); margin-bottom: 30px; line-height: 1.3; }
+        h2 { font-size: 28px; color: var(--primary-color); margin-bottom: 20px; }
+
+        /* --- Loading Animation (Spinning Brain) --- */
+        #loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; color: white; text-align: center; }
+        #loading-text { font-size: 2rem; font-weight: bold; margin-bottom: 20px; }
+        #loading-icon { font-size: 6rem; color: #ffc107; margin-bottom: 30px; animation: spin 2s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- Big Buttons & Cards --- */
+        .menu-grid { display: flex; flex-direction: column; gap: 20px; margin-top: 20px; }
+        .big-btn {
+            background: #fff; border: 3px solid var(--secondary-color);
+            border-radius: 20px; padding: 30px 20px;
+            font-size: 28px; font-weight: bold; color: var(--secondary-color);
+            cursor: pointer; text-align: center; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .big-btn:active { transform: scale(0.98); }
+        .big-btn.primary { background: var(--secondary-color); color: #fff; border: none; }
+        .big-btn i { font-size: 40px; }
+
+        /* --- Quiz Interface --- */
+        #quiz-card, #result-card, #video-card { display: none; }
+        .question { font-size: 30px; font-weight: bold; color: var(--primary-color); margin: 30px 0; }
+        
+        .choice-label {
+            display: block; font-size: 26px; padding: 20px; 
+            background: #f8f9fa; border: 2px solid #ddd; border-radius: 15px; 
+            margin-bottom: 15px; cursor: pointer; transition: 0.2s;
+        }
+        .choice-label input { transform: scale(2.5); margin-right: 20px; }
+        .choice-label.selected { background: #e3f2fd; border-color: var(--secondary-color); }
+        
+        #submitBtn {
+            width: 100%; padding: 25px; font-size: 28px; 
+            background: #28a745; color: white; border: none; border-radius: 15px; 
+            margin-top: 20px; display: none; font-weight: bold;
+        }
+
+        /* --- Result --- */
+        .result-emoji { font-size: 80px; margin-bottom: 20px; }
+        .result-score { font-size: 40px; font-weight: bold; color: var(--primary-color); }
+        
+        /* --- Modal --- */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 1000; }
+        .modal.show { display: flex; }
+        .modal-content { background: #fff; padding: 30px; border-radius: 20px; width: 90%; max-width: 500px; text-align: center; }
+        .modal-btn { width: 100%; padding: 20px; font-size: 24px; border-radius: 15px; border: none; margin-top: 15px; cursor: pointer; font-weight: bold; }
+        .modal-btn.next { background: var(--secondary-color); color: white; }
+        .modal-btn.close { background: #dc3545; color: white; }
+
+        /* --- Link Buttons in Video Section --- */
+        .video-link-btn {
+            display: block; width: 100%; padding: 25px; margin-bottom: 20px;
+            background: #fff3e0; border: 2px solid #ff9800; border-radius: 15px;
+            text-decoration: none; color: #e65100; font-size: 24px; font-weight: bold;
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
-<div id="loader-overlay" style="display: none;"><div class="spinner"></div></div>
-<div class="container">
-  <h1>คุณรู้ทันสโตรกหรือยัง?</h1>
-  <div id="history-card"><div id="history-text">กำลังโหลดข้อมูล...</div></div>
 
-  <div class="grid">
-    <div id="cardGeneralQuiz" class="card"><div class="emoji">❓</div><div class="title">ทดสอบความรู้สโตรก</div></div>
-    <div id="cardGeneralLearn" class="card"><div class="emoji">📖</div><div class="title">อ่านความรู้เรื่องสโตรก</div></div>
-    <div id="cardAsmQuiz" class="card"><div class="emoji">🩺</div><div class="title">ทดสอบความรู้ อสม.</div></div>
-    <div id="cardAsmGuide" class="card"><div class="emoji">📋</div><div class="title">แนวปฏิบัติ อสม.</div></div>
-  </div>
-
-  <div id="quiz-card" class="card">
-    <div id="progress"><span id="qindex">1/10</span><div id="progress-bar"></div></div>
-    <div id="questionText" class="question"></div>
-    <div id="choicesContainer" class="choices"></div>
-    <button id="submitBtn">ส่งคำตอบ</button>
-    <div class="link-note"><span id="openLearn">ถ้าไม่แน่ใจคำตอบ คลิกอ่านที่นี่</span></div>
-  </div>
-
-  <div id="result-card" class="card">
-    <div id="resultEmoji" class="result-emoji"></div>
-    <div id="resultMessage" class="result-message"></div>
-    <button id="shareBtn">บันทึกและแชร์คะแนน</button>
-  </div>
-</div>
-
-<div id="answerModal" class="modal"><div class="modal-content"><div id="modalEmoji" class="modal-emoji"></div><div id="modalMessage" class="modal-text"></div><button id="modalNextBtn">ข้อต่อไป</button></div></div>
-<div id="learn-card" class="modal">
-  <div class="modal-content" style="max-height:80vh;overflow:auto;text-align:left">
-    <h2>5 บทเรียนต้องรู้! สู้สโตรก</h2>
-    <div class="accordion">
-      <div class="accordion-item">
-        <div class="accordion-header">บทที่ 1: สโตรกคืออะไร? ภัยเงียบที่ต้องระวัง<span class="icon">＋</span></div>
-        <div class="accordion-body">
-          <p><strong>โรคหลอดเลือดสมอง (Stroke หรือ สโตรก)</strong> คือภาวะที่สมองขาดเลือดไปเลี้ยงอย่างเฉียบพลัน ซึ่งอาจเกิดจาก <strong>หลอดเลือดสมองตีบหรืออุดตัน</strong> (Ischemic Stroke) หรือ <strong>หลอดเลือดสมองแตก</strong> (Hemorrhagic Stroke) เมื่อเซลล์สมองไม่ได้รับออกซิเจนก็จะเริ่มตายลงอย่างรวดเร็ว และนำไปสู่ความพิการถาวรหรือเสียชีวิตได้</p>
-          <p>สโตรกจึงเปรียบเสมือน "ภาวะหัวใจวายของสมอง" ที่ทุกวินาทีมีความหมายต่อการรักษาและการฟื้นตัวครับ</p>
-        </div>
-      </div>
-      <div class="accordion-item">
-        <div class="accordion-header">บทที่ 2: ปัจจัยเสี่ยงที่ต้องใส่ใจ<span class="icon">＋</span></div>
-        <div class="accordion-body">
-          <p>ปัจจัยเสี่ยงแบ่งเป็น 2 กลุ่มใหญ่ๆ คือ:</p>
-          <p><strong>1. ปัจจัยที่ปรับเปลี่ยนได้ (เราควบคุมได้):</strong></p>
-          <ul style="padding-left:1em">
-            <li><strong>โรคประจำตัว:</strong> ความดันโลหิตสูง (ปัจจัยเสี่ยงที่สำคัญที่สุด), เบาหวาน, และไขมันในเลือดสูง</li>
-            <li><strong>พฤติกรรมการใช้ชีวิต:</strong> การสูบบุหรี่, ภาวะน้ำหนักเกินหรืออ้วนลงพุง, การรับประทานอาหารที่ไม่เหมาะสม (หวาน มัน เค็มจัด), และการดื่มแอลกอฮอล์มากเกินไป</li>
-          </ul>
-          <p><strong>2. ปัจจัยที่ปรับเปลี่ยนไม่ได้:</strong></p>
-          <ul style="padding-left:1em">
-            <li><strong>อายุที่เพิ่มขึ้น:</strong> ความเสี่ยงจะสูงขึ้นตามอายุ</li>
-            <li><strong>ประวัติครอบครัว:</strong> หากมีคนในครอบครัวสายตรงเคยเป็นโรคนี้</li>
-          </ul>
-          <p>การจัดการปัจจัยเสี่ยงที่เราควบคุมได้ คือเกราะป้องกันที่ดีที่สุดครับ</p>
-        </div>
-      </div>
-      <div class="accordion-item">
-        <div class="accordion-header">บทที่ 3: วิธีสังเกตและทดสอบอาการ (B.E.F.A.S.T.)<span class="icon">＋</span></div>
-        <div class="accordion-body">
-          <p>อาการของสโตรกจะเกิดขึ้น <strong>"อย่างเฉียบพลัน"</strong> ให้จำและทดสอบตามหลัก **B.E.F.A.S.T.** ดังนี้:</p>
-          <ul style="padding-left:1em">
-            <li><strong>B – Balance (การทรงตัว):</strong> สังเกตว่ามีอาการเวียนหัว เดินเซ หรือสูญเสียการทรงตัวกะทันหันหรือไม่</li>
-            <li><strong>E – Eyes (การมองเห็น):</strong> สังเกตว่าตามัว มองเห็นภาพซ้อน หรือมองไม่เห็นไปครึ่งซีกอย่างทันทีทันใดหรือไม่</li>
-            <li><strong>F – Face (ใบหน้า):</strong> <strong>วิธีทดสอบ:</strong> ให้ผู้ป่วยลอง "ยิ้มหรือยิงฟัน" แล้วสังเกตว่ามีอาการปากเบี้ยว มุมปากตกไปข้างใดข้างหนึ่งหรือไม่</li>
-            <li><strong>A – Arms (แขน):</strong> <strong>วิธีทดสอบ:</strong> ให้ผู้ป่วย "ยกแขนสองข้างขึ้นมาด้านหน้า" ค้างไว้ 10 วินาที สังเกตว่าแขนข้างใดข้างหนึ่งตกลงมาหรือไม่</li>
-            <li><strong>S – Speech (การพูด):</strong> <strong>วิธีทดสอบ:</strong> ให้ผู้ป่วยลอง "พูดประโยคง่ายๆ" เช่น "ฟ้าฝนตกที่หน้าต่าง" สังเกตว่าพูดไม่ชัด พูดติดขัด หรือพูดไม่ได้เลยหรือไม่</li>
-          </ul>
-          <p>หากพบอาการผิดปกติแม้เพียงข้อเดียว ต้องรีบทำตามขั้นตอนต่อไปทันที</p>
-        </div>
-      </div>
-      <div class="accordion-item">
-        <div class="accordion-header">บทที่ 4: ความสำคัญของเวลาและการปฐมพยาบาล<span class="icon">＋</span></div>
-        <div class="accordion-body">
-          <p><strong>T – Time (เวลา):</strong> เวลาคือสมอง! ต้องรีบนำผู้ป่วยส่งโรงพยาบาลให้เร็วที่สุดภายใน <strong>4.5 ชั่วโมง</strong> เพื่อให้ได้รับการรักษาด้วยยาละลายลิ่มเลือด ซึ่งจะช่วยลดความพิการและเพิ่มโอกาสฟื้นตัว</p>
-          <p><strong>วิธีปฐมพยาบาลเบื้องต้น (ละเอียด):</strong></p>
-          <ol style="padding-left:1em">
-            <li><strong>โทร 1669 ทันที:</strong> แจ้งเจ้าหน้าที่ว่า "มีผู้ป่วยสงสัยสโตรก" พร้อมบอกอาการที่พบและสถานที่ให้ชัดเจน</li>
-            <li><strong>ดูเวลา:</strong> พยายามจดจำเวลาที่ผู้ป่วยเริ่มมีอาการครั้งแรกให้แม่นยำที่สุด เพื่อเป็นข้อมูลสำคัญสำหรับแพทย์</li>
-            <li><strong>จัดท่าผู้ป่วย:</strong> หากผู้ป่วยยังรู้สึกตัวดี ให้จัดท่านอนศีรษะสูงเล็กน้อย (ประมาณ 30 องศา) คลายเสื้อผ้าให้หลวมเพื่อให้หายใจสะดวก</li>
-            <li><strong>ห้ามให้ยาและอาหาร:</strong> ห้ามให้ยาใดๆ (รวมถึงยาแอสไพริน) หรือน้ำและอาหารทางปากเด็ดขาด เพราะผู้ป่วยอาจมีปัญหาการกลืนและเสี่ยงต่อการสำลัก</li>
-            <li><strong>หากผู้ป่วยหมดสติ:</strong> ตรวจสอบการหายใจ หากไม่หายใจหรือหายใจเฮือก ให้เริ่มทำการกดหน้าอก (CPR) ทันที โดยวางสันมือไว้กึ่งกลางหน้าอกแล้วกดด้วยอัตราเร็ว 100-120 ครั้งต่อนาที จนกว่าทีมแพทย์จะมาถึง</li>
-          </ol>
-        </div>
-      </div>
-      <div class="accordion-item">
-        <div class="accordion-header">บทที่ 5: วิธีใช้ไลน์ "สวีรู้ทันสโตรก"<span class="icon">＋</span></div>
-        <div class="accordion-body">
-          <p>ไลน์ "สวีรู้ทันสโตรก" เป็นผู้ช่วยส่วนตัวในการดูแลสุขภาพให้ห่างไกลสโตรก:</p>
-          <ol style="padding-left:1em">
-            <li><strong>เพิ่มเพื่อนกับไลน์:</strong> เพื่อเข้าถึงฟังก์ชันต่างๆ ของแอปพลิเคชัน</li>
-            <li><strong>ไปที่ข้อมูลส่วนตัว:</strong> เพื่อทำแบบประเมินความเสี่ยงและปักหมุดที่อยู่ของคุณ ซึ่งสำคัญมากในกรณีฉุกเฉิน</li>
-            <li><strong>ประเมินอาการประจำวัน:</strong> หมั่นตรวจสอบความผิดปกติของร่างกายอย่างสม่ำเสมอผ่านเมนูที่ออกแบบมาโดยเฉพาะ</li>
-            <li><strong>โทรหา รพ.สวี:</strong> หากพบอาการเสี่ยง สามารถกดปุ่มเพื่อโทรหาโรงพยาบาลได้ทันทีจากแอป</li>
-            <li><strong>ใส่ใจคนรอบตัว:</strong> ส่งสติกเกอร์ให้ความรู้ประจำวันแก่คนในครอบครัวและเพื่อนๆ เพื่อสร้างความตระหนักรู้และเฝ้าระวังไปด้วยกัน</li>
-          </ol>
-        </div>
-      </div>
+    <div id="loading">
+        <i id="loading-icon" class="bi bi-brain"></i>
+        <div id="loading-text">กำลังโหลดข้อมูล...</div>
     </div>
-    <button class="close-btn">ปิด</button>
-  </div>
-</div>
-<div id="asm-guide" class="modal">
-  <div class="modal-content" style="max-height:80vh;overflow:auto;text-align:left">
-    <h2>5 ภารกิจ อสม. พิชิตสโตรก</h2>
-    <div class="accordion">
-      <div class="accordion-item">
-        <div class="accordion-header">บทที่ 1: เข้าใจโรคและความรุนแรง<span class="icon">＋</span></div>
-        <div class="accordion-body">
-          <p>ในฐานะ อสม. เราคือหัวใจสำคัญของชุมชนในการต่อสู้กับ **โรคหลอดเลือดสมอง (อัมพฤกษ์ อัมพาต)** ซึ่งเป็นภาวะที่สมองขาดเลือดไปเลี้ยง ทำให้เซลล์สมองถูกทำลายอย่างรวดเร็ว</p>
-          <p><strong>ภารกิจสำคัญที่สุด:</strong> คือการสร้างความเข้าใจในชุมชนว่า "เวลาคือสมอง" ผู้ป่วยต้องได้รับการรักษาภายใน <strong>4.5 ชั่วโมงครึ่ง</strong> หลังเกิดอาการ จึงจะมีโอกาสรอดและฟื้นตัวสูงสุด อาการเตือนสำคัญที่ต้องสื่อสารคือ **F.A.S.T.** (Face, Arms, Speech, Time)</p>
+
+    <div class="container">
+        <div id="home-card">
+            <h1>ทดสอบความรู้<br>เรื่อง Stroke</h1>
+            
+            <div id="user-info" style="text-align:center; font-size: 24px; margin-bottom: 30px; color: #555;">
+                สวัสดีครับ...
+            </div>
+
+            <div class="menu-grid">
+                <div class="big-btn" onclick="showVideoLinks()">
+                    <i class="bi bi-youtube"></i>
+                    อ่านความรู้<br>เรื่องสโตรก
+                </div>
+
+                <div id="startQuizBtn" class="big-btn primary" onclick="startQuiz()">
+                    <i class="bi bi-pencil-square"></i>
+                    <span id="quizBtnText">ทดสอบ<br>ความรู้สโตรก</span>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px; font-size: 18px; color: #888;">
+                *ตัวหนังสือขนาดใหญ่เพื่อผู้สูงอายุ
+            </div>
         </div>
-      </div>
-      <div class="accordion-item">
-        <div class="accordion-header">บทที่ 2: เกณฑ์ประเมินความเสี่ยงอย่างมืออาชีพ<span class="icon">＋</span></div>
-        <div class="accordion-body">
-          <p>อสม. ต้องคัดกรองกลุ่มเสี่ยงอย่างแม่นยำ โดยใช้เกณฑ์ต่อไปนี้:</p>
-          <p><strong>1. การประเมินด้วยตารางสี (Thai CV Risk Score):</strong></p>
-          <ul style="padding-left:1em">
-            <li>เป็นการประเมินโอกาสเสี่ยงในระยะ <strong>10 ปีข้างหน้า</strong></li>
-            <li><strong>ข้อมูลที่ต้องใช้:</strong> เพศ, อายุ, การเป็นเบาหวาน, การสูบบุหรี่, และค่าความดันโลหิตตัวบน</li>
-            <li><strong>กรณีไม่ทราบผลคอเลสเตอรอล:</strong> ให้ใช้ "ขนาดรอบเอว" เทียบกับส่วนสูง (น้อยกว่า หรือ มากกว่า ส่วนสูง/2)</li>
-            <li><strong>💡แอป "สวีรู้ทันสโตรก":</strong> สามารถช่วยคำนวณความเสี่ยงนี้ได้อัตโนมัติ ทำให้ อสม. ไม่จำเป็นต้องเปิดดูตารางสีด้วยตนเอง สะดวกและรวดเร็วยิ่งขึ้น</li>
-          </ul>
-          <p><strong>2. เกณฑ์การวัดที่สำคัญ:</strong></p>
-          <ul style="padding-left:1em">
-            <li><strong>ความดันโลหิต (BP):</strong> ค่าที่ถือว่าเริ่มมีความเสี่ยงคือ <strong>≥ 140/90 มม.ปรอท</strong></li>
-            <li><strong>ภาวะอ้วนลงพุง (รอบเอว):</strong> ผู้ชาย <strong>> 90 ซม.</strong> และผู้หญิง <strong>> 80 ซม.</strong></li>
-            <li><strong>ดัชนีมวลกาย (BMI):</strong> ค่าที่เหมาะสมสำหรับคนไทยคือ <strong>18.5 - 22.9 กก./ตร.ม.</strong></li>
-          </ul>
+
+        <div id="video-card">
+            <h2>สื่อความรู้เรื่องสโตรก</h2>
+            <p>คลิกที่ปุ่มเพื่อรับชมวิดีโอหรืออ่านเอกสาร:</p>
+            
+            <a href="https://drive.google.com/file/d/1IyHiddZG8BLn_ztuoGNUoID4KqmrjQbG/view?usp=drive_link" target="_blank" class="video-link-btn">
+                🎵 เพลงสวีรู้ทันสโตรก
+            </a>
+            
+            <a href="https://drive.google.com/file/d/1T-_o8_2Zmq57epW9MsKi7hIWrLu7tErQ/view?usp=drive_link" target="_blank" class="video-link-btn">
+                🚑 วิธีปฏิบัติเพื่อพบคนเป็นสโตรก
+            </a>
+
+            <button class="modal-btn close" onclick="location.reload()">กลับหน้าหลัก</button>
         </div>
-      </div>
-      <div class="accordion-item">
-        <div class="accordion-header">บทที่ 3: การให้คำแนะนำตามระดับความเสี่ยง (3อ. 2ส.)<span class="icon">＋</span></div>
-        <div class="accordion-body">
-          <p>หัวใจของการให้คำแนะนำคือหลัก **3อ. 2ส.** ได้แก่ <strong>อาหาร, ออกกำลังกาย, อารมณ์, ไม่สูบบุหรี่ และลดสุรา</strong></p>
-          <p><strong>แนวทางการติดตาม:</strong></p>
-          <ul style="padding-left:1em">
-            <li><strong>กลุ่มเสี่ยงปานกลาง (สีเหลือง, <20%):</strong> ติดตามประเมินปัจจัยเสี่ยงทุก <strong>6 เดือน</strong> และประเมิน CVD Risk ซ้ำปีละ 1 ครั้ง เน้นแนะนำการปรับพฤติกรรม 3อ. 2ส. อย่างจริงจัง</li>
-            <li><strong>กลุ่มเสี่ยงสูง (สีส้ม, 20%-<30%):</strong> ติดตามทุก <strong>3 เดือน</strong> และแนะนำให้พบแพทย์หากปรับพฤติกรรมแล้วความเสี่ยงยังไม่ลดลง</li>
-            <li><strong>กลุ่มเสี่ยงสูงมาก (สีแดง, ≥30%):</strong> ต้องแนะนำให้ไป **พบแพทย์ทันที** และติดตามอย่างใกล้ชิดภายใน 1 เดือน</li>
-          </ul>
+
+        <div id="quiz-card">
+            <div style="font-size: 24px; font-weight: bold; color: #666; margin-bottom: 10px;">
+                <span id="testTypeLabel">แบบทดสอบ</span>
+                <span style="float:right;" id="qIndex">1/10</span>
+            </div>
+            <div id="questionText" class="question">คำถามจะปรากฏที่นี่...</div>
+            <div id="choicesContainer"></div>
+            <button id="submitBtn">ยืนยันคำตอบ</button>
         </div>
-      </div>
-      <div class="accordion-item">
-        <div class="accordion-header">บทที่ 4: การจัดการผู้ป่วยสโตรกอย่างเป็นระบบ<span class="icon">＋</span></div>
-        <div class="accordion-body">
-          <p>เมื่อพบผู้ป่วยที่สงสัยว่าเป็นสโตรก อสม. คือบุคคลสำคัญที่สุดในที่เกิดเหตุ ด้วยความรู้และความสงบ จะช่วยเพิ่มโอกาสรอดของผู้ป่วยได้อย่างมหาศาล</p>
-          <p><strong>วิธีปฐมพยาบาล (ละเอียด):</strong></p>
-          <ol style="padding-left:1em">
-            <li><strong>ควบคุมสถานการณ์:</strong> ตั้งสติ มองดูความปลอดภัยรอบตัว และเข้าหาผู้ป่วยอย่างนุ่มนวล</li>
-            <li><strong>ประเมินอาการฉับไว:</strong> ใช้หลัก F.A.S.T. หรือ B.E.F.A.S.T. ในการประเมินอาการอย่างรวดเร็ว</li>
-            <li><strong>โทรแจ้ง 1669:</strong> ต่อสายด่วนการแพทย์ฉุกเฉินทันที แจ้งข้อมูลว่า "สงสัยผู้ป่วยสโตรก" บอกอาการที่พบ สถานที่ และเบอร์โทรติดต่อกลับ</li>
-            <li><strong>สอบถามเวลา:</strong> ถามผู้ป่วยหรือญาติว่า "เริ่มมีอาการครั้งแรกตอนกี่โมง" และจดจำไว้ให้ดี</li>
-            <li><strong>จัดท่ารอความช่วยเหลือ:</strong> จัดผู้ป่วยในท่าที่สบายที่สุด หากยังรู้สึกตัวดีให้นอนราบศีรษะสูงเล็กน้อย หากอาเจียนให้ตะแคงหน้าไปด้านใดด้านหนึ่งป้องกันการสำลัก</li>
-            <li><strong>ห้ามให้ยาหรืออาหารเด็ดขาด:</strong> เพื่อป้องกันการสำลักซึ่งเป็นอันตรายอย่างยิ่ง</li>
-            <li><strong>เตรียมพร้อมส่งต่อ:</strong> รวบรวมข้อมูลส่วนตัวของผู้ป่วย เช่น โรคประจำตัว ยาที่ใช้ประจำ และเตรียมเส้นทางเพื่อรอรับทีมกู้ชีพ</li>
-          </ol>
+
+        <div id="result-card" style="text-align: center;">
+            <div id="resultEmoji" class="result-emoji">🏆</div>
+            <div style="font-size: 28px;">คะแนนของคุณ</div>
+            <div id="resultScore" class="result-score">0/10</div>
+            <p id="resultDesc" style="font-size: 24px; margin-top: 20px;"></p>
+            
+            <button class="modal-btn next" onclick="closeApp()">ปิดโปรแกรม</button>
         </div>
-      </div>
-      <div class="accordion-item">
-        <div class="accordion-header">บทที่ 5: วิธีใช้แอปฯ เพื่อการดูแลเชิงรุก<span class="icon">＋</span></div>
-        <div class="accordion-body">
-          <p>แอป "สวีรู้ทันสโตรก" ถูกออกแบบมาเพื่อเป็นเครื่องมือคู่ใจของ อสม.:</p>
-          <ol style="padding-left:1em">
-            <li><strong>ลงทะเบียนและสมัคร อสม.สโตรก:</strong> เริ่มต้นโดยการเพิ่มเพื่อนไลน์, ลงทะเบียนข้อมูลส่วนตัว จากนั้นเข้าเมนู "สมัคร อสม.สโตรก" เพื่อเลือกเขตบริการและทำแบบทดสอบเพื่อยืนยันความรู้</li>
-            <li><strong>ประเมินความเสี่ยงให้ลูกบ้าน:</strong> ท่านสามารถประเมินความเสี่ยงให้แก่ประชาชนในเขตของท่านได้โดยตรงผ่านแอป โดยไปที่เมนู **"ประเมินให้ใคร"** แล้วเลือก **"อสม.สโตรก ประเมินให้ผู้ป่วย"** จากนั้นกรอกข้อมูลของผู้ป่วยตามที่ท่านคัดกรองมา</li>
-            <li><strong>ดูข้อมูลในเขตรับผิดชอบ:</strong> เข้าถึงข้อมูลสรุปความเสี่ยงของประชาชนในเขตของท่านได้จากเมนู "อสม." เพื่อวางแผนการดูแล</li>
-            <li><strong>ติดตามกลุ่มเสี่ยงสูง:</strong> เมื่อพบผู้ป่วยที่มีความเสี่ยงสูง (สีแดง/ส้ม) ท่านสามารถนัดหมายเพื่อให้ความรู้และติดตามผลสุขภาพได้อย่างใกล้ชิดและเป็นระบบ</li>
-            <li><strong>ส่งต่อข้อมูลไปโรงพยาบาล:</strong> ในกรณีที่ต้องส่งต่อผู้ป่วย ท่านสามารถคลิกที่ **"แบบฟอร์มส่งต่อ"** ในแอป กรอกข้อมูลที่จำเป็นของผู้ป่วย แล้วกดส่งข้อมูลไปยังโรงพยาบาลได้โดยตรง</li>
-          </ol>
-        </div>
-      </div>
     </div>
-    <button class="close-btn">ปิด</button>
-  </div>
-</div>
-<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-<script>
-const GAS_URL='https://script.google.com/macros/s/AKfycbwt4O6aTK_NqGGdYaIF6gRbv5f37dgFeQYZ7ZLxZIRYGBEz54EnJx1hS36XPhET1AOgHg/exec';
-const LIFF_ID='2005789397-ROQvjpYk';
-let userProfile, currentQuizLevel = '', idx = 0, score = 0, wrongs = [];
-let cachedRank, cachedTotal, _name = '';
 
-const shuffle = a => {
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-};
-function loadUserHistory() {
-  if (!userProfile?.userId) return;
-  const script = document.createElement('script');
-  script.src = `${GAS_URL}?action=getUserHistory&userId=${encodeURIComponent(userProfile.userId)}&callback=handleUserHistory`;
-  
-  // เพิ่มตัวดักจับ Error กรณีโหลดสคริปต์ไม่สำเร็จ
-  script.onerror = function() {
-    console.error("Failed to load user history script.");
-    document.getElementById('history-text').innerHTML = 'เกิดข้อผิดพลาดในการเชื่อมต่อ<br>กรุณาลองรีเฟรชหน้าอีกครั้ง';
-  };
+    <div id="feedbackModal" class="modal">
+        <div class="modal-content">
+            <div id="fbEmoji" style="font-size: 60px;"></div>
+            <div id="fbTitle" style="font-size: 32px; font-weight: bold; margin: 10px 0;"></div>
+            <div id="fbMsg" style="font-size: 24px; text-align: left; margin-top: 15px;"></div>
+            <button id="nextQBtn" class="modal-btn next">ข้อต่อไป</button>
+        </div>
+    </div>
 
-  document.head.appendChild(script);
-}
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbwt4O6aTK_NqGGdYaIF6gRbv5f37dgFeQYZ7ZLxZIRYGBEz54EnJx1hS36XPhET1AOgHg/exec'; // **อย่าลืมเปลี่ยนเป็น URL ของคุณถ้า Deploy ใหม่**
+        const LIFF_ID = '2005789397-ROQvjpYk';
 
-window.handleUserHistory = (data) => {
-  // ตรวจสอบก่อนว่า Server ส่ง Error กลับมาหรือไม่
-  if (data.error) {
-    console.error("Error from Google Apps Script:", data.error);
-    document.getElementById('history-text').innerHTML = `เกิดข้อผิดพลาดฝั่งเซิร์ฟเวอร์:<br><small>${data.error}</small>`;
-    // ซ่อนการ์ด อสม. ไว้ก่อนถ้ามีปัญหา
-    document.getElementById('cardAsmQuiz').style.display = 'none';
-    document.getElementById('cardAsmGuide').style.display = 'none';
-    return;
-  }
-  
-  const txt = document.getElementById('history-text');
-  _name = data.name || userProfile.displayName;
-  let msg = '';
+        let userProfile = null;
+        let testType = 'pre'; // 'pre' or 'post'
+        let questions = [];
+        let currentIdx = 0;
+        let score = 0;
+        let wrongAnswers = [];
+        let userName = '';
 
-  if (!data.name && data.lastScore === null) {
-    msg = `เพื่อประโยชน์สูงสุดในการใช้แอปนี้ โปรด<a href="https://liff.line.me/2005789397-RLAGXrBJ" class="register-btn">ลงทะเบียนที่นี่</a>`;
-  } else if (data.lastScore !== null) {
-    if (data.lastLevel === 'asm') {
-      msg = `คุณ <strong>${_name}</strong><br>เคยทำข้อสอบ อสม.สโตรก ได้ <strong>${data.lastScore}</strong> คะแนน<br>ถ้าอยากแก้มือ คลิก 'ทดสอบความรู้ อสม.' อีกครั้งได้เลย`;
-    } else {
-      msg = `คุณ <strong>${_name}</strong><br>เคยทำข้อสอบสโตรก ได้ <strong>${data.lastScore}</strong> คะแนน<br>ถ้าอยากแก้มือ คลิก 'ทดสอบความรู้สโตรก' ได้เลย`;
-    }
-  } else {
-    msg = `สวัสดี, <strong>${_name}</strong>!<br>มาทดสอบความรู้กัน คลิกที่ 'ทดสอบความรู้สโตรก' ได้เลย`;
-  }
-  txt.innerHTML = msg;
+        // --- Initialization ---
+        $(document).ready(() => {
+            initializeLiff();
+        });
 
-  const cardAsmQuiz = document.getElementById('cardAsmQuiz');
-  const cardAsmGuide = document.getElementById('cardAsmGuide');
-  if (data.isAsmUser) {
-    cardAsmQuiz.style.display = 'flex';
-    cardAsmGuide.style.display = 'flex';
-  } else {
-    cardAsmQuiz.style.display = 'none';
-    cardAsmGuide.style.display = 'none';
-  }
-};
-function loadQuiz(level) {
-  document.getElementById('loader-overlay').style.display = 'flex';
-  currentQuizLevel = level;
-  const script = document.createElement('script');
-  script.src = `${GAS_URL}?action=getQuiz&level=${level}&callback=handleQuiz`;
-  document.head.appendChild(script);
-}
+        async function initializeLiff() {
+            try {
+                await liff.init({ liffId: LIFF_ID });
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                } else {
+                    userProfile = await liff.getProfile();
+                    checkUserHistory();
+                }
+            } catch (e) {
+                console.error(e);
+                alert("เกิดข้อผิดพลาดในการเชื่อมต่อ LINE");
+                $('#loading').hide();
+            }
+        }
 
-window.handleQuiz = (data) => {
-  document.getElementById('loader-overlay').style.display = 'none';
-  if (!data || data.length === 0) {
-    alert('ไม่สามารถโหลดข้อสอบได้ โปรดลองอีกครั้ง');
-    return;
-  }
-  questions = data;
-  idx = 0; score = 0; wrongs = [];
-  const quizCard = document.getElementById('quiz-card');
-  quizCard.style.display = 'block';
-  quizCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  showQuestion();
-};
+        function checkUserHistory() {
+            // เช็คว่าเคยสอบหรือยัง เพื่อกำหนดปุ่ม Pre/Post
+            $.ajax({
+                url: GAS_URL,
+                dataType: 'jsonp',
+                data: {
+                    action: 'checkHistory',
+                    userId: userProfile.userId
+                },
+                success: function(data) {
+                    $('#loading').hide();
+                    userName = data.name || userProfile.displayName;
+                    $('#user-info').html(`สวัสดีคุณ <strong>${userName}</strong>`);
 
-function showQuestion() {
-  const q = questions[idx];
-  document.getElementById('qindex').textContent = `${idx + 1}/${questions.length}`;
-  document.getElementById('progress-bar').style.width = `${(idx + 1) / questions.length * 100}%`;
-  document.getElementById('questionText').textContent = q.question;
-  const choicesContainer = document.getElementById('choicesContainer');
-  choicesContainer.innerHTML = '';
-  const choices = shuffle(['choice1', 'choice2', 'choice3', 'choice4']);
+                    if (data.hasTaken) {
+                        testType = 'post';
+                        $('#quizBtnText').html("ทดสอบ<br>หลังเรียน (Post-test)");
+                    } else {
+                        testType = 'pre';
+                        $('#quizBtnText').html("ทดสอบ<br>ก่อนเรียน (Pre-test)");
+                    }
+                },
+                error: function() {
+                    $('#loading').hide();
+                    alert("โหลดข้อมูลล้มเหลว");
+                }
+            });
+        }
 
-  choices.forEach(key => {
-    if (q[key]) {
-      const label = document.createElement('label');
-      label.innerHTML = `<input type="radio" name="choice" value="${q[key].trim()}"> ${q[key]}`;
-      label.onclick = () => {
-        document.querySelectorAll('.choices label').forEach(l => l.classList.remove('selected'));
-        label.classList.add('selected');
-        document.getElementById('submitBtn').style.display = 'block';
-      };
-      choicesContainer.appendChild(label);
-    }
-  });
+        // --- UI Navigation ---
+        window.showVideoLinks = () => {
+            $('#home-card').hide();
+            $('#video-card').show();
+        };
 
-  document.getElementById('submitBtn').style.display = 'none';
-  document.getElementById('submitBtn').onclick = () => checkAnswer(q);
-  document.getElementById('openLearn').onclick = () => {
-    const modalId = currentQuizLevel === 'asm' ? 'asm-guide' : 'learn-card';
-    document.getElementById(modalId).classList.add('show');
-  };
-}
+        window.startQuiz = () => {
+            $('#home-card').hide();
+            $('#loading').css('display', 'flex'); // Show loading
+            
+            // Load ASM questions
+            $.ajax({
+                url: GAS_URL,
+                dataType: 'jsonp',
+                data: {
+                    action: 'getQuiz',
+                    level: 'asm' // Hardcode type as ASM
+                },
+                success: function(data) {
+                    $('#loading').hide();
+                    questions = data;
+                    currentIdx = 0;
+                    score = 0;
+                    wrongAnswers = [];
+                    
+                    $('#quiz-card').show();
+                    $('#testTypeLabel').text(testType === 'pre' ? "ทดสอบก่อนเรียน" : "ทดสอบหลังเรียน");
+                    renderQuestion();
+                }
+            });
+        };
 
-function checkAnswer(question) {
-  const selected = document.querySelector('input[name="choice"]:checked');
-  if (!selected) return;
-  const isCorrect = selected.value === question.correct_choice.trim();
-  if (isCorrect) {
-    score++;
-    document.getElementById('modalEmoji').textContent = '✅';
-    document.getElementById('modalMessage').textContent = 'ถูกต้อง!';
-  } else {
-    wrongs.push(question.test_id);
-    document.getElementById('modalEmoji').textContent = '😞';
-    document.getElementById('modalMessage').textContent = `ผิดครับ, คำตอบคือ:\n${question.correct_choice}`;
-  }
-  
-  document.getElementById('answerModal').classList.add('show');
-  document.getElementById('modalNextBtn').onclick = () => {
-    document.getElementById('answerModal').classList.remove('show');
-    idx++;
-    idx < questions.length ? showQuestion() : finishQuiz();
-  };
-}
+        // --- Quiz Logic ---
+        function renderQuestion() {
+            const q = questions[currentIdx];
+            $('#qIndex').text(`${currentIdx + 1} / ${questions.length}`);
+            $('#questionText').text(q.question);
+            
+            // Random Choices
+            let choices = ['choice1', 'choice2', 'choice3', 'choice4'];
+            choices.sort(() => Math.random() - 0.5);
 
-function finishQuiz() {
-  document.getElementById('quiz-card').style.display = 'none';
-  document.getElementById('result-card').style.display = 'block';
+            let html = '';
+            choices.forEach(key => {
+                if(q[key]) {
+                    html += `<label class="choice-label">
+                                <input type="radio" name="ans" value="${q[key]}">
+                                ${q[key]}
+                             </label>`;
+                }
+            });
+            $('#choicesContainer').html(html);
+            $('#submitBtn').hide();
 
-  const percentage = (score / questions.length) * 100;
-  let emoji = percentage >= 90 ? '🏆' : percentage >= 60 ? '🥈' : '👍';
-  
-  document.getElementById('resultEmoji').textContent = emoji;
-  document.getElementById('resultMessage').innerHTML = `<strong style="font-size:24px">คุณได้ ${score}/${questions.length} คะแนน</strong>`;
+            // Select Event
+            $('.choice-label').click(function() {
+                $('.choice-label').removeClass('selected');
+                $(this).addClass('selected');
+                $(this).find('input').prop('checked', true);
+                $('#submitBtn').show();
+            });
 
-  const params = [
-    'action=recordResult',
-    `userId=${encodeURIComponent(userProfile.userId)}`,
-    `name=${encodeURIComponent(_name)}`,
-    `level=${currentQuizLevel}`,
-    `score=${score}`,
-    `wrong_ids=${encodeURIComponent(wrongs.join(','))}`,
-    'callback=handleRecordResult'
-  ];
-  const script = document.createElement('script');
-  script.src = `${GAS_URL}?${params.join('&')}`;
-  document.head.appendChild(script);
-}
+            // Bind Submit
+            $('#submitBtn').off('click').click(() => checkAnswer(q));
+        }
 
-window.handleRecordResult = (resp) => {
-  if (resp?.status === 'success') {
-    cachedRank = resp.rank;
-    cachedTotal = resp.totalPlayers;
-    document.getElementById('shareBtn').style.display = 'block';
-  }
-};
+        function checkAnswer(q) {
+            const selectedVal = $('input[name="ans"]:checked').val();
+            const correctVal = q.correct_choice.trim();
+            const isCorrect = (selectedVal.trim() === correctVal);
 
-window.handleShareRecord = () => {
-  const name = _name || userProfile.displayName;
-  const pic = userProfile.pictureUrl;
+            if (isCorrect) {
+                score++;
+                showFeedback(true, correctVal);
+            } else {
+                wrongAnswers.push(q.test_id);
+                showFeedback(false, correctVal);
+            }
+        }
 
-  const flex = {
-    type: 'flex',
-    altText: `${name} ได้ทดสอบความรู้เรื่องสโตรก`,
-    contents: {
-      type: 'bubble',
-      size: 'kilo',
-      header: {
-        type: 'box',
-        layout: 'vertical',
-        backgroundColor: '#FFF3E0',
-        paddingAll: '12px',
-        contents: [
-          { type: 'text', text: `คุณ ${name} รู้ทันสโตรก`, align: 'center', weight: 'bold', size: 'lg' }
-        ]
-      },
-      body: {
-        type: 'box',
-        layout: 'vertical',
-        backgroundColor: '#FFF3E0',
-        spacing: 'md',
-        paddingAll: '12px',
-        alignItems: 'center',
-        contents: [
-          { type: 'text', text: '👑', align: 'center', size: '4xl' },
-          {
-            type: 'box', layout: 'vertical', width: '100px', height: '100px',
-            cornerRadius: '100px', margin: 'md',
-            contents: [{ type: 'image', url: pic, size: 'full', aspectMode: 'cover' }]
-          },
-          { type: 'text', text: `ความรู้สโตรก ${score}/${questions.length}`, weight: 'bold', size: 'xl', margin: 'md' },
-          { type: 'text', text: `เก่งเป็นอันดับ ${cachedRank} จาก ${cachedTotal} คน`, size: 'sm', color: '#666666' },
-          { type: 'text', text: 'ผู้ที่รู้เกี่ยวกับสโตรกจะปฏิบัติตัวถูกต้องและมารพ.ทันการรักษา ลองทำแบบทดสอบกันได้เลย',
-            size: 'xs', color: '#666666', margin: 'lg', wrap: true, align: 'center' }
-        ]
-      },
-      footer: {
-        type: 'box',
-        layout: 'vertical',
-        backgroundColor: '#FFF3E0',
-        paddingAll: 'md',
-        spacing: 'sm',
-        contents: [
-          {
-            type: 'box',
-            layout: 'horizontal',
-            spacing: 'sm',
-            contents: [
-              {
-                type: 'box',
-                layout: 'vertical',
-                flex: 1,
-                backgroundColor: '#F57C00',
-                cornerRadius: 'md',
-                paddingAll: 'sm',
-                action: { type: 'uri', label: 'ทำข้อสอบ', uri: 'https://liff.line.me/2005789397-ROQvjpYk' },
-                justifyContent: 'center',
-                contents: [ { type: 'text', text: 'ทำข้อสอบ', color: '#FFFFFF', align: 'center', weight: 'bold', size: 'sm' } ]
-              },
-              {
-                type: 'box',
-                layout: 'vertical',
-                flex: 1,
-                backgroundColor: '#FFFFFF',
-                cornerRadius: 'md',
-                paddingAll: 'sm',
-                borderColor: '#CCCCCC',
-                borderWidth: '1px',
-                action: { type: 'uri', label: 'เช็คอาการ', uri: 'https://liff.line.me/2005789397-WRm1lYd9' },
-                justifyContent: 'center',
-                contents: [ { type: 'text', text: 'เช็คอาการ', color: '#111111', align: 'center', weight: 'bold', size: 'sm' } ]
-              }
-            ]
-          },
-          {
-            type: 'box',
-            layout: 'horizontal',
-            spacing: 'sm',
-            contents: [
-              {
-                type: 'box',
-                layout: 'vertical',
-                flex: 2,
-                backgroundColor: '#FFFFFF',
-                cornerRadius: 'md',
-                paddingAll: 'sm',
-                borderColor: '#CCCCCC',
-                borderWidth: '1px',
-                action: { type: 'uri', label: 'ประเมินความเสี่ยง', uri: 'https://liff.line.me/2005789397-nebQ8oJy' },
-                justifyContent: 'center',
-                contents: [ { type: 'text', text: 'ประเมินความเสี่ยง', color: '#111111', align: 'center', weight: 'bold', size: 'sm' } ]
-              },
-              {
-                type: 'box',
-                layout: 'vertical',
-                flex: 1,
-                backgroundColor: '#FFFFFF',
-                cornerRadius: 'md',
-                paddingAll: 'sm',
-                borderColor: '#CCCCCC',
-                borderWidth: '1px',
-                action: { type: 'uri', label: 'ลงทะเบียน', uri: 'https://liff.line.me/2005789397-RLAGXrBJ' },
-                justifyContent: 'center',
-                contents: [ { type: 'text', text: 'ลงทะเบียน', color: '#111111', align: 'center', weight: 'bold', size: 'sm' } ]
-              }
-            ]
-          }
-        ]
-      }
-    }
-  };
-  if (liff.isApiAvailable('shareTargetPicker')) {
-    liff.shareTargetPicker([flex]).catch(err => console.error('Share Error', err));
-  }
-};
+        function showFeedback(isCorrect, answerText) {
+            $('#fbEmoji').text(isCorrect ? '✅' : '❌');
+            $('#fbTitle').text(isCorrect ? 'ถูกต้อง!' : 'ผิดครับ');
+            $('#fbTitle').css('color', isCorrect ? 'green' : 'red');
+            
+            if(!isCorrect) {
+                $('#fbMsg').html(`คำตอบที่ถูกคือ:<br><strong>${answerText}</strong>`);
+            } else {
+                $('#fbMsg').text('');
+            }
 
-document.addEventListener('DOMContentLoaded', async () => {
-  try {
-    await liff.init({ liffId: LIFF_ID });
-    if (!liff.isLoggedIn()) {
-      liff.login({ redirectUri: window.location.href });
-      return; 
-    }
-    userProfile = await liff.getProfile();
-    loadUserHistory();
-  } catch (err) {
-    document.getElementById('history-text').textContent = 'เกิดข้อผิดพลาดในการโหลดข้อมูล';
-  }
+            $('#feedbackModal').addClass('show');
+            
+            $('#nextQBtn').off('click').click(() => {
+                $('#feedbackModal').removeClass('show');
+                currentIdx++;
+                if(currentIdx < questions.length) {
+                    renderQuestion();
+                } else {
+                    finishQuiz();
+                }
+            });
+        }
 
-  const cardHandlers = {
-    'cardGeneralQuiz': () => loadQuiz('general'),
-    'cardAsmQuiz': () => loadQuiz('asm'),
-    'cardGeneralLearn': () => document.getElementById('learn-card').classList.add('show'),
-    'cardAsmGuide': () => document.getElementById('asm-guide').classList.add('show'),
-  };
+        function finishQuiz() {
+            $('#quiz-card').hide();
+            $('#loading').css('display', 'flex');
 
-  document.querySelectorAll('.grid .card').forEach(card => {
-    card.addEventListener('click', () => {
-      document.querySelectorAll('.grid .card').forEach(c => c.classList.remove('active'));
-      card.classList.add('active');
-      document.getElementById('quiz-card').style.display = 'none';
-      document.getElementById('result-card').style.display = 'none';
-      if (cardHandlers[card.id]) cardHandlers[card.id]();
-    });
-  });
+            // Save Result
+            $.ajax({
+                url: GAS_URL,
+                dataType: 'jsonp',
+                data: {
+                    action: 'recordResult',
+                    userId: userProfile.userId,
+                    name: userName,
+                    level: 'asm', // Always ASM
+                    score: score,
+                    full_score: questions.length,
+                    wrong_ids: wrongAnswers.join(','),
+                    test_type: testType // pre or post
+                },
+                success: function(resp) {
+                    $('#loading').hide();
+                    $('#result-card').show();
+                    $('#resultScore').text(`${score} / ${questions.length}`);
+                    
+                    if(testType === 'pre') {
+                        $('#resultDesc').text("บันทึกผลทดสอบก่อนเรียนแล้ว");
+                    } else {
+                        $('#resultDesc').text("บันทึกผลทดสอบหลังเรียนเรียบร้อย");
+                    }
+                }
+            });
+        }
 
-  document.querySelectorAll('.accordion-header').forEach(header => {
-    header.addEventListener('click', () => {
-      const body = header.nextElementSibling;
-      header.classList.toggle('active');
-      body.style.display = body.style.display === 'block' ? 'none' : 'block';
-    });
-  });
-  
-  document.querySelectorAll('.modal .close-btn').forEach(btn => {
-    btn.onclick = () => btn.closest('.modal').classList.remove('show');
-  });
-  document.getElementById('shareBtn').onclick = handleShareRecord;
-});
-</script>
+        window.closeApp = () => {
+            if(liff.isInClient()) {
+                liff.closeWindow();
+            } else {
+                location.reload();
+            }
+        }
 
+    </script>
 </body>
 </html>
