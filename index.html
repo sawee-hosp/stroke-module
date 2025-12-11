@@ -7,34 +7,55 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <style>
-        /* --- Global & Typography --- */
+        /* --- Global Style --- */
         :root { --primary-color: #1a237e; --secondary-color: #1e88e5; --bg-color: #f5f5f5; }
         body { 
             font-family: 'Noto Sans Thai', sans-serif !important; 
             background: var(--bg-color); 
-            margin: 0; padding: 20px; 
+            margin: 0; padding: 0; /* แก้ padding เป็น 0 เพื่อให้ loading เต็มจอ */
             font-size: 22px; 
             line-height: 1.6;
             color: #333;
         }
-        .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .container { 
+            max-width: 600px; margin: 20px auto; 
+            background: #fff; padding: 25px; 
+            border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+        }
         
         h1 { font-size: 36px; text-align: center; color: var(--primary-color); margin-bottom: 20px; line-height: 1.3; }
         h2 { font-size: 28px; color: var(--primary-color); margin-bottom: 20px; }
 
-        /* --- Loading Animation (Black BG + Flashing Text) --- */
+        /* --- Loading Screen (Black BG + Spin Load + Blinking Text) --- */
         #loading { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #000000; /* ดำสนิท */
+            position: fixed; top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: #000; 
             display: flex; flex-direction: column; 
             justify-content: center; align-items: center; 
             z-index: 2000; color: white; text-align: center; 
         }
-        #loading-text { font-size: 1.5rem; margin-bottom: 10px; color: #aaa; }
+        
+        /* Spin Loader Animation */
+        .spinner {
+            border: 8px solid #333; /* Light grey */
+            border-top: 8px solid #ffc107; /* Blue */
+            border-radius: 50%;
+            width: 80px; height: 80px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 30px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        #loading-text { 
+            font-size: 2rem; font-weight: bold; margin-bottom: 10px; color: #fff;
+        }
+        .loading-prefix { font-size: 1.2rem; margin-bottom: 5px; color: #aaa; }
+        
         #loading-subtext { 
             font-size: 4rem; font-weight: 800; color: #ffc107; 
             min-height: 100px; line-height: 1.2; 
-            text-shadow: 0 0 20px rgba(255,193,7,0.8);
+            text-shadow: 2px 2px 10px rgba(255,193,7,0.5); 
             opacity: 1; transition: opacity 0.5s ease-in-out; 
         }
 
@@ -113,7 +134,9 @@
 <body>
 
     <div id="loading">
-        <div id="loading-text">จำใส่ใจ อาการสโตรก:</div>
+        <div class="spinner"></div>
+        <div id="loading-text">กำลังโหลดข้อมูล...</div>
+        <div class="loading-prefix">จำใส่ใจอาการสโตรก:</div>
         <div id="loading-subtext"></div>
     </div>
 
@@ -122,8 +145,7 @@
             <h1>ทดสอบความรู้<br>เรื่อง Stroke</h1>
             
             <div id="user-info" style="text-align:center; font-size: 24px; margin-bottom: 30px; color: #333; background: #fff9c4; padding: 15px; border-radius: 10px;">
-                กำลังโหลดข้อมูล...
-            </div>
+                </div>
 
             <div class="menu-grid">
                 <div class="big-btn" onclick="showKnowledge()">
@@ -226,6 +248,7 @@
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        // *** อย่าลืมเปลี่ยน GAS_URL เป็น URL ที่ Deploy ใหม่ ***
         const GAS_URL = 'https://script.google.com/macros/s/AKfycbwt4O6aTK_NqGGdYaIF6gRbv5f37dgFeQYZ7ZLxZIRYGBEz54EnJx1hS36XPhET1AOgHg/exec'; 
         const LIFF_ID = '2005789397-ROQvjpYk';
 
@@ -237,35 +260,40 @@
         let wrongAnswers = [];
         let userName = '';
         
-        // Timer Variables
         let startTime;
         let finalTimeSec = 0;
 
-        // --- Loading Animation ---
-        function startLoadingAnim() {
+        // --- Loading Animation Logic ---
+        function startLoadingAnimation() {
             const msgs = ["เซมึนหัว", "ตามัวมาก", "มุมปากตก", "ยกแขนยาก", "ลำบากพูด"];
             let i = 0;
             const sub = document.getElementById('loading-subtext');
-            if(sub) sub.textContent = msgs[0];
             
+            // Set ข้อความเริ่มต้น
+            if(sub) sub.textContent = msgs[0];
+
             window.loadingInterval = setInterval(() => {
+                // Fade out
                 if(sub) sub.style.opacity = 0;
+                
                 setTimeout(() => {
+                    // เปลี่ยนข้อความ
                     i = (i + 1) % msgs.length;
                     if(sub) sub.textContent = msgs[i];
+                    // Fade in
                     if(sub) sub.style.opacity = 1;
                 }, 500);
             }, 2500);
         }
 
-        function stopLoadingAnim() {
+        function stopLoadingAnimation() {
             clearInterval(window.loadingInterval);
             $('#loading').fadeOut();
         }
 
         // --- Initialization ---
         $(document).ready(() => {
-            startLoadingAnim();
+            startLoadingAnimation();
             initializeLiff();
             
             // Accordion Logic
@@ -287,7 +315,7 @@
             } catch (e) {
                 console.error(e);
                 alert("เกิดข้อผิดพลาดในการเชื่อมต่อ LINE");
-                stopLoadingAnim();
+                stopLoadingAnimation();
             }
         }
 
@@ -300,12 +328,11 @@
                     userId: userProfile.userId
                 },
                 success: function(data) {
-                    stopLoadingAnim();
+                    stopLoadingAnimation();
                     userName = data.name || userProfile.displayName;
                     
                     let msg = `สวัสดีคุณ <strong>${userName}</strong>`;
                     if (data.hasTaken) {
-                        // Format date nicely
                         const d = new Date(data.lastDate);
                         const dateStr = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()+543}`;
                         msg += `<br>คะแนนล่าสุดของคุณคือ <strong>${data.lastScore}</strong><br><span style="font-size:18px">เมื่อ ${dateStr}</span>`;
@@ -319,13 +346,13 @@
                     $('#user-info').html(msg);
                 },
                 error: function() {
-                    stopLoadingAnim();
+                    stopLoadingAnimation();
                     alert("โหลดข้อมูลล้มเหลว");
                 }
             });
         }
 
-        // --- UI Navigation ---
+        // --- Navigation ---
         window.showKnowledge = () => {
             $('#home-card').hide();
             $('#knowledge-card').show();
@@ -333,7 +360,7 @@
 
         window.startQuiz = () => {
             $('#home-card').hide();
-            $('#loading').show();
+            $('#loading').fadeIn(); // Show loading again
             
             $.ajax({
                 url: GAS_URL,
@@ -343,7 +370,7 @@
                     level: 'asm'
                 },
                 success: function(data) {
-                    $('#loading').hide();
+                    $('#loading').fadeOut();
                     questions = data;
                     currentIdx = 0;
                     score = 0;
@@ -354,7 +381,6 @@
                     
                     // Start Timer
                     startTime = new Date();
-                    
                     renderQuestion();
                 }
             });
@@ -432,16 +458,15 @@
         function finishQuiz() {
             // Stop Timer
             let endTime = new Date();
-            let timeDiff = endTime - startTime; // in ms
-            finalTimeSec = Math.floor(timeDiff / 1000); // in seconds
+            let timeDiff = endTime - startTime; 
+            finalTimeSec = Math.floor(timeDiff / 1000); 
             
-            // Calculate mm:ss for display
             let minutes = Math.floor(finalTimeSec / 60);
             let seconds = finalTimeSec % 60;
             let timeStr = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')} วินาที`;
 
             $('#quiz-card').hide();
-            $('#loading').show();
+            $('#loading').fadeIn();
 
             // Save Result
             $.ajax({
@@ -456,16 +481,15 @@
                     full_score: questions.length,
                     wrong_ids: wrongAnswers.join(','),
                     test_type: testType,
-                    time_taken: finalTimeSec // Send seconds to server
+                    time_taken: finalTimeSec
                 },
                 success: function(resp) {
-                    $('#loading').hide();
+                    $('#loading').fadeOut();
                     $('#result-card').show();
                     
                     $('#resultScore').text(`${score} / ${questions.length}`);
                     $('#timeTakenDisplay').text(timeStr);
                     
-                    // Show Rank
                     $('#rankDisplay').text(resp.rank);
                     $('#totalDisplay').text(resp.totalPlayers);
                 }
