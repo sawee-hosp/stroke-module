@@ -7,28 +7,38 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <style>
-        /* --- Global & Typography (Elderly Friendly) --- */
+        /* --- Global & Typography --- */
         :root { --primary-color: #1a237e; --secondary-color: #1e88e5; --bg-color: #f5f5f5; }
         body { 
             font-family: 'Noto Sans Thai', sans-serif !important; 
             background: var(--bg-color); 
             margin: 0; padding: 20px; 
-            font-size: 22px; /* Base font ใหญ่ขึ้น */
+            font-size: 22px; 
             line-height: 1.6;
             color: #333;
         }
         .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         
-        h1 { font-size: 36px; text-align: center; color: var(--primary-color); margin-bottom: 30px; line-height: 1.3; }
+        h1 { font-size: 36px; text-align: center; color: var(--primary-color); margin-bottom: 20px; line-height: 1.3; }
         h2 { font-size: 28px; color: var(--primary-color); margin-bottom: 20px; }
 
-        /* --- Loading Animation (Spinning Brain) --- */
-        #loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; color: white; text-align: center; }
-        #loading-text { font-size: 2rem; font-weight: bold; margin-bottom: 20px; }
-        #loading-icon { font-size: 6rem; color: #ffc107; margin-bottom: 30px; animation: spin 2s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* --- Loading Animation (Black BG + Flashing Text) --- */
+        #loading { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #000000; /* ดำสนิท */
+            display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; 
+            z-index: 2000; color: white; text-align: center; 
+        }
+        #loading-text { font-size: 1.5rem; margin-bottom: 10px; color: #aaa; }
+        #loading-subtext { 
+            font-size: 4rem; font-weight: 800; color: #ffc107; 
+            min-height: 100px; line-height: 1.2; 
+            text-shadow: 0 0 20px rgba(255,193,7,0.8);
+            opacity: 1; transition: opacity 0.5s ease-in-out; 
+        }
 
-        /* --- Big Buttons & Cards --- */
+        /* --- Big Buttons --- */
         .menu-grid { display: flex; flex-direction: column; gap: 20px; margin-top: 20px; }
         .big-btn {
             background: #fff; border: 3px solid var(--secondary-color);
@@ -42,9 +52,24 @@
         .big-btn.primary { background: var(--secondary-color); color: #fff; border: none; }
         .big-btn i { font-size: 40px; }
 
+        /* --- Accordion (Knowledge) --- */
+        .accordion-item { border-bottom: 2px solid #ddd; margin-bottom: 10px; }
+        .accordion-header {
+            padding: 20px; font-size: 26px; font-weight: bold; cursor: pointer;
+            background: #e3f2fd; border-radius: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .accordion-header.active { background: #bbdefb; color: var(--primary-color); }
+        .accordion-body {
+            padding: 20px; font-size: 24px; line-height: 1.8; display: none;
+            background: #fff;
+        }
+        .icon { transition: 0.3s; font-size: 30px; }
+        .active .icon { transform: rotate(45deg); }
+
         /* --- Quiz Interface --- */
-        #quiz-card, #result-card, #video-card { display: none; }
-        .question { font-size: 30px; font-weight: bold; color: var(--primary-color); margin: 30px 0; }
+        #quiz-card, #result-card, #knowledge-card { display: none; }
+        .question { font-size: 32px; font-weight: bold; color: var(--primary-color); margin: 20px 0; }
         
         .choice-label {
             display: block; font-size: 26px; padding: 20px; 
@@ -60,45 +85,49 @@
             margin-top: 20px; display: none; font-weight: bold;
         }
 
-        /* --- Result --- */
-        .result-emoji { font-size: 80px; margin-bottom: 20px; }
-        .result-score { font-size: 40px; font-weight: bold; color: var(--primary-color); }
-        
+        /* --- Result Animation --- */
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .result-box {
+            animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: #e8f5e9; border: 3px solid #4caf50;
+            border-radius: 20px; padding: 20px; margin-top: 20px;
+        }
+        .rank-badge {
+            font-size: 30px; color: #d35400; font-weight: bold;
+            text-shadow: 1px 1px 0px #fff;
+        }
+        .time-text { font-size: 24px; color: #555; margin-top: 5px; }
+
         /* --- Modal --- */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 1000; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 3000; }
         .modal.show { display: flex; }
         .modal-content { background: #fff; padding: 30px; border-radius: 20px; width: 90%; max-width: 500px; text-align: center; }
         .modal-btn { width: 100%; padding: 20px; font-size: 24px; border-radius: 15px; border: none; margin-top: 15px; cursor: pointer; font-weight: bold; }
         .modal-btn.next { background: var(--secondary-color); color: white; }
         .modal-btn.close { background: #dc3545; color: white; }
-
-        /* --- Link Buttons in Video Section --- */
-        .video-link-btn {
-            display: block; width: 100%; padding: 25px; margin-bottom: 20px;
-            background: #fff3e0; border: 2px solid #ff9800; border-radius: 15px;
-            text-decoration: none; color: #e65100; font-size: 24px; font-weight: bold;
-            text-align: left;
-        }
     </style>
 </head>
 <body>
 
     <div id="loading">
-        <i id="loading-icon" class="bi bi-brain"></i>
-        <div id="loading-text">กำลังโหลดข้อมูล...</div>
+        <div id="loading-text">จำใส่ใจ อาการสโตรก:</div>
+        <div id="loading-subtext"></div>
     </div>
 
     <div class="container">
         <div id="home-card">
             <h1>ทดสอบความรู้<br>เรื่อง Stroke</h1>
             
-            <div id="user-info" style="text-align:center; font-size: 24px; margin-bottom: 30px; color: #555;">
-                สวัสดีครับ...
+            <div id="user-info" style="text-align:center; font-size: 24px; margin-bottom: 30px; color: #333; background: #fff9c4; padding: 15px; border-radius: 10px;">
+                กำลังโหลดข้อมูล...
             </div>
 
             <div class="menu-grid">
-                <div class="big-btn" onclick="showVideoLinks()">
-                    <i class="bi bi-youtube"></i>
+                <div class="big-btn" onclick="showKnowledge()">
+                    <i class="bi bi-book"></i>
                     อ่านความรู้<br>เรื่องสโตรก
                 </div>
 
@@ -107,23 +136,47 @@
                     <span id="quizBtnText">ทดสอบ<br>ความรู้สโตรก</span>
                 </div>
             </div>
-            
-            <div style="text-align: center; margin-top: 30px; font-size: 18px; color: #888;">
-                *ตัวหนังสือขนาดใหญ่เพื่อผู้สูงอายุ
-            </div>
         </div>
 
-        <div id="video-card">
-            <h2>สื่อความรู้เรื่องสโตรก</h2>
-            <p>คลิกที่ปุ่มเพื่อรับชมวิดีโอหรืออ่านเอกสาร:</p>
+        <div id="knowledge-card">
+            <h2>5 บทเรียนต้องรู้! สู้สโตรก</h2>
             
-            <a href="https://drive.google.com/file/d/1IyHiddZG8BLn_ztuoGNUoID4KqmrjQbG/view?usp=drive_link" target="_blank" class="video-link-btn">
-                🎵 เพลงสวีรู้ทันสโตรก
-            </a>
+            <div class="accordion-item">
+                <div class="accordion-header">1. สโตรกคืออะไร?<span class="icon">＋</span></div>
+                <div class="accordion-body">
+                    โรคหลอดเลือดสมอง (สโตรก) คือภาวะที่สมองขาดเลือดทันที จากหลอดเลือดตีบ ตัน หรือแตก ทำให้เซลล์สมองตายและอาจพิการได้
+                </div>
+            </div>
             
-            <a href="https://drive.google.com/file/d/1T-_o8_2Zmq57epW9MsKi7hIWrLu7tErQ/view?usp=drive_link" target="_blank" class="video-link-btn">
-                🚑 วิธีปฏิบัติเพื่อพบคนเป็นสโตรก
-            </a>
+            <div class="accordion-item">
+                <div class="accordion-header">2. ปัจจัยเสี่ยง<span class="icon">＋</span></div>
+                <div class="accordion-body">
+                    - ความดันโลหิตสูง (สำคัญที่สุด)<br>
+                    - เบาหวาน, ไขมันสูง<br>
+                    - สูบบุหรี่, อ้วนลงพุง<br>
+                    - อายุมาก
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header">3. อาการ B.E.F.A.S.T.<span class="icon">＋</span></div>
+                <div class="accordion-body">
+                    B - ทรงตัวไม่ได้<br>
+                    E - ตามัวทันที<br>
+                    F - หน้าเบี้ยว ปากตก<br>
+                    A - แขนขาอ่อนแรง<br>
+                    S - พูดไม่ชัด พูดไม่ออก<br>
+                    T - รีบไปโรงพยาบาลทันที
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header">4. เวลาคือชีวิต<span class="icon">＋</span></div>
+                <div class="accordion-body">
+                    ต้องนำผู้ป่วยส่ง รพ. ภายใน <strong>4.5 ชั่วโมง</strong> เพื่อให้ยาละลายลิ่มเลือด<br>
+                    โทร 1669 ทันที ห้ามให้กินยาหรือน้ำ!
+                </div>
+            </div>
 
             <button class="modal-btn close" onclick="location.reload()">กลับหน้าหลัก</button>
         </div>
@@ -133,16 +186,29 @@
                 <span id="testTypeLabel">แบบทดสอบ</span>
                 <span style="float:right;" id="qIndex">1/10</span>
             </div>
-            <div id="questionText" class="question">คำถามจะปรากฏที่นี่...</div>
+            <div id="questionText" class="question"></div>
             <div id="choicesContainer"></div>
             <button id="submitBtn">ยืนยันคำตอบ</button>
         </div>
 
         <div id="result-card" style="text-align: center;">
-            <div id="resultEmoji" class="result-emoji">🏆</div>
-            <div style="font-size: 28px;">คะแนนของคุณ</div>
-            <div id="resultScore" class="result-score">0/10</div>
-            <p id="resultDesc" style="font-size: 24px; margin-top: 20px;"></p>
+            <div style="font-size: 60px;">🎉</div>
+            <div style="font-size: 32px; font-weight: bold;">ผลการทดสอบ</div>
+            
+            <div class="result-box">
+                <div style="font-size: 26px;">คะแนนที่ได้</div>
+                <div id="resultScore" style="font-size: 50px; font-weight: bold; color: #2e7d32;">0/10</div>
+            </div>
+
+            <div class="result-box" style="border-color: #ff9800; background: #fff3e0; animation-delay: 0.3s;">
+                <div class="time-text">ใช้เวลาทำข้อสอบ</div>
+                <div id="timeTakenDisplay" style="font-size: 36px; font-weight: bold; color: #e65100;">00:00</div>
+            </div>
+
+            <div class="result-box" style="border-color: #1976d2; background: #e3f2fd; animation-delay: 0.6s;">
+                <div class="rank-badge">🏆 อันดับที่ <span id="rankDisplay">...</span></div>
+                <div style="font-size: 20px; color: #666;">จากผู้ทดสอบทั้งหมด <span id="totalDisplay">...</span> คน</div>
+            </div>
             
             <button class="modal-btn next" onclick="closeApp()">ปิดโปรแกรม</button>
         </div>
@@ -160,20 +226,53 @@
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        const GAS_URL = 'https://script.google.com/macros/s/AKfycbwt4O6aTK_NqGGdYaIF6gRbv5f37dgFeQYZ7ZLxZIRYGBEz54EnJx1hS36XPhET1AOgHg/exec'; // **อย่าลืมเปลี่ยนเป็น URL ของคุณถ้า Deploy ใหม่**
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbwt4O6aTK_NqGGdYaIF6gRbv5f37dgFeQYZ7ZLxZIRYGBEz54EnJx1hS36XPhET1AOgHg/exec'; 
         const LIFF_ID = '2005789397-ROQvjpYk';
 
         let userProfile = null;
-        let testType = 'pre'; // 'pre' or 'post'
+        let testType = 'pre';
         let questions = [];
         let currentIdx = 0;
         let score = 0;
         let wrongAnswers = [];
         let userName = '';
+        
+        // Timer Variables
+        let startTime;
+        let finalTimeSec = 0;
+
+        // --- Loading Animation ---
+        function startLoadingAnim() {
+            const msgs = ["เซมึนหัว", "ตามัวมาก", "มุมปากตก", "ยกแขนยาก", "ลำบากพูด"];
+            let i = 0;
+            const sub = document.getElementById('loading-subtext');
+            if(sub) sub.textContent = msgs[0];
+            
+            window.loadingInterval = setInterval(() => {
+                if(sub) sub.style.opacity = 0;
+                setTimeout(() => {
+                    i = (i + 1) % msgs.length;
+                    if(sub) sub.textContent = msgs[i];
+                    if(sub) sub.style.opacity = 1;
+                }, 500);
+            }, 2500);
+        }
+
+        function stopLoadingAnim() {
+            clearInterval(window.loadingInterval);
+            $('#loading').fadeOut();
+        }
 
         // --- Initialization ---
         $(document).ready(() => {
+            startLoadingAnim();
             initializeLiff();
+            
+            // Accordion Logic
+            $('.accordion-header').click(function() {
+                $(this).toggleClass('active');
+                $(this).next('.accordion-body').slideToggle();
+            });
         });
 
         async function initializeLiff() {
@@ -188,12 +287,11 @@
             } catch (e) {
                 console.error(e);
                 alert("เกิดข้อผิดพลาดในการเชื่อมต่อ LINE");
-                $('#loading').hide();
+                stopLoadingAnim();
             }
         }
 
         function checkUserHistory() {
-            // เช็คว่าเคยสอบหรือยัง เพื่อกำหนดปุ่ม Pre/Post
             $.ajax({
                 url: GAS_URL,
                 dataType: 'jsonp',
@@ -202,42 +300,47 @@
                     userId: userProfile.userId
                 },
                 success: function(data) {
-                    $('#loading').hide();
+                    stopLoadingAnim();
                     userName = data.name || userProfile.displayName;
-                    $('#user-info').html(`สวัสดีคุณ <strong>${userName}</strong>`);
-
+                    
+                    let msg = `สวัสดีคุณ <strong>${userName}</strong>`;
                     if (data.hasTaken) {
+                        // Format date nicely
+                        const d = new Date(data.lastDate);
+                        const dateStr = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()+543}`;
+                        msg += `<br>คะแนนล่าสุดของคุณคือ <strong>${data.lastScore}</strong><br><span style="font-size:18px">เมื่อ ${dateStr}</span>`;
+                        
                         testType = 'post';
                         $('#quizBtnText').html("ทดสอบ<br>หลังเรียน (Post-test)");
                     } else {
                         testType = 'pre';
                         $('#quizBtnText').html("ทดสอบ<br>ก่อนเรียน (Pre-test)");
                     }
+                    $('#user-info').html(msg);
                 },
                 error: function() {
-                    $('#loading').hide();
+                    stopLoadingAnim();
                     alert("โหลดข้อมูลล้มเหลว");
                 }
             });
         }
 
         // --- UI Navigation ---
-        window.showVideoLinks = () => {
+        window.showKnowledge = () => {
             $('#home-card').hide();
-            $('#video-card').show();
+            $('#knowledge-card').show();
         };
 
         window.startQuiz = () => {
             $('#home-card').hide();
-            $('#loading').css('display', 'flex'); // Show loading
+            $('#loading').show();
             
-            // Load ASM questions
             $.ajax({
                 url: GAS_URL,
                 dataType: 'jsonp',
                 data: {
                     action: 'getQuiz',
-                    level: 'asm' // Hardcode type as ASM
+                    level: 'asm'
                 },
                 success: function(data) {
                     $('#loading').hide();
@@ -248,6 +351,10 @@
                     
                     $('#quiz-card').show();
                     $('#testTypeLabel').text(testType === 'pre' ? "ทดสอบก่อนเรียน" : "ทดสอบหลังเรียน");
+                    
+                    // Start Timer
+                    startTime = new Date();
+                    
                     renderQuestion();
                 }
             });
@@ -259,7 +366,6 @@
             $('#qIndex').text(`${currentIdx + 1} / ${questions.length}`);
             $('#questionText').text(q.question);
             
-            // Random Choices
             let choices = ['choice1', 'choice2', 'choice3', 'choice4'];
             choices.sort(() => Math.random() - 0.5);
 
@@ -275,7 +381,6 @@
             $('#choicesContainer').html(html);
             $('#submitBtn').hide();
 
-            // Select Event
             $('.choice-label').click(function() {
                 $('.choice-label').removeClass('selected');
                 $(this).addClass('selected');
@@ -283,7 +388,6 @@
                 $('#submitBtn').show();
             });
 
-            // Bind Submit
             $('#submitBtn').off('click').click(() => checkAnswer(q));
         }
 
@@ -326,8 +430,18 @@
         }
 
         function finishQuiz() {
+            // Stop Timer
+            let endTime = new Date();
+            let timeDiff = endTime - startTime; // in ms
+            finalTimeSec = Math.floor(timeDiff / 1000); // in seconds
+            
+            // Calculate mm:ss for display
+            let minutes = Math.floor(finalTimeSec / 60);
+            let seconds = finalTimeSec % 60;
+            let timeStr = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')} วินาที`;
+
             $('#quiz-card').hide();
-            $('#loading').css('display', 'flex');
+            $('#loading').show();
 
             // Save Result
             $.ajax({
@@ -337,22 +451,23 @@
                     action: 'recordResult',
                     userId: userProfile.userId,
                     name: userName,
-                    level: 'asm', // Always ASM
+                    level: 'asm',
                     score: score,
                     full_score: questions.length,
                     wrong_ids: wrongAnswers.join(','),
-                    test_type: testType // pre or post
+                    test_type: testType,
+                    time_taken: finalTimeSec // Send seconds to server
                 },
                 success: function(resp) {
                     $('#loading').hide();
                     $('#result-card').show();
-                    $('#resultScore').text(`${score} / ${questions.length}`);
                     
-                    if(testType === 'pre') {
-                        $('#resultDesc').text("บันทึกผลทดสอบก่อนเรียนแล้ว");
-                    } else {
-                        $('#resultDesc').text("บันทึกผลทดสอบหลังเรียนเรียบร้อย");
-                    }
+                    $('#resultScore').text(`${score} / ${questions.length}`);
+                    $('#timeTakenDisplay').text(timeStr);
+                    
+                    // Show Rank
+                    $('#rankDisplay').text(resp.rank);
+                    $('#totalDisplay').text(resp.totalPlayers);
                 }
             });
         }
@@ -364,7 +479,6 @@
                 location.reload();
             }
         }
-
     </script>
 </body>
 </html>
