@@ -12,7 +12,7 @@
         body { 
             font-family: 'Noto Sans Thai', sans-serif !important; 
             background: var(--bg-color); 
-            margin: 0; padding: 0; /* แก้ padding เป็น 0 เพื่อให้ loading เต็มจอ */
+            margin: 0; padding: 0;
             font-size: 22px; 
             line-height: 1.6;
             color: #333;
@@ -26,7 +26,7 @@
         h1 { font-size: 36px; text-align: center; color: var(--primary-color); margin-bottom: 20px; line-height: 1.3; }
         h2 { font-size: 28px; color: var(--primary-color); margin-bottom: 20px; }
 
-        /* --- Loading Screen (Black BG + Spin Load + Blinking Text) --- */
+        /* --- Loading Screen --- */
         #loading { 
             position: fixed; top: 0; left: 0; 
             width: 100%; height: 100%; 
@@ -36,10 +36,9 @@
             z-index: 2000; color: white; text-align: center; 
         }
         
-        /* Spin Loader Animation */
         .spinner {
-            border: 8px solid #333; /* Light grey */
-            border-top: 8px solid #ffc107; /* Blue */
+            border: 8px solid #333; 
+            border-top: 8px solid #ffc107; 
             border-radius: 50%;
             width: 80px; height: 80px;
             animation: spin 1s linear infinite;
@@ -92,13 +91,26 @@
         #quiz-card, #result-card, #knowledge-card { display: none; }
         .question { font-size: 32px; font-weight: bold; color: var(--primary-color); margin: 20px 0; }
         
+        /* [แก้ไข] ปรับตัวเลือกให้หนาและชัดเจน */
         .choice-label {
-            display: block; font-size: 26px; padding: 20px; 
-            background: #f8f9fa; border: 2px solid #ddd; border-radius: 15px; 
-            margin-bottom: 15px; cursor: pointer; transition: 0.2s;
+            display: block; 
+            font-size: 28px;          /* ใหญ่ขึ้นอีกนิด */
+            font-weight: 700;         /* ตัวหนา */
+            color: #000;              /* สีดำสนิท */
+            padding: 25px; 
+            background: #fff; 
+            border: 3px solid #ddd;   /* ขอบหนาขึ้น */
+            border-radius: 15px; 
+            margin-bottom: 20px; 
+            cursor: pointer; 
+            transition: 0.2s;
         }
-        .choice-label input { transform: scale(2.5); margin-right: 20px; }
-        .choice-label.selected { background: #e3f2fd; border-color: var(--secondary-color); }
+        .choice-label input { transform: scale(2.5); margin-right: 25px; }
+        .choice-label.selected { 
+            background: #e3f2fd; 
+            border-color: var(--secondary-color); 
+            color: var(--primary-color);
+        }
         
         #submitBtn {
             width: 100%; padding: 25px; font-size: 28px; 
@@ -143,16 +155,13 @@
     <div class="container">
         <div id="home-card">
             <h1>ทดสอบความรู้<br>เรื่อง Stroke</h1>
-            
             <div id="user-info" style="text-align:center; font-size: 24px; margin-bottom: 30px; color: #333; background: #fff9c4; padding: 15px; border-radius: 10px;">
                 </div>
-
             <div class="menu-grid">
                 <div class="big-btn" onclick="showKnowledge()">
                     <i class="bi bi-book"></i>
                     อ่านความรู้<br>เรื่องสโตรก
                 </div>
-
                 <div id="startQuizBtn" class="big-btn primary" onclick="startQuiz()">
                     <i class="bi bi-pencil-square"></i>
                     <span id="quizBtnText">ทดสอบ<br>ความรู้สโตรก</span>
@@ -169,7 +178,6 @@
                     โรคหลอดเลือดสมอง (สโตรก) คือภาวะที่สมองขาดเลือดทันที จากหลอดเลือดตีบ ตัน หรือแตก ทำให้เซลล์สมองตายและอาจพิการได้
                 </div>
             </div>
-            
             <div class="accordion-item">
                 <div class="accordion-header">2. ปัจจัยเสี่ยง<span class="icon">＋</span></div>
                 <div class="accordion-body">
@@ -179,7 +187,6 @@
                     - อายุมาก
                 </div>
             </div>
-
             <div class="accordion-item">
                 <div class="accordion-header">3. อาการ B.E.F.A.S.T.<span class="icon">＋</span></div>
                 <div class="accordion-body">
@@ -191,7 +198,6 @@
                     T - รีบไปโรงพยาบาลทันที
                 </div>
             </div>
-
             <div class="accordion-item">
                 <div class="accordion-header">4. เวลาคือชีวิต<span class="icon">＋</span></div>
                 <div class="accordion-body">
@@ -229,7 +235,7 @@
 
             <div class="result-box" style="border-color: #1976d2; background: #e3f2fd; animation-delay: 0.6s;">
                 <div class="rank-badge">🏆 อันดับที่ <span id="rankDisplay">...</span></div>
-                <div style="font-size: 20px; color: #666;">จากผู้ทดสอบทั้งหมด <span id="totalDisplay">...</span> คน</div>
+                <div style="font-size: 20px; color: #666;">จากผู้ทดสอบทั้งหมด <span id="totalDisplay">...</span> ครั้ง</div>
             </div>
             
             <button class="modal-btn next" onclick="closeApp()">ปิดโปรแกรม</button>
@@ -248,7 +254,7 @@
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        // *** อย่าลืมเปลี่ยน GAS_URL เป็น URL ที่ Deploy ใหม่ ***
+        // *** อย่าลืมเปลี่ยน URL หลัง Deploy ใหม่ ***
         const GAS_URL = 'https://script.google.com/macros/s/AKfycbwt4O6aTK_NqGGdYaIF6gRbv5f37dgFeQYZ7ZLxZIRYGBEz54EnJx1hS36XPhET1AOgHg/exec'; 
         const LIFF_ID = '2005789397-ROQvjpYk';
 
@@ -263,24 +269,16 @@
         let startTime;
         let finalTimeSec = 0;
 
-        // --- Loading Animation Logic ---
         function startLoadingAnimation() {
             const msgs = ["เซมึนหัว", "ตามัวมาก", "มุมปากตก", "ยกแขนยาก", "ลำบากพูด"];
             let i = 0;
             const sub = document.getElementById('loading-subtext');
-            
-            // Set ข้อความเริ่มต้น
             if(sub) sub.textContent = msgs[0];
-
             window.loadingInterval = setInterval(() => {
-                // Fade out
                 if(sub) sub.style.opacity = 0;
-                
                 setTimeout(() => {
-                    // เปลี่ยนข้อความ
                     i = (i + 1) % msgs.length;
                     if(sub) sub.textContent = msgs[i];
-                    // Fade in
                     if(sub) sub.style.opacity = 1;
                 }, 500);
             }, 2500);
@@ -291,12 +289,9 @@
             $('#loading').fadeOut();
         }
 
-        // --- Initialization ---
         $(document).ready(() => {
             startLoadingAnimation();
             initializeLiff();
-            
-            // Accordion Logic
             $('.accordion-header').click(function() {
                 $(this).toggleClass('active');
                 $(this).next('.accordion-body').slideToggle();
@@ -314,8 +309,8 @@
                 }
             } catch (e) {
                 console.error(e);
-                alert("เกิดข้อผิดพลาดในการเชื่อมต่อ LINE");
                 stopLoadingAnimation();
+                alert("เกิดข้อผิดพลาดในการเชื่อมต่อ");
             }
         }
 
@@ -323,20 +318,15 @@
             $.ajax({
                 url: GAS_URL,
                 dataType: 'jsonp',
-                data: {
-                    action: 'checkHistory',
-                    userId: userProfile.userId
-                },
+                data: { action: 'checkHistory', userId: userProfile.userId },
                 success: function(data) {
                     stopLoadingAnimation();
                     userName = data.name || userProfile.displayName;
-                    
                     let msg = `สวัสดีคุณ <strong>${userName}</strong>`;
                     if (data.hasTaken) {
                         const d = new Date(data.lastDate);
                         const dateStr = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()+543}`;
                         msg += `<br>คะแนนล่าสุดของคุณคือ <strong>${data.lastScore}</strong><br><span style="font-size:18px">เมื่อ ${dateStr}</span>`;
-                        
                         testType = 'post';
                         $('#quizBtnText').html("ทดสอบ<br>หลังเรียน (Post-test)");
                     } else {
@@ -352,7 +342,6 @@
             });
         }
 
-        // --- Navigation ---
         window.showKnowledge = () => {
             $('#home-card').hide();
             $('#knowledge-card').show();
@@ -360,60 +349,43 @@
 
         window.startQuiz = () => {
             $('#home-card').hide();
-            $('#loading').fadeIn(); // Show loading again
-            
+            $('#loading').fadeIn();
             $.ajax({
                 url: GAS_URL,
                 dataType: 'jsonp',
-                data: {
-                    action: 'getQuiz',
-                    level: 'asm'
-                },
+                data: { action: 'getQuiz', level: 'asm' },
                 success: function(data) {
                     $('#loading').fadeOut();
                     questions = data;
-                    currentIdx = 0;
-                    score = 0;
-                    wrongAnswers = [];
-                    
+                    currentIdx = 0; score = 0; wrongAnswers = [];
                     $('#quiz-card').show();
                     $('#testTypeLabel').text(testType === 'pre' ? "ทดสอบก่อนเรียน" : "ทดสอบหลังเรียน");
-                    
-                    // Start Timer
                     startTime = new Date();
                     renderQuestion();
                 }
             });
         };
 
-        // --- Quiz Logic ---
         function renderQuestion() {
             const q = questions[currentIdx];
             $('#qIndex').text(`${currentIdx + 1} / ${questions.length}`);
             $('#questionText').text(q.question);
-            
             let choices = ['choice1', 'choice2', 'choice3', 'choice4'];
             choices.sort(() => Math.random() - 0.5);
-
             let html = '';
             choices.forEach(key => {
                 if(q[key]) {
-                    html += `<label class="choice-label">
-                                <input type="radio" name="ans" value="${q[key]}">
-                                ${q[key]}
-                             </label>`;
+                    html += `<label class="choice-label"><input type="radio" name="ans" value="${q[key]}">${q[key]}</label>`;
                 }
             });
             $('#choicesContainer').html(html);
             $('#submitBtn').hide();
-
             $('.choice-label').click(function() {
                 $('.choice-label').removeClass('selected');
                 $(this).addClass('selected');
                 $(this).find('input').prop('checked', true);
                 $('#submitBtn').show();
             });
-
             $('#submitBtn').off('click').click(() => checkAnswer(q));
         }
 
@@ -421,54 +393,35 @@
             const selectedVal = $('input[name="ans"]:checked').val();
             const correctVal = q.correct_choice.trim();
             const isCorrect = (selectedVal.trim() === correctVal);
-
-            if (isCorrect) {
-                score++;
-                showFeedback(true, correctVal);
-            } else {
-                wrongAnswers.push(q.test_id);
-                showFeedback(false, correctVal);
-            }
+            if (isCorrect) score++;
+            else wrongAnswers.push(q.test_id);
+            showFeedback(isCorrect, correctVal);
         }
 
         function showFeedback(isCorrect, answerText) {
             $('#fbEmoji').text(isCorrect ? '✅' : '❌');
             $('#fbTitle').text(isCorrect ? 'ถูกต้อง!' : 'ผิดครับ');
             $('#fbTitle').css('color', isCorrect ? 'green' : 'red');
-            
-            if(!isCorrect) {
-                $('#fbMsg').html(`คำตอบที่ถูกคือ:<br><strong>${answerText}</strong>`);
-            } else {
-                $('#fbMsg').text('');
-            }
-
+            if(!isCorrect) $('#fbMsg').html(`คำตอบที่ถูกคือ:<br><strong>${answerText}</strong>`);
+            else $('#fbMsg').text('');
             $('#feedbackModal').addClass('show');
-            
             $('#nextQBtn').off('click').click(() => {
                 $('#feedbackModal').removeClass('show');
                 currentIdx++;
-                if(currentIdx < questions.length) {
-                    renderQuestion();
-                } else {
-                    finishQuiz();
-                }
+                if(currentIdx < questions.length) renderQuestion();
+                else finishQuiz();
             });
         }
 
         function finishQuiz() {
-            // Stop Timer
             let endTime = new Date();
-            let timeDiff = endTime - startTime; 
-            finalTimeSec = Math.floor(timeDiff / 1000); 
-            
+            finalTimeSec = Math.floor((endTime - startTime) / 1000);
             let minutes = Math.floor(finalTimeSec / 60);
             let seconds = finalTimeSec % 60;
             let timeStr = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')} วินาที`;
 
             $('#quiz-card').hide();
             $('#loading').fadeIn();
-
-            // Save Result
             $.ajax({
                 url: GAS_URL,
                 dataType: 'jsonp',
@@ -486,10 +439,8 @@
                 success: function(resp) {
                     $('#loading').fadeOut();
                     $('#result-card').show();
-                    
                     $('#resultScore').text(`${score} / ${questions.length}`);
                     $('#timeTakenDisplay').text(timeStr);
-                    
                     $('#rankDisplay').text(resp.rank);
                     $('#totalDisplay').text(resp.totalPlayers);
                 }
@@ -497,11 +448,8 @@
         }
 
         window.closeApp = () => {
-            if(liff.isInClient()) {
-                liff.closeWindow();
-            } else {
-                location.reload();
-            }
+            if(liff.isInClient()) liff.closeWindow();
+            else location.reload();
         }
     </script>
 </body>
