@@ -2,300 +2,227 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>ทดสอบความรู้เรื่อง stroke</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>สวีรู้ทัน Stroke</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    
     <style>
-        /* --- Global Style --- */
-        :root { --primary-color: #1a237e; --secondary-color: #1e88e5; --bg-color: #f5f5f5; }
+        /* --- Critical CSS (ใส่ใน head เพื่อให้โหลดเร็ว) --- */
+        :root { 
+            --primary: #FF6B6B; --secondary: #4ECDC4; 
+            --accent-1: #FFE66D; --accent-2: #1A535C;
+            --bg-color: #FFFDF7; --text-color: #333;
+            --font-stack: 'Kanit', sans-serif;
+        }
         body { 
-            font-family: 'Noto Sans Thai', sans-serif !important; 
-            background: var(--bg-color); 
-            margin: 0; padding: 0;
-            font-size: 22px; 
-            line-height: 1.6;
-            color: #333;
+            font-family: var(--font-stack) !important; 
+            background: var(--bg-color); margin: 0; padding: 0;
+            font-size: 20px; line-height: 1.5; color: var(--text-color);
+            overscroll-behavior-y: contain; /* ป้องกันการ pull-to-refresh ของ browser */
         }
-        .container { 
-            max-width: 600px; margin: 20px auto; 
-            background: #fff; padding: 25px; 
-            border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
-        }
-        
-        h1 { font-size: 36px; text-align: center; color: var(--primary-color); margin-bottom: 20px; line-height: 1.3; }
-        h2 { font-size: 28px; color: var(--primary-color); margin-bottom: 20px; }
+        .container { max-width: 100%; padding: 20px; overflow-x: hidden; }
+        h1 { font-size: 40px; text-align: center; color: var(--accent-2); margin: 10px 0 30px; font-weight: 900; letter-spacing: 1px; text-shadow: 2px 2px 0px var(--accent-1); }
+        h2 { font-size: 32px; color: var(--accent-2); font-weight: 700; margin-bottom: 20px; }
 
-        /* --- Loading Screen --- */
-        #loading { 
-            position: fixed; top: 0; left: 0; 
-            width: 100%; height: 100%; 
-            background: #000; 
-            display: flex; flex-direction: column; 
-            justify-content: center; align-items: center; 
-            z-index: 2000; color: white; text-align: center; 
+        /* --- Video Icons Menu --- */
+        .video-menu-grid { 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; 
         }
+        .video-btn {
+            aspect-ratio: 1 / 1;
+            border-radius: 25px; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            text-align: center; font-weight: bold; font-size: 22px; color: white;
+            cursor: pointer; box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s; border: 3px solid rgba(255,255,255,0.3);
+        }
+        .video-btn:active { transform: scale(0.95); }
+        .video-btn i { font-size: 50px; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+        .v-btn-1 { background: linear-gradient(135deg, #FF9A8B, #FF6A88); }
+        .v-btn-2 { background: linear-gradient(135deg, #4ECDC4, #556270); }
+        .v-btn-3 { background: linear-gradient(135deg, #A8E063, #56AB2F); }
+        .v-btn-4 { background: linear-gradient(135deg, #FED373, #F15245); }
+
+        /* --- Main Buttons --- */
+        .big-btn {
+            width: 100%; padding: 25px; border-radius: 20px;
+            font-size: 28px; font-weight: bold; text-align: center;
+            cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+            display: flex; align-items: center; justify-content: center; gap: 15px;
+            margin-bottom: 20px; color: white; border: none;
+        }
+        .btn-learn { background: linear-gradient(45deg, var(--secondary), var(--accent-2)); }
+        .btn-quiz { background: linear-gradient(45deg, var(--primary), #c0392b); }
+        /* ปุ่มสำหรับคนที่ทำ Post-test แล้ว */
+        .btn-quiz.completed { 
+            background: linear-gradient(45deg, #27ae60, #2ecc71); 
+            pointer-events: none; /* ห้ามกดซ้ำ */
+        }
+
+        /* --- Lesson Carousel (Horizontal Scroll) --- */
+        #lesson-section { display: none; /* ซ่อนไว้ก่อน */ }
+        .carousel-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+            gap: 15px;
+            padding-bottom: 20px; /* พื้นที่สำหรับ scrollbar */
+        }
+        .carousel-container::-webkit-scrollbar { height: 8px; }
+        .carousel-container::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 4px; }
+
+        .lesson-slide {
+            flex: 0 0 100%; /* เต็มจอพอดี */
+            scroll-snap-align: center;
+            background: #fff;
+            border-radius: 25px;
+            padding: 25px;
+            box-sizing: border-box;
+            border: 4px solid var(--accent-1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .lesson-title { font-size: 36px; font-weight: 900; color: var(--accent-2); margin-bottom: 20px; text-align: center; }
+        .lesson-image-container {
+            width: 100%; aspect-ratio: 1 / 1; /* สี่เหลี่ยมจัตุรัส */
+            border-radius: 20px; overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            margin-bottom: 20px; cursor: zoom-in;
+            position: relative;
+        }
+        .lesson-image { width: 100%; height: 100%; object-fit: cover; }
+        .expand-hint { position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.5); color: white; padding: 5px 10px; border-radius: 15px; font-size: 16px; pointer-events: none;}
+
+        /* --- Expandable Content --- */
+        details.lesson-content {
+            background: #f0f8ff; border-radius: 15px;
+            padding: 5px; margin-bottom: 20px;
+            border: 2px solid #b3e5fc;
+        }
+        summary {
+            font-size: 26px; font-weight: bold; color: var(--secondary);
+            padding: 15px; cursor: pointer; outline: none;
+        }
+        .lesson-details-body { padding: 15px 20px; font-size: 24px; line-height: 1.7; }
+        .lesson-details-body b { color: var(--primary); }
+
+        /* --- Inline Lesson Quiz --- */
+        .lesson-quiz-container { 
+            border-top: 3px dashed #ddd; padding-top: 25px; display: none; /* ซ่อนก่อนกดทำ */
+        }
+        .quiz-question-item { margin-bottom: 30px; background: #fff3e0; padding: 20px; border-radius: 15px;}
+        .quiz-q-text { font-size: 26px; font-weight: bold; color: var(--accent-2); margin-bottom: 15px; }
+        .quiz-choice {
+            display: block; padding: 15px 20px; margin: 10px 0;
+            background: #fff; border: 3px solid #ddd; border-radius: 12px;
+            font-size: 24px; font-weight: bold; cursor: pointer;
+        }
+        /* ซ่อน radio button */
+        .quiz-choice input { display: none; } 
+        /* State เมื่อเลือก */
+        .quiz-choice.selected { border-color: var(--secondary); background: #e0f7fa; color: var(--accent-2); }
+        /* State เมื่อเฉลย */
+        .quiz-choice.correct { border-color: #2ecc71 !important; background: #d5f5e3 !important; color: #1e8449; }
+        .quiz-choice.wrong { border-color: #e74c3c !important; background: #fadbd8 !important; color: #c0392b; opacity: 0.7; }
         
-        .spinner {
-            border: 8px solid #333; 
-            border-top: 8px solid #ffc107; 
-            border-radius: 50%;
-            width: 80px; height: 80px;
-            animation: spin 1s linear infinite;
-            margin-bottom: 30px;
+        .btn-submit-lesson { 
+            background: var(--accent-2); color: white; width: 100%; 
+            padding: 20px; border-radius: 15px; font-size: 26px; font-weight: bold; border: none;
         }
+
+        /* --- Image Modal & Share --- */
+        #imageModal { 
+            display: none; position: fixed; z-index: 3000; 
+            left: 0; top: 0; width: 100%; height: 100%; 
+            background-color: rgba(0,0,0,0.9); flex-direction: column;
+            justify-content: center; align-items: center;
+        }
+        #modalImage { max-width: 95%; max-height: 70vh; border-radius: 15px; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+        .modal-close { position: absolute; top: 20px; right: 30px; color: #f1f1f1; font-size: 50px; font-weight: bold; cursor: pointer; }
+        .btn-share {
+            margin-top: 20px; background: #00C300; /* LINE Green */
+            color: white; padding: 15px 30px; border-radius: 30px;
+            font-size: 24px; font-weight: bold; display: flex; align-items: center; gap: 10px;
+        }
+
+        /* --- Loading Spinner (Minimal) --- */
+        .loader { border: 8px solid #f3f3f3; border-top: 8px solid var(--primary); border-radius: 50%; width: 60px; height: 60px; animation: spin 1s linear infinite; margin: 50px auto; display: none; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        #loading-text { 
-            font-size: 2rem; font-weight: bold; margin-bottom: 10px; color: #fff;
-        }
-        .loading-prefix { font-size: 1.2rem; margin-bottom: 5px; color: #aaa; }
-        
-        #loading-subtext { 
-            font-size: 4rem; font-weight: 800; color: #ffc107; 
-            min-height: 100px; line-height: 1.2; 
-            text-shadow: 2px 2px 10px rgba(255,193,7,0.5); 
-            opacity: 1; transition: opacity 0.5s ease-in-out; 
-        }
+        /* --- Helper --- */
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
 
-        /* --- Big Buttons --- */
-        .menu-grid { display: flex; flex-direction: column; gap: 20px; margin-top: 20px; }
-        .big-btn {
-            background: #fff; border: 3px solid var(--secondary-color);
-            border-radius: 20px; padding: 30px 20px;
-            font-size: 28px; font-weight: bold; color: var(--secondary-color);
-            cursor: pointer; text-align: center; transition: 0.2s;
-            display: flex; align-items: center; justify-content: center; gap: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .big-btn:active { transform: scale(0.98); }
-        .big-btn.primary { background: var(--secondary-color); color: #fff; border: none; }
-        .big-btn i { font-size: 40px; }
-
-        /* --- Accordion (Knowledge) --- */
-        .accordion-item { border-bottom: 2px solid #ddd; margin-bottom: 10px; }
-        .accordion-header {
-            padding: 20px; font-size: 26px; font-weight: bold; cursor: pointer;
-            background: #e3f2fd; border-radius: 10px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .accordion-header.active { background: #bbdefb; color: var(--primary-color); }
-        .accordion-body {
-            padding: 20px; font-size: 24px; line-height: 1.8; display: none;
-            background: #fff;
-        }
-        .icon { transition: 0.3s; font-size: 30px; }
-        .active .icon { transform: rotate(45deg); }
-
-        /* --- Quiz Interface --- */
-        #quiz-card, #result-card, #knowledge-card { display: none; }
-        .question { font-size: 32px; font-weight: bold; color: var(--primary-color); margin: 20px 0; }
-        
-        /* [แก้ไข] ปรับตัวเลือกให้หนาและชัดเจน */
-        .choice-label {
-            display: block; 
-            font-size: 28px;          /* ใหญ่ขึ้นอีกนิด */
-            font-weight: 700;         /* ตัวหนา */
-            color: #000;              /* สีดำสนิท */
-            padding: 25px; 
-            background: #fff; 
-            border: 3px solid #ddd;   /* ขอบหนาขึ้น */
-            border-radius: 15px; 
-            margin-bottom: 20px; 
-            cursor: pointer; 
-            transition: 0.2s;
-        }
-        .choice-label input { transform: scale(2.5); margin-right: 25px; }
-        .choice-label.selected { 
-            background: #e3f2fd; 
-            border-color: var(--secondary-color); 
-            color: var(--primary-color);
-        }
-        
-        #submitBtn {
-            width: 100%; padding: 25px; font-size: 28px; 
-            background: #28a745; color: white; border: none; border-radius: 15px; 
-            margin-top: 20px; display: none; font-weight: bold;
-        }
-
-        /* --- Result Animation --- */
-        @keyframes popIn {
-            0% { transform: scale(0.5); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .result-box {
-            animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            background: #e8f5e9; border: 3px solid #4caf50;
-            border-radius: 20px; padding: 20px; margin-top: 20px;
-        }
-        .rank-badge {
-            font-size: 30px; color: #d35400; font-weight: bold;
-            text-shadow: 1px 1px 0px #fff;
-        }
-        .time-text { font-size: 24px; color: #555; margin-top: 5px; }
-
-        /* --- Modal --- */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 3000; }
-        .modal.show { display: flex; }
-        .modal-content { background: #fff; padding: 30px; border-radius: 20px; width: 90%; max-width: 500px; text-align: center; }
-        .modal-btn { width: 100%; padding: 20px; font-size: 24px; border-radius: 15px; border: none; margin-top: 15px; cursor: pointer; font-weight: bold; }
-        .modal-btn.next { background: var(--secondary-color); color: white; }
-        .modal-btn.close { background: #dc3545; color: white; }
     </style>
 </head>
 <body>
 
-    <div id="loading">
-        <div class="spinner"></div>
-        <div id="loading-text">กำลังโหลดข้อมูล...</div>
-        <div class="loading-prefix">จำใส่ใจอาการสโตรก:</div>
-        <div id="loading-subtext"></div>
-    </div>
-
     <div class="container">
-        <div id="home-card">
-            <h1>ทดสอบความรู้<br>เรื่อง Stroke</h1>
-            <div id="user-info" style="text-align:center; font-size: 24px; margin-bottom: 30px; color: #333; background: #fff9c4; padding: 15px; border-radius: 10px;">
-                </div>
-            <div class="menu-grid">
-                <div class="big-btn" onclick="showKnowledge()">
-                    <i class="bi bi-book"></i>
-                    อ่านความรู้<br>เรื่องสโตรก
-                </div>
-                <div id="startQuizBtn" class="big-btn primary" onclick="startQuiz()">
-                    <i class="bi bi-pencil-square"></i>
-                    <span id="quizBtnText">ทดสอบ<br>ความรู้สโตรก</span>
-                </div>
+        <h1>สวีรู้ทัน STROKE ❤️</h1>
+
+        <div class="video-menu-grid">
+            <div class="video-btn v-btn-1" onclick="sendTextMessage('เพลงสวีรู้ทันสโตรก')">
+                <i class="bi bi-music-note-beamed"></i> เพลงสวี<br>รู้ทันสโตรก
+            </div>
+            <div class="video-btn v-btn-2" onclick="sendTextMessage('สโตรกคืออะไร')">
+                <i class="bi bi-question-circle-fill"></i> สโตรก<br>คืออะไร?
+            </div>
+            <div class="video-btn v-btn-3" onclick="sendTextMessage('ปัจจัยเสี่ยงสโตรก')">
+                <i class="bi bi-exclamation-triangle-fill"></i> ปัจจัยเสี่ยง<br>ที่ต้องระวัง
+            </div>
+            <div class="video-btn v-btn-4" onclick="sendTextMessage('วิธีปฏิบัติตัวเมื่อเป็นสโตรก')">
+                <i class="bi bi-heart-pulse-fill"></i> วิธีปฏิบัติ<br>เมื่อเป็น
             </div>
         </div>
 
-        <div id="knowledge-card">
-            <h2>5 บทเรียนต้องรู้! สู้สโตรก</h2>
-            
-            <div class="accordion-item">
-                <div class="accordion-header">1. สโตรกคืออะไร?<span class="icon">＋</span></div>
-                <div class="accordion-body">
-                    โรคหลอดเลือดสมอง (สโตรก) คือภาวะที่สมองขาดเลือดทันที จากหลอดเลือดตีบ ตัน หรือแตก ทำให้เซลล์สมองตายและอาจพิการได้
-                </div>
-            </div>
-            <div class="accordion-item">
-                <div class="accordion-header">2. ปัจจัยเสี่ยง<span class="icon">＋</span></div>
-                <div class="accordion-body">
-                    - ความดันโลหิตสูง (สำคัญที่สุด)<br>
-                    - เบาหวาน, ไขมันสูง<br>
-                    - สูบบุหรี่, อ้วนลงพุง<br>
-                    - อายุมาก
-                </div>
-            </div>
-            <div class="accordion-item">
-                <div class="accordion-header">3. อาการ B.E.F.A.S.T.<span class="icon">＋</span></div>
-                <div class="accordion-body">
-                    B - ทรงตัวไม่ได้<br>
-                    E - ตามัวทันที<br>
-                    F - หน้าเบี้ยว ปากตก<br>
-                    A - แขนขาอ่อนแรง<br>
-                    S - พูดไม่ชัด พูดไม่ออก<br>
-                    T - รีบไปโรงพยาบาลทันที
-                </div>
-            </div>
-            <div class="accordion-item">
-                <div class="accordion-header">4. เวลาคือชีวิต<span class="icon">＋</span></div>
-                <div class="accordion-body">
-                    ต้องนำผู้ป่วยส่ง รพ. ภายใน <strong>4.5 ชั่วโมง</strong> เพื่อให้ยาละลายลิ่มเลือด<br>
-                    โทร 1669 ทันที ห้ามให้กินยาหรือน้ำ!
-                </div>
-            </div>
+        <hr style="border-top: 3px dotted #ddd; margin: 30px 0;">
 
-            <button class="modal-btn close" onclick="location.reload()">กลับหน้าหลัก</button>
+        <div id="btnLoadLesson" class="big-btn btn-learn" onclick="loadLessons()">
+            <i class="bi bi-book-half"></i>
+            เข้าสู่บทเรียนสโตรก (10 บท)
         </div>
 
-        <div id="quiz-card">
-            <div style="font-size: 24px; font-weight: bold; color: #666; margin-bottom: 10px;">
-                <span id="testTypeLabel">แบบทดสอบ</span>
-                <span style="float:right;" id="qIndex">1/10</span>
-            </div>
-            <div id="questionText" class="question"></div>
-            <div id="choicesContainer"></div>
-            <button id="submitBtn">ยืนยันคำตอบ</button>
+        <div id="lesson-section">
+            <div class="loader" id="lessonLoader"></div>
+            <div class="carousel-container" id="carouselContainer">
+                </div>
+            <button class="big-btn" style="background:#999; margin-top:20px;" onclick="closeLessonSection()">ปิดบทเรียน</button>
         </div>
 
-        <div id="result-card" style="text-align: center;">
-            <div style="font-size: 60px;">🎉</div>
-            <div style="font-size: 32px; font-weight: bold;">ผลการทดสอบ</div>
-            
-            <div class="result-box">
-                <div style="font-size: 26px;">คะแนนที่ได้</div>
-                <div id="resultScore" style="font-size: 50px; font-weight: bold; color: #2e7d32;">0/10</div>
+        <div id="mainQuizBtnContainer">
+            <div id="btnStartMainQuiz" class="big-btn btn-quiz" onclick="startMainQuiz()">
+                <i class="bi bi-pencil-fill"></i>
+                <span id="quizBtnText">โหลดข้อมูล...</span>
             </div>
-
-            <div class="result-box" style="border-color: #ff9800; background: #fff3e0; animation-delay: 0.3s;">
-                <div class="time-text">ใช้เวลาทำข้อสอบ</div>
-                <div id="timeTakenDisplay" style="font-size: 36px; font-weight: bold; color: #e65100;">00:00</div>
-            </div>
-
-            <div class="result-box" style="border-color: #1976d2; background: #e3f2fd; animation-delay: 0.6s;">
-                <div class="rank-badge">🏆 อันดับที่ <span id="rankDisplay">...</span></div>
-                <div style="font-size: 20px; color: #666;">จากผู้ทดสอบทั้งหมด <span id="totalDisplay">...</span> ครั้ง</div>
-            </div>
-            
-            <button class="modal-btn next" onclick="closeApp()">ปิดโปรแกรม</button>
         </div>
-    </div>
 
-    <div id="feedbackModal" class="modal">
-        <div class="modal-content">
-            <div id="fbEmoji" style="font-size: 60px;"></div>
-            <div id="fbTitle" style="font-size: 32px; font-weight: bold; margin: 10px 0;"></div>
-            <div id="fbMsg" style="font-size: 24px; text-align: left; margin-top: 15px;"></div>
-            <button id="nextQBtn" class="modal-btn next">ข้อต่อไป</button>
+    </div> <div id="imageModal">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <img id="modalImage">
+        <div class="btn-share" onclick="shareCurrent Image()">
+            <i class="bi bi-share-fill"></i> แชร์ภาพนี้ให้เพื่อน
         </div>
     </div>
 
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        // *** อย่าลืมเปลี่ยน URL หลัง Deploy ใหม่ ***
+        // *** สำคัญ: เปลี่ยน URL เป็นของ Web App ที่ Deploy ใหม่ของคุณ ***
         const GAS_URL = 'https://script.google.com/macros/s/AKfycbwt4O6aTK_NqGGdYaIF6gRbv5f37dgFeQYZ7ZLxZIRYGBEz54EnJx1hS36XPhET1AOgHg/exec'; 
         const LIFF_ID = '2005789397-ROQvjpYk';
+        const LINE_OA_LINK = 'https://lin.ee/hkcrpOo';
 
         let userProfile = null;
-        let testType = 'pre';
-        let questions = [];
-        let currentIdx = 0;
-        let score = 0;
-        let wrongAnswers = [];
-        let userName = '';
-        
-        let startTime;
-        let finalTimeSec = 0;
-
-        function startLoadingAnimation() {
-            const msgs = ["เซมึนหัว", "ตามัวมาก", "มุมปากตก", "ยกแขนยาก", "ลำบากพูด"];
-            let i = 0;
-            const sub = document.getElementById('loading-subtext');
-            if(sub) sub.textContent = msgs[0];
-            window.loadingInterval = setInterval(() => {
-                if(sub) sub.style.opacity = 0;
-                setTimeout(() => {
-                    i = (i + 1) % msgs.length;
-                    if(sub) sub.textContent = msgs[i];
-                    if(sub) sub.style.opacity = 1;
-                }, 500);
-            }, 2500);
-        }
-
-        function stopLoadingAnimation() {
-            clearInterval(window.loadingInterval);
-            $('#loading').fadeOut();
-        }
+        let mainTestType = 'pre'; // pre หรือ post
+        let lessonsData = []; // เก็บข้อมูลบทเรียน
+        let currentShareImage = ''; // เก็บ URL รูปที่จะแชร์
 
         $(document).ready(() => {
-            startLoadingAnimation();
             initializeLiff();
-            $('.accordion-header').click(function() {
-                $(this).toggleClass('active');
-                $(this).next('.accordion-body').slideToggle();
-            });
         });
 
         async function initializeLiff() {
@@ -305,152 +232,255 @@
                     liff.login();
                 } else {
                     userProfile = await liff.getProfile();
-                    checkUserHistory();
+                    // เช็คประวัติเพื่อปรับปุ่ม Pre/Post Test
+                    checkMainQuizHistory();
                 }
             } catch (e) {
-                console.error(e);
-                stopLoadingAnimation();
-                alert("เกิดข้อผิดพลาดในการเชื่อมต่อ");
+                alert("เกิดข้อผิดพลาดในการเชื่อมต่อ LINE");
             }
         }
 
-        function checkUserHistory() {
+        // --- 1. ฟังก์ชันสำหรับเมนูวิดีโอ (ส่งข้อความ) ---
+        function sendTextMessage(text) {
+            if (liff.isInClient()) {
+                liff.sendMessages([{ type: 'text', text: text }])
+                    .then(() => { console.log('message sent'); liff.closeWindow(); })
+                    .catch((err) => { console.error('error', err); });
+            } else {
+                alert('ฟังก์ชันนี้ใช้งานได้เฉพาะใน LINE App เท่านั้น');
+            }
+        }
+
+        // --- 2. ฟังก์ชันจัดการบทเรียน (Carousel & Quiz) ---
+
+        function loadLessons() {
+            $('#btnLoadLesson').hide();
+            $('#lesson-section').fadeIn();
+            $('#lessonLoader').show();
+            $('#carouselContainer').empty(); // เคลียร์ของเก่า
+
+            // ดึงข้อมูลบทเรียนจาก GAS
             $.ajax({
-                url: GAS_URL,
-                dataType: 'jsonp',
-                data: { action: 'checkHistory', userId: userProfile.userId },
+                url: GAS_URL, dataType: 'jsonp',
+                data: { action: 'getLessons' },
                 success: function(data) {
-                    stopLoadingAnimation();
-                    userName = data.name || userProfile.displayName;
-                    let msg = `สวัสดีคุณ <strong>${userName}</strong>`;
-                    if (data.hasTaken) {
-                        const d = new Date(data.lastDate);
-                        const dateStr = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()+543}`;
-                        msg += `<br>คะแนนล่าสุดของคุณคือ <strong>${data.lastScore}</strong><br><span style="font-size:18px">เมื่อ ${dateStr}</span>`;
-                        testType = 'post';
-                        $('#quizBtnText').html("ทดสอบ<br>หลังเรียน (Post-test)");
-                    } else {
-                        testType = 'pre';
-                        $('#quizBtnText').html("ทดสอบ<br>ก่อนเรียน (Pre-test)");
-                    }
-                    $('#user-info').html(msg);
+                    lessonsData = data;
+                    renderLessons(data);
+                    $('#lessonLoader').hide();
                 },
                 error: function() {
-                    stopLoadingAnimation();
-                    alert("โหลดข้อมูลล้มเหลว");
+                    $('#lessonLoader').hide();
+                    alert('ไม่สามารถโหลดบทเรียนได้');
+                    closeLessonSection();
                 }
             });
         }
 
-        window.showKnowledge = () => {
-            $('#home-card').hide();
-            $('#knowledge-card').show();
-        };
-
-        window.startQuiz = () => {
-            $('#home-card').hide();
-            $('#loading').fadeIn();
-            $.ajax({
-                url: GAS_URL,
-                dataType: 'jsonp',
-                data: { action: 'getQuiz', level: 'asm' },
-                success: function(data) {
-                    $('#loading').fadeOut();
-                    questions = data;
-                    currentIdx = 0; score = 0; wrongAnswers = [];
-                    $('#quiz-card').show();
-                    $('#testTypeLabel').text(testType === 'pre' ? "ทดสอบก่อนเรียน" : "ทดสอบหลังเรียน");
-                    startTime = new Date();
-                    renderQuestion();
-                }
-            });
-        };
-
-        function renderQuestion() {
-            const q = questions[currentIdx];
-            $('#qIndex').text(`${currentIdx + 1} / ${questions.length}`);
-            $('#questionText').text(q.question);
-            let choices = ['choice1', 'choice2', 'choice3', 'choice4'];
-            choices.sort(() => Math.random() - 0.5);
+        function renderLessons(lessons) {
             let html = '';
-            choices.forEach(key => {
-                if(q[key]) {
-                    html += `<label class="choice-label"><input type="radio" name="ans" value="${q[key]}">${q[key]}</label>`;
-                }
+            lessons.forEach((lesson, index) => {
+                // สร้าง level สำหรับดึงข้อสอบ เช่น lesson1, lesson2...
+                const lessonLevel = `lesson${index + 1}`;
+                // ใช้ loading="lazy" เพื่อความเร็ว
+                html += `
+                <div class="lesson-slide" id="module-${lesson.module_id}">
+                    <div class="lesson-title">${lesson.title}</div>
+                    <div class="lesson-image-container" onclick="openModal('${lesson.images}')">
+                        <img class="lesson-image" src="${lesson.images}" loading="lazy" alt="${lesson.title}">
+                        <div class="expand-hint"><i class="bi bi-arrows-angle-expand"></i> แตะเพื่อขยาย</div>
+                    </div>
+                    <details class="lesson-content">
+                        <summary>อ่านเนื้อหา <i class="bi bi-caret-down-fill"></i></summary>
+                        <div class="lesson-details-body">${lesson.content_html}</div>
+                    </details>
+                    
+                    <div class="big-btn btn-quiz" style="font-size:24px; padding:15px;" onclick="loadLessonQuiz(this, '${lessonLevel}', '${lesson.module_id}')">
+                        <i class="bi bi-clipboard-check"></i> ทำข้อสอบบทนี้ (3 ข้อ)
+                    </div>
+                    <div class="lesson-quiz-container" id="quiz-${lessonLevel}">
+                        <div class="text-center"><div class="loader" style="display:block; width:40px; height:40px; margin: 20px auto;"></div> กำลังโหลดข้อสอบ...</div>
+                    </div>
+                </div>
+                `;
             });
-            $('#choicesContainer').html(html);
-            $('#submitBtn').hide();
-            $('.choice-label').click(function() {
-                $('.choice-label').removeClass('selected');
-                $(this).addClass('selected');
-                $(this).find('input').prop('checked', true);
-                $('#submitBtn').show();
-            });
-            $('#submitBtn').off('click').click(() => checkAnswer(q));
+            $('#carouselContainer').html(html);
         }
 
-        function checkAnswer(q) {
-            const selectedVal = $('input[name="ans"]:checked').val();
-            const correctVal = q.correct_choice.trim();
-            const isCorrect = (selectedVal.trim() === correctVal);
-            if (isCorrect) score++;
-            else wrongAnswers.push(q.test_id);
-            showFeedback(isCorrect, correctVal);
+        function closeLessonSection() {
+            $('#lesson-section').hide();
+            $('#btnLoadLesson').show();
+            // รีเซ็ตตำแหน่ง scroll
+            $('#carouselContainer').scrollLeft(0);
         }
 
-        function showFeedback(isCorrect, answerText) {
-            $('#fbEmoji').text(isCorrect ? '✅' : '❌');
-            $('#fbTitle').text(isCorrect ? 'ถูกต้อง!' : 'ผิดครับ');
-            $('#fbTitle').css('color', isCorrect ? 'green' : 'red');
-            if(!isCorrect) $('#fbMsg').html(`คำตอบที่ถูกคือ:<br><strong>${answerText}</strong>`);
-            else $('#fbMsg').text('');
-            $('#feedbackModal').addClass('show');
-            $('#nextQBtn').off('click').click(() => {
-                $('#feedbackModal').removeClass('show');
-                currentIdx++;
-                if(currentIdx < questions.length) renderQuestion();
-                else finishQuiz();
-            });
-        }
+        // --- ฟังก์ชันย่อย: โหลดและทำข้อสอบท้ายบท ---
+        function loadLessonQuiz(btnElement, level, moduleId) {
+            const quizContainer = $(btnElement).next('.lesson-quiz-container');
+            $(btnElement).hide(); // ซ่อนปุ่มกดทำ
+            quizContainer.show(); // แสดงพื้นที่ข้อสอบ
 
-        function finishQuiz() {
-            let endTime = new Date();
-            finalTimeSec = Math.floor((endTime - startTime) / 1000);
-            let minutes = Math.floor(finalTimeSec / 60);
-            let seconds = finalTimeSec % 60;
-            let timeStr = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')} วินาที`;
-
-            $('#quiz-card').hide();
-            $('#loading').fadeIn();
             $.ajax({
-                url: GAS_URL,
-                dataType: 'jsonp',
-                data: {
-                    action: 'recordResult',
-                    userId: userProfile.userId,
-                    name: userName,
-                    level: 'asm',
-                    score: score,
-                    full_score: questions.length,
-                    wrong_ids: wrongAnswers.join(','),
-                    test_type: testType,
-                    time_taken: finalTimeSec
-                },
-                success: function(resp) {
-                    $('#loading').fadeOut();
-                    $('#result-card').show();
-                    $('#resultScore').text(`${score} / ${questions.length}`);
-                    $('#timeTakenDisplay').text(timeStr);
-                    $('#rankDisplay').text(resp.rank);
-                    $('#totalDisplay').text(resp.totalPlayers);
+                url: GAS_URL, dataType: 'jsonp',
+                data: { action: 'getQuiz', level: level },
+                success: function(questions) {
+                    renderLessonQuiz(quizContainer, questions, level, moduleId);
                 }
             });
         }
 
-        window.closeApp = () => {
-            if(liff.isInClient()) liff.closeWindow();
-            else location.reload();
+        function renderLessonQuiz(container, questions, level, moduleId) {
+            if (questions.length === 0) {
+                container.html('<div class="text-center" style="color:red; font-size:22px;">ยังไม่มีข้อสอบสำหรับบทนี้ครับ</div>');
+                return;
+            }
+            let html = '';
+            questions.forEach((q, idx) => {
+                // สุ่มตัวเลือก
+                let choices = ['choice1', 'choice2', 'choice3', 'choice4'].filter(k => q[k]);
+                choices.sort(() => Math.random() - 0.5);
+
+                html += `<div class="quiz-question-item" data-correct="${q.correct_choice}" data-testid="${q.test_id}">
+                    <div class="quiz-q-text">${idx+1}. ${q.question}</div>`;
+                choices.forEach(key => {
+                    html += `<label class="quiz-choice" onclick="selectChoice(this)">
+                                <input type="radio" name="q_${level}_${idx}" value="${q[key]}"> ${q[key]}
+                             </label>`;
+                });
+                html += `</div>`;
+            });
+            html += `<button class="btn-submit-lesson" onclick="submitLessonQuiz(this, '${level}', ${questions.length}, '${moduleId}')">ส่งคำตอบ</button>`;
+            container.html(html);
         }
+
+        // ฟังก์ชันเลือกช้อยส์ (เปลี่ยนสี)
+        window.selectChoice = (element) => {
+           // หา container ของข้อนั้นๆ แล้วลบ class selected ออกจากทุกตัวเลือกก่อน
+           $(element).closest('.quiz-question-item').find('.quiz-choice').removeClass('selected');
+           // เพิ่ม class selected ให้ตัวที่เลือก
+           $(element).addClass('selected');
+        }
+
+        function submitLessonQuiz(btnBtn, level, fullScore, moduleId) {
+            const quizContainer = $(btnBtn).parent();
+            let score = 0;
+            let wrongIds = [];
+            let allAnswered = true;
+
+            // ตรวจคำตอบและเฉลย
+            quizContainer.find('.quiz-question-item').each(function() {
+                const correctVal = $(this).data('correct').trim();
+                const testId = $(this).data('testid');
+                const selected = $(this).find('input:checked');
+                
+                if (selected.length === 0) { allAnswered = false; return false; } // ถ้ามีข้อไหนยังไม่ตอบ
+
+                const userVal = selected.val().trim();
+                const selectedLabel = selected.parent();
+
+                if (userVal === correctVal) {
+                    score++;
+                    selectedLabel.addClass('correct');
+                } else {
+                    wrongIds.push(testId);
+                    selectedLabel.addClass('wrong');
+                    // เฉลยข้อที่ถูก
+                    $(this).find(`input[value="${correctVal}"]`).parent().addClass('correct');
+                }
+                // ปิดการคลิกแก้ไข
+                $(this).find('.quiz-choice').css('pointer-events', 'none');
+            });
+
+            if (!allAnswered) {
+                alert("กรุณาตอบให้ครบทุกข้อก่อนส่งครับ");
+                return;
+            }
+
+            $(btnBtn).hide(); // ซ่อนปุ่มส่ง
+            // แสดงคะแนน
+            quizContainer.append(`<div style="text-align:center; font-size:32px; font-weight:bold; margin:20px 0; color: var(--accent-2);">
+                คะแนนที่ได้: <span style="color:${score===fullScore?'#2ecc71':'#e74c3c'}">${score} / ${fullScore}</span>
+            </div>`);
+            
+            // บันทึกลง GAS
+            $.ajax({
+                url: GAS_URL, dataType: 'jsonp',
+                data: {
+                    action: 'recordLessonResult', userId: userProfile.userId, name: userProfile.displayName,
+                    level: level, score: score, full_score: fullScore, wrong_ids: wrongIds.join(','), moduleId: moduleId
+                },
+                success: (resp) => { console.log('บันทึกผลสอบย่อยเรียบร้อย'); }
+            });
+        }
+
+
+        // --- 3. ฟังก์ชัน Modal และ Share Image ---
+        function openModal(imgUrl) {
+            currentShareImage = imgUrl;
+            $('#modalImage').attr('src', imgUrl);
+            $('#imageModal').css('display', 'flex').hide().fadeIn(300);
+        }
+
+        function closeModal() {
+            $('#imageModal').fadeOut(300);
+        }
+        // ปิด Modal เมื่อคลิกพื้นที่ว่าง
+        $('#imageModal').click(function(e) {
+             if(e.target === this) closeModal();
+        });
+
+        function shareCurrent Image() {
+            if (!liff.isApiAvailable('shareTargetPicker')) {
+                alert("อุปกรณ์นี้ไม่รองรับการแชร์"); return;
+            }
+            // สร้าง Flex Message สำหรับแชร์รูป
+            const flexMessage = {
+                type: "flex",
+                altText: "มีความรู้ดีๆ เกี่ยวกับสโตรกมาฝากครับ",
+                contents: {
+                    type: "bubble",
+                    hero: { type: "image", url: currentShareImage, size: "full", aspectRatio: "1:1", aspectMode: "cover", action: { type: "uri", uri: LINE_OA_LINK } },
+                    body: {
+                        type: "box", layout: "vertical",
+                        contents: [
+                            { type: "text", text: "👆 แตะที่รูปเพื่อเรียนรู้เพิ่มเติม", weight: "bold", size: "md", align: "center", color: "#1A535C" },
+                            { type: "button", action: { type: "uri", label: "เข้าสู่ LINE OA สวีรู้ทัน Stroke", uri: LINE_OA_LINK }, style: "primary", color: "#FF6B6B", margin: "md" }
+                        ]
+                    }
+                }
+            };
+
+            liff.shareTargetPicker([flexMessage])
+                .then(res => { if (res) alert("แชร์เรียบร้อย!"); closeModal(); })
+                .catch(err => { console.error(err); alert("การแชร์ล้มเหลว"); });
+        }
+
+
+        // --- 4. ฟังก์ชันสำหรับ Main Quiz (Pre/Post) ---
+        function checkMainQuizHistory() {
+            $.ajax({
+                url: GAS_URL, dataType: 'jsonp',
+                data: { action: 'checkHistory', userId: userProfile.userId },
+                success: function(data) {
+                    if (data.hasTakenPost) {
+                        mainTestType = 'completed';
+                        $('#quizBtnText').html(`✅ ทำแบบทดสอบแล้ว<br>ได้ ${data.lastScore} คะแนน`);
+                        $('#btnStartMainQuiz').addClass('completed').removeAttr('onclick');
+                    } else {
+                        mainTestType = 'pre'; // หรือเช็คละเอียดว่าเป็น pre หรือ post ถ้าต้องการ
+                        $('#quizBtnText').html("ทำแบบทดสอบ<br>วัดผล (Pre/Post Test)");
+                    }
+                }
+            });
+        }
+
+        // (ส่วนนี้ยังไม่ได้ทำหน้า Quiz ใหม่ให้ แต่เตรียมฟังก์ชันไว้เชื่อมต่อ)
+        function startMainQuiz() {
+           if(mainTestType === 'completed') return;
+           alert("ระบบกำลังพาไปหน้าทำแบบทดสอบวัดผล (ส่วนนี้ใช้ Logic เดิม)");
+           // ตรงนี้ให้ Redirect ไปหน้า quiz.html หรือแสดง Quiz Interface เดิมที่คุณมี
+           // window.location.href = "quiz.html"; 
+        }
+
     </script>
 </body>
 </html>
