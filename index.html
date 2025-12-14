@@ -25,6 +25,7 @@
             font-size: 22px; line-height: 1.6; color: #333;
             overscroll-behavior-y: contain;
         }
+        button { font-family: var(--font-stack) !important; } /* บังคับ Font ปุ่ม */
         .container { max-width: 600px; margin: 0 auto; padding: 20px; overflow-x: hidden; }
         
         h1 { 
@@ -51,7 +52,7 @@
             font-size: 26px; font-weight: 600; text-align: center;
             cursor: pointer; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
             display: flex; align-items: center; justify-content: center; gap: 10px;
-            transition: 0.2s; color: white;
+            transition: 0.2s; color: white; font-family: var(--font-stack);
         }
         .big-btn:active { transform: scale(0.98); }
         .btn-blue { background-color: var(--primary-blue); }
@@ -80,7 +81,8 @@
             box-shadow: var(--card-shadow); box-sizing: border-box;
         }
         .lesson-title { font-size: 32px; font-weight: 600; color: var(--text-dark); margin-bottom: 15px; text-align: center; }
-        .lesson-image { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 10px; margin-bottom: 20px; }
+        /* ปรับรูปเป็น 1:1 */
+        .lesson-image { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 10px; margin-bottom: 20px; }
         
         /* --- Quiz UI (Both Lesson & Main) --- */
         .quiz-choice {
@@ -136,7 +138,6 @@
         <!-- 2. ส่วนแบบทดสอบ (สีส้ม) -->
         <div class="section-card" style="border-left: 8px solid #ff6b6b;">
             <div class="section-title" style="color:#e65100;"><i class="bi bi-pencil-square"></i> แบบทดสอบวัดผล (10 คะแนน)</div>
-            <!-- ตัดคำอธิบาย Pre/Post ออกตามขอ -->
             
             <div class="big-btn btn-orange" onclick="startMainExam()">
                 ทำแบบทดสอบ
@@ -259,7 +260,10 @@
         }
 
         function renderInlineQuiz(container, questions, level, type) {
-            if (!questions || !questions.length) { container.html('ไม่พบข้อสอบ'); return; }
+            if (!questions || !questions.length) { 
+                container.html('<div style="text-align:center; color:red;">ไม่พบข้อสอบ (โปรดตรวจสอบข้อมูลใน Google Sheet)</div>'); 
+                return; 
+            }
             let html = '';
             questions.forEach((q, i) => {
                 const choices = [
@@ -277,7 +281,6 @@
                 html += `</div>`;
             });
             
-            // ปุ่มส่งคำตอบ (ใช้ร่วมกันได้ทั้ง Lesson และ Main Exam แต่ Main Exam จะใช้ฟังก์ชันแยก)
             if (type === 'lesson') {
                 html += `<button class="big-btn btn-orange" style="font-size:22px; padding:15px;" onclick="submitInlineQuiz(this, '${level}', ${questions.length})">ส่งคำตอบ</button>`;
             }
@@ -390,14 +393,7 @@
                 </div>
             `);
 
-            // Determine Pre/Post (Check existing score first)
-            // For simplicity, let backend decide based on existing rows or just send logic
-            // But here, we check local state. 
-            // Better: just send and let backend handle or overwrite logic.
-            // Requirement: "Don't show details about pre/post".
-            // So we just assume: First time = Pre, Next = Post.
-            // We can assume logic is handled by backend or just send 'post' if pre exists.
-            
+            // Determine Pre/Post
             const isPost = $('#mainScoreContainer').find('.badge-pre').length > 0;
             const type = isPost ? 'post' : 'pre';
 
@@ -437,7 +433,7 @@
             if (data.pre) {
                 html += `
                 <div class="score-row">
-                    <div><span class="badge badge-pre">Pre-test</span> <small style="color:#666">${data.pre.date}</small></div>
+                    <div><span class="badge badge-pre">ก่อนเรียน</span> <small style="color:#666">${data.pre.date}</small></div>
                     <div style="font-weight:bold; color:#0d47a1;">${data.pre.score} คะแนน <small>(${data.pre.time})</small></div>
                 </div>`;
             }
@@ -445,7 +441,7 @@
             if (data.post) {
                 html += `
                 <div class="score-row">
-                    <div><span class="badge badge-post">Post-test</span> <small style="color:#666">${data.post.date}</small></div>
+                    <div><span class="badge badge-post">หลังเรียน</span> <small style="color:#666">${data.post.date}</small></div>
                     <div style="font-weight:bold; color:#0d47a1;">${data.post.score} คะแนน <small>(${data.post.time})</small></div>
                 </div>`;
             }
