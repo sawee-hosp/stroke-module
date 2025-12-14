@@ -138,7 +138,6 @@
         <!-- 2. ส่วนแบบทดสอบ -->
         <div class="section-card" style="border-left: 8px solid #ff6b6b;">
             <div class="section-title" style="color:#e65100;"><i class="bi bi-pencil-square"></i> แบบทดสอบวัดผล (10 คะแนน)</div>
-            <!-- ตัดคำอธิบายเงื่อนไขออก -->
             
             <div class="big-btn btn-orange" onclick="startMainExam()">
                 ทำแบบทดสอบ
@@ -272,7 +271,8 @@
                     { t: q.choice3, v: q.choice3 }, { t: q.choice4, v: q.choice4 }
                 ].filter(c => c.t).sort(() => Math.random() - 0.5);
 
-                html += `<div class="quiz-item" data-correct="${q.correct_choice}" style="margin-bottom:25px;">
+                // เพิ่ม data-testid เพื่อใช้อ้างอิงข้อผิด
+                html += `<div class="quiz-item" data-correct="${q.correct_choice}" data-testid="${q.test_id}" style="margin-bottom:25px;">
                     <div class="quiz-q-text">${i+1}. ${q.question}</div>`;
                 choices.forEach(c => {
                     html += `<label class="quiz-choice">
@@ -300,9 +300,11 @@
             const container = $(btn).parent();
             let score = 0;
             let answered = 0;
+            let wrongIds = [];
             
             container.find('.quiz-item').each(function() {
                 const correct = $(this).data('correct');
+                const testId = $(this).data('testid');
                 const selected = $(this).find('input:checked').val();
                 const choiceEl = $(this).find('input:checked').parent();
                 
@@ -313,6 +315,7 @@
                         choiceEl.addClass('correct');
                     } else {
                         choiceEl.addClass('wrong');
+                        if(testId) wrongIds.push(testId);
                     }
                 }
                 $(this).find('.quiz-choice').css('pointer-events', 'none'); 
@@ -327,7 +330,8 @@
                 url: GAS_URL, dataType: 'jsonp',
                 data: {
                     action: 'recordResult', userId: userProfile.userId, name: userProfile.displayName,
-                    score: score, full_score: total, level: level, type: ''
+                    score: score, full_score: total, level: level, type: '', 
+                    wrong_ids: wrongIds.join(',') // ส่งข้อผิดไป
                 }
             });
         }
@@ -363,13 +367,19 @@
 
             let score = 0;
             let answered = 0;
+            let wrongIds = [];
             
             container.find('.quiz-item').each(function() {
                 const correct = $(this).data('correct');
+                const testId = $(this).data('testid');
                 const selected = $(this).find('input:checked').val();
                 if(selected) {
                     answered++;
-                    if(selected == correct) score++;
+                    if(selected == correct) {
+                        score++;
+                    } else {
+                        if(testId) wrongIds.push(testId);
+                    }
                 }
             });
 
@@ -403,7 +413,8 @@
                 data: {
                     action: 'recordResult', userId: userProfile.userId, name: userProfile.displayName,
                     score: score, full_score: total, level: 'asm', 
-                    type: type, time: timeTaken
+                    type: type, time: timeTaken,
+                    wrong_ids: wrongIds.join(',') // ส่งข้อผิดไป
                 }
             });
         }
