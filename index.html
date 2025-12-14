@@ -12,8 +12,8 @@
     <style>
         /* --- CSS Variables --- */
         :root { 
-            --primary-blue: #0d47a1;   /* สีน้ำเงินหลัก */
-            --light-blue: #e3f2fd;     /* สีฟ้าอ่อนพื้นหลัง */
+            --primary-blue: #0d47a1;
+            --light-blue: #e3f2fd;
             --text-dark: #1A535C;
             --bg-color: #F9FBFD;
             --font-stack: 'Kanit', sans-serif;
@@ -22,109 +22,90 @@
         body { 
             font-family: var(--font-stack) !important; 
             background: var(--bg-color); margin: 0; padding: 0;
-            font-size: 22px; /* เพิ่มจาก 18px */
-            line-height: 1.6; color: #333;
+            font-size: 22px; line-height: 1.6; color: #333;
             overscroll-behavior-y: contain;
         }
         .container { max-width: 600px; margin: 0 auto; padding: 20px; overflow-x: hidden; }
         
         h1 { 
-            font-size: 42px; /* เพิ่มจาก 32px */
-            text-align: center; color: var(--primary-blue); 
+            font-size: 42px; text-align: center; color: var(--primary-blue); 
             margin: 20px 0 30px; font-weight: 700; 
         }
 
-        /* --- Section Card Styles --- */
+        /* --- Cards --- */
         .section-card {
-            background: white;
-            border-radius: 16px;
-            padding: 25px; /* เพิ่ม padding */
-            margin-bottom: 30px;
-            box-shadow: var(--card-shadow);
-            border: 1px solid #e1e8ed;
+            background: white; border-radius: 16px; padding: 25px;
+            margin-bottom: 30px; box-shadow: var(--card-shadow); border: 1px solid #e1e8ed;
         }
         .section-title {
-            font-size: 28px; /* เพิ่มจาก 22px */
-            font-weight: 600; color: var(--primary-blue);
+            font-size: 28px; font-weight: 600; color: var(--primary-blue);
             margin-bottom: 15px; display: flex; align-items: center; gap: 10px;
         }
         .section-desc {
-            font-size: 22px; /* เพิ่มจาก 16px */
-            color: #555; margin-bottom: 20px; line-height: 1.6;
+            font-size: 22px; color: #555; margin-bottom: 20px; line-height: 1.6;
         }
 
         /* --- Buttons --- */
         .big-btn {
             width: 100%; padding: 18px; border-radius: 50px;
-            font-size: 26px; /* เพิ่มจาก 20px */
-            font-weight: 600; text-align: center;
-            cursor: pointer; border: none;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            font-size: 26px; font-weight: 600; text-align: center;
+            cursor: pointer; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
             display: flex; align-items: center; justify-content: center; gap: 10px;
             transition: 0.2s; color: white;
         }
         .big-btn:active { transform: scale(0.98); }
-
         .btn-blue { background-color: var(--primary-blue); }
         .btn-orange { background-color: #ff6b6b; }
 
-        /* --- Score Display --- */
+        /* --- Score & History --- */
         .score-container {
-            background-color: #f1f8ff;
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 20px;
-            border: 1px dashed #b3e5fc;
+            background-color: #f1f8ff; border-radius: 12px; padding: 20px;
+            margin-top: 20px; border: 1px dashed #b3e5fc;
         }
         .score-row {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 0; border-bottom: 1px solid #e1f5fe; 
-            font-size: 20px; /* เพิ่มจาก 16px */
+            padding: 10px 0; border-bottom: 1px solid #e1f5fe; font-size: 20px;
         }
         .score-row:last-child { border-bottom: none; }
-        .badge {
-            padding: 5px 10px; border-radius: 6px; color: white; 
-            font-size: 18px; /* เพิ่มจาก 14px */
-            font-weight: bold;
-        }
+        .badge { padding: 5px 10px; border-radius: 6px; color: white; font-size: 18px; font-weight: bold; }
         .badge-pre { background-color: #ff9800; }
         .badge-post { background-color: #4caf50; }
 
-        /* --- Lesson Carousel (Code เดิมที่ห้ามลบ) --- */
+        /* --- Carousel (Lessons) --- */
         #lesson-section { display: none; margin-top: 30px; }
-        .carousel-container {
-            display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
-            gap: 15px; padding-bottom: 20px;
-        }
+        .carousel-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 15px; padding-bottom: 20px; }
         .lesson-slide {
             flex: 0 0 90%; scroll-snap-align: center; background: #fff;
             border-radius: 20px; padding: 25px; border: 1px solid #eee;
             box-shadow: var(--card-shadow); box-sizing: border-box;
         }
-        .lesson-title { font-size: 32px; font-weight: 600; color: var(--text-dark); margin-bottom: 15px; text-align: center; } /* เพิ่ม class นี้ */
+        .lesson-title { font-size: 32px; font-weight: 600; color: var(--text-dark); margin-bottom: 15px; text-align: center; }
         .lesson-image { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 10px; margin-bottom: 20px; }
-        .lesson-details-body { font-size: 22px; line-height: 1.7; color: #444; } /* เพิ่ม class นี้ */
         
-        /* Quiz in Lesson */
+        /* --- Quiz UI (Both Lesson & Main) --- */
         .quiz-choice {
             display: block; padding: 15px; margin: 10px 0;
             border: 2px solid #eee; border-radius: 12px;
-            cursor: pointer; transition: 0.2s;
-            font-size: 22px; /* เพิ่มขนาดตัวเลือก */
+            cursor: pointer; transition: 0.2s; font-size: 22px;
         }
-        .quiz-q-text { font-size: 24px; font-weight: 600; color: var(--text-dark); margin-bottom: 15px; } /* เพิ่ม class นี้ */
-
+        .quiz-q-text { font-size: 24px; font-weight: 600; color: var(--text-dark); margin-bottom: 15px; }
         .quiz-choice.selected { border-color: var(--primary-blue); background: var(--light-blue); }
         .quiz-choice.correct { border-color: #2ecc71 !important; background: #d5f5e3 !important; }
         .quiz-choice.wrong { border-color: #e74c3c !important; background: #fadbd8 !important; }
+
+        /* --- In-Page Main Exam --- */
+        #main-exam-section { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: white; z-index: 2000; overflow-y: auto; padding: 20px; box-sizing: border-box; }
+        .exam-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .timer-display { font-size: 24px; font-weight: bold; color: #e65100; }
 
         .loader { border: 5px solid #f3f3f3; border-top: 5px solid var(--primary-blue); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* Modal */
         #imageModal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; flex-direction: column; }
-        #modalImage { max-width: 95%; max-height: 80vh; border-radius: 10px; }
+        #modalImage { max-width: 95%; max-height: 70vh; border-radius: 10px; margin-bottom: 20px; }
         .modal-close { position: absolute; top: 20px; right: 20px; color: white; font-size: 50px; cursor: pointer; }
+        .btn-share { background: #06c755; color: white; padding: 15px 30px; border-radius: 30px; font-size: 20px; font-weight: bold; cursor: pointer; display: flex; gap: 10px; align-items: center; }
 
     </style>
 </head>
@@ -145,7 +126,6 @@
                 อ่านเนื้อหา
             </div>
 
-            <!-- Carousel Section (ซ่อนอยู่) -->
             <div id="lesson-section">
                 <div class="loader" id="lessonLoader"></div>
                 <div class="carousel-container" id="carouselContainer"></div>
@@ -156,38 +136,47 @@
         <!-- 2. ส่วนแบบทดสอบ (สีส้ม) -->
         <div class="section-card" style="border-left: 8px solid #ff6b6b;">
             <div class="section-title" style="color:#e65100;"><i class="bi bi-pencil-square"></i> แบบทดสอบวัดผล (10 คะแนน)</div>
-            <div class="section-desc">
-                Pre-test ทำได้ 1 ครั้ง / Post-test ทำได้หลายครั้ง (ระบบจะบันทึกคะแนนล่าสุด)
-            </div>
+            <!-- ตัดคำอธิบาย Pre/Post ออกตามขอ -->
             
-            <div class="big-btn btn-orange" onclick="startMainQuiz()">
+            <div class="big-btn btn-orange" onclick="startMainExam()">
                 ทำแบบทดสอบ
             </div>
 
             <!-- แสดงคะแนน -->
             <div id="scoreLoader" style="display:none; text-align:center; margin-top:15px; font-size:20px;">กำลังโหลดคะแนน...</div>
-            <div id="mainScoreContainer" class="score-container" style="display:none;">
-                <!-- JS จะเติมข้อมูลตรงนี้ -->
-            </div>
+            <div id="mainScoreContainer" class="score-container" style="display:none;"></div>
         </div>
 
     </div>
 
-    <!-- Image Modal -->
+    <!-- ส่วนทำแบบทดสอบหลัก (Popup เต็มจอ) -->
+    <div id="main-exam-section">
+        <div class="exam-header">
+            <div style="font-size:24px; font-weight:bold;">แบบทดสอบ</div>
+            <div class="timer-display" id="examTimer">0 วินาที</div>
+        </div>
+        <div id="exam-questions-container"></div>
+        <button class="big-btn btn-orange" style="margin-top:30px;" onclick="submitMainExam()">ส่งคำตอบ</button>
+        <button class="big-btn" style="background:#eee; color:#555; margin-top:15px;" onclick="closeMainExam()">ยกเลิก</button>
+    </div>
+
+    <!-- Image Modal & Share -->
     <div id="imageModal">
         <span class="modal-close" onclick="closeModal()">&times;</span>
         <img id="modalImage">
+        <div class="btn-share" onclick="shareCurrentImage()"><i class="bi bi-share-fill"></i> แชร์ภาพนี้</div>
     </div>
 
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        // *** CONFIGURATION ***
         const GAS_URL = 'https://script.google.com/macros/s/AKfycbwt4O6aTK_NqGGdYaIF6gRbv5f37dgFeQYZ7ZLxZIRYGBEz54EnJx1hS36XPhET1AOgHg/exec'; 
         const LIFF_ID = '2005789397-ROQvjpYk';
-        const MAIN_QUIZ_LINK = 'https://liff.line.me/2006363657-k7d2Bd5R'; // ลิงก์แบบทดสอบจริง
 
         let userProfile = null;
+        let examStartTime = 0;
+        let examTimerInterval;
+        let currentShareImage = '';
 
         $(document).ready(() => {
             initializeLiff();
@@ -200,12 +189,12 @@
                     liff.login();
                 } else {
                     userProfile = await liff.getProfile();
-                    loadMainQuizInfo(userProfile.userId); // ดึงคะแนน
+                    loadMainQuizInfo(userProfile.userId); 
                 }
             } catch (e) { console.error(e); }
         }
 
-        // --- ส่วนที่ 1: จัดการบทเรียน (Lesson Carousel) ---
+        // --- 1. Lessons ---
         function loadLessons() {
             $('#btnLoadLesson').hide();
             $('#lesson-section').fadeIn();
@@ -216,9 +205,16 @@
                 url: GAS_URL, dataType: 'jsonp',
                 data: { action: 'getLessons' },
                 success: function(data) {
-                    if(!data || data.length === 0) { alert('ไม่พบข้อมูลบทเรียน'); closeLessonSection(); return; }
+                    if(!data || data.length === 0) { 
+                        alert('ไม่พบข้อมูลบทเรียน (ตรวจสอบ Sheet: learning_modules)'); 
+                        closeLessonSection(); return; 
+                    }
                     renderLessons(data);
                     $('#lessonLoader').hide();
+                },
+                error: function() {
+                    alert('เชื่อมต่อฐานข้อมูลล้มเหลว');
+                    closeLessonSection();
                 }
             });
         }
@@ -231,11 +227,10 @@
                 <div class="lesson-slide">
                     <h3 class="lesson-title">${lesson.title}</h3>
                     <img class="lesson-image" src="${lesson.images}" onclick="openModal('${lesson.images}')">
-                    <div style="font-size:22px; color:#444; margin-bottom:20px; max-height:200px; overflow-y:auto; line-height:1.6;">
-                        ${lesson.content_html || 'เนื้อหาบทเรียน...'}
+                    <div style="font-size:22px; color:#444; margin-bottom:20px; max-height:300px; overflow-y:auto; line-height:1.6;">
+                        ${lesson.content_html || '-'}
                     </div>
-                    
-                    <button class="big-btn btn-blue" style="font-size:20px; padding:12px;" onclick="loadLessonQuiz(this, '${lessonLevel}', '${lesson.module_id}')">
+                    <button class="big-btn btn-blue" style="font-size:20px; padding:12px;" onclick="loadLessonQuiz(this, '${lessonLevel}')">
                         <i class="bi bi-question-circle"></i> ทำข้อสอบบทนี้ (3 ข้อ)
                     </button>
                     <div class="lesson-quiz-container" style="display:none; margin-top:20px; border-top:2px dashed #ccc; padding-top:20px;"></div>
@@ -249,8 +244,8 @@
             $('#btnLoadLesson').show();
         }
 
-        // --- ส่วนที่ 2: แบบทดสอบย่อย (Quiz in Lesson) ---
-        function loadLessonQuiz(btn, level, moduleId) {
+        // --- 2. Lesson Quiz (3 ข้อ) ---
+        function loadLessonQuiz(btn, level) {
             const container = $(btn).next('.lesson-quiz-container');
             $(btn).hide(); container.show().html('<div class="loader"></div>');
 
@@ -258,16 +253,15 @@
                 url: GAS_URL, dataType: 'jsonp',
                 data: { action: 'getQuiz', level: level },
                 success: function(questions) {
-                    renderInlineQuiz(container, questions, level, moduleId);
+                    renderInlineQuiz(container, questions, level, 'lesson');
                 }
             });
         }
 
-        function renderInlineQuiz(container, questions, level, moduleId) {
-            if (!questions.length) { container.html('ไม่พบข้อสอบ'); return; }
+        function renderInlineQuiz(container, questions, level, type) {
+            if (!questions || !questions.length) { container.html('ไม่พบข้อสอบ'); return; }
             let html = '';
             questions.forEach((q, i) => {
-                // Logic สลับช้อยส์แบบง่าย
                 const choices = [
                     { t: q.choice1, v: q.choice1 }, { t: q.choice2, v: q.choice2 },
                     { t: q.choice3, v: q.choice3 }, { t: q.choice4, v: q.choice4 }
@@ -282,50 +276,147 @@
                 });
                 html += `</div>`;
             });
-            html += `<button class="big-btn btn-orange" style="font-size:22px; padding:15px;" onclick="checkInlineQuiz(this)">ส่งคำตอบ</button>`;
             
+            // ปุ่มส่งคำตอบ (ใช้ร่วมกันได้ทั้ง Lesson และ Main Exam แต่ Main Exam จะใช้ฟังก์ชันแยก)
+            if (type === 'lesson') {
+                html += `<button class="big-btn btn-orange" style="font-size:22px; padding:15px;" onclick="submitInlineQuiz(this, '${level}', ${questions.length})">ส่งคำตอบ</button>`;
+            }
             container.html(html);
-            
-            // Add click event for styling
+            bindChoiceEvents(container);
+        }
+
+        function bindChoiceEvents(container) {
             container.find('.quiz-choice').click(function() {
                 $(this).siblings().removeClass('selected').find('input').prop('checked', false);
                 $(this).addClass('selected').find('input').prop('checked', true);
             });
         }
 
-        function checkInlineQuiz(btn) {
+        function submitInlineQuiz(btn, level, total) {
             const container = $(btn).parent();
             let score = 0;
-            let total = 0;
+            let answered = 0;
             
             container.find('.quiz-item').each(function() {
-                total++;
                 const correct = $(this).data('correct');
                 const selected = $(this).find('input:checked').val();
                 const choiceEl = $(this).find('input:checked').parent();
                 
-                if(selected == correct) {
-                    score++;
-                    choiceEl.addClass('correct');
-                } else {
-                    choiceEl.addClass('wrong');
+                if (selected) {
+                    answered++;
+                    if(selected == correct) {
+                        score++;
+                        choiceEl.addClass('correct');
+                    } else {
+                        choiceEl.addClass('wrong');
+                    }
                 }
-                $(this).find('.quiz-choice').css('pointer-events', 'none'); // Lock
+                $(this).find('.quiz-choice').css('pointer-events', 'none'); 
             });
+
+            if(answered < total) { alert('กรุณาตอบให้ครบ'); return; }
 
             $(btn).replaceWith(`<div style="text-align:center; font-weight:bold; font-size:26px; color:#0d47a1; margin-top:20px;">คะแนน: ${score}/${total}</div>`);
             
-            // บันทึกคะแนน (Fire & Forget)
+            // Record
             $.ajax({
                 url: GAS_URL, dataType: 'jsonp',
                 data: {
-                    action: 'recordLessonResult', userId: userProfile.userId,
-                    score: score, full_score: total, level: 'lesson' // ส่ง level ไปด้วย
+                    action: 'recordResult', userId: userProfile.userId, name: userProfile.displayName,
+                    score: score, full_score: total, level: level, type: ''
                 }
             });
         }
 
-        // --- ส่วนที่ 3: คะแนน Pre/Post (Main Quiz) ---
+        // --- 3. Main Exam (10 items In-App) ---
+        function startMainExam() {
+            $('#main-exam-section').fadeIn();
+            $('#exam-questions-container').html('<div class="loader"></div>');
+            
+            // Start Timer
+            examStartTime = new Date().getTime();
+            clearInterval(examTimerInterval);
+            examTimerInterval = setInterval(() => {
+                const now = new Date().getTime();
+                const diff = Math.floor((now - examStartTime) / 1000);
+                $('#examTimer').text(diff + " วินาที");
+            }, 1000);
+
+            // Fetch Data
+            $.ajax({
+                url: GAS_URL, dataType: 'jsonp',
+                data: { action: 'getExam' },
+                success: function(questions) {
+                    renderInlineQuiz($('#exam-questions-container'), questions, 'asm', 'exam'); // Use shared render
+                }
+            });
+        }
+
+        function submitMainExam() {
+            const container = $('#exam-questions-container');
+            const total = container.find('.quiz-item').length;
+            if(total === 0) return;
+
+            let score = 0;
+            let answered = 0;
+            
+            container.find('.quiz-item').each(function() {
+                const correct = $(this).data('correct');
+                const selected = $(this).find('input:checked').val();
+                if(selected) {
+                    answered++;
+                    if(selected == correct) score++;
+                }
+            });
+
+            if(answered < total) { alert('กรุณาตอบให้ครบทุกข้อ'); return; }
+
+            // Stop Timer
+            clearInterval(examTimerInterval);
+            const endTime = new Date().getTime();
+            const timeTaken = Math.floor((endTime - examStartTime) / 1000);
+
+            $('#main-exam-section').html(`
+                <div style="text-align:center; margin-top:50px;">
+                    <i class="bi bi-check-circle-fill" style="font-size:80px; color:#28a745;"></i>
+                    <h1>บันทึกผลสำเร็จ</h1>
+                    <div style="font-size:30px; font-weight:bold; margin:20px;">
+                        คุณได้ ${score} / ${total} คะแนน
+                    </div>
+                    <div style="font-size:24px; color:#666;">
+                        ใช้เวลา ${timeTaken} วินาที
+                    </div>
+                    <button class="big-btn btn-blue" onclick="location.reload()" style="margin-top:40px;">กลับหน้าหลัก</button>
+                </div>
+            `);
+
+            // Determine Pre/Post (Check existing score first)
+            // For simplicity, let backend decide based on existing rows or just send logic
+            // But here, we check local state. 
+            // Better: just send and let backend handle or overwrite logic.
+            // Requirement: "Don't show details about pre/post".
+            // So we just assume: First time = Pre, Next = Post.
+            // We can assume logic is handled by backend or just send 'post' if pre exists.
+            
+            const isPost = $('#mainScoreContainer').find('.badge-pre').length > 0;
+            const type = isPost ? 'post' : 'pre';
+
+            $.ajax({
+                url: GAS_URL, dataType: 'jsonp',
+                data: {
+                    action: 'recordResult', userId: userProfile.userId, name: userProfile.displayName,
+                    score: score, full_score: total, level: 'asm', 
+                    type: type, time: timeTaken
+                }
+            });
+        }
+
+        function closeMainExam() {
+            clearInterval(examTimerInterval);
+            $('#main-exam-section').fadeOut();
+        }
+
+        // --- 4. History Display ---
         function loadMainQuizInfo(userId) {
             $('#scoreLoader').show();
             $.ajax({
@@ -334,8 +425,7 @@
                 success: function(res) {
                     $('#scoreLoader').hide();
                     renderScoreBoard(res);
-                },
-                error: function() { $('#scoreLoader').html('<span style="color:red">โหลดข้อมูลไม่สำเร็จ</span>'); }
+                }
             });
         }
 
@@ -343,35 +433,53 @@
             if (!data || (!data.pre && !data.post)) return;
 
             let html = '';
+            // Display Pre
             if (data.pre) {
                 html += `
                 <div class="score-row">
-                    <div><span class="badge badge-pre">Pre-test</span> <small style="font-size:18px; color:#666;">${data.pre.date}</small></div>
-                    <div style="font-weight:bold; color:#0d47a1;">${data.pre.score} คะแนน <small style="font-size:16px">(${data.pre.time})</small></div>
+                    <div><span class="badge badge-pre">Pre-test</span> <small style="color:#666">${data.pre.date}</small></div>
+                    <div style="font-weight:bold; color:#0d47a1;">${data.pre.score} คะแนน <small>(${data.pre.time})</small></div>
                 </div>`;
             }
+            // Display Post
             if (data.post) {
                 html += `
                 <div class="score-row">
-                    <div><span class="badge badge-post">Post-test</span> <small style="font-size:18px; color:#666;">${data.post.date}</small></div>
-                    <div style="font-weight:bold; color:#0d47a1;">${data.post.score} คะแนน <small style="font-size:16px">(${data.post.time})</small></div>
+                    <div><span class="badge badge-post">Post-test</span> <small style="color:#666">${data.post.date}</small></div>
+                    <div style="font-weight:bold; color:#0d47a1;">${data.post.score} คะแนน <small>(${data.post.time})</small></div>
                 </div>`;
             }
-            
-            if(html) $('#mainScoreContainer').html(html).fadeIn();
+            $('#mainScoreContainer').html(html).fadeIn();
         }
 
-        function startMainQuiz() {
-            if (liff.isInClient()) {
-                liff.openWindow({ url: MAIN_QUIZ_LINK, external: false });
+        // --- Utils: Share & Modal ---
+        function openModal(src) { 
+            currentShareImage = src;
+            $('#modalImage').attr('src', src); 
+            $('#imageModal').css('display','flex').fadeIn(); 
+        }
+        function closeModal() { $('#imageModal').fadeOut(); }
+        
+        function shareCurrentImage() {
+            if (liff.isApiAvailable('shareTargetPicker')) {
+                const msg = {
+                    type: "flex", altText: "ความรู้เรื่องสโตรก",
+                    contents: {
+                        type: "bubble",
+                        hero: { type: "image", url: currentShareImage, size: "full", aspectRatio: "1:1", aspectMode: "cover" },
+                        body: {
+                            type: "box", layout: "vertical",
+                            contents: [
+                                { type: "text", text: "สาระน่ารู้จาก รพ.สวี", weight: "bold", size: "lg", align: "center" }
+                            ]
+                        }
+                    }
+                };
+                liff.shareTargetPicker([msg]).catch(e => console.log(e));
             } else {
-                window.location.href = MAIN_QUIZ_LINK;
+                alert("อุปกรณ์นี้ไม่รองรับการแชร์");
             }
         }
-
-        // --- Utils ---
-        function openModal(src) { $('#modalImage').attr('src', src); $('#imageModal').css('display','flex').fadeIn(); }
-        function closeModal() { $('#imageModal').fadeOut(); }
 
     </script>
 </body>
