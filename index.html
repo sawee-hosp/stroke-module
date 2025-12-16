@@ -23,11 +23,11 @@
             --body-text: #333333;       /* สีเนื้อหา */
             --bg-card: #ffffff;
             
-            /* Typography Scale for Elderly */
+            /* Typography Scale */
             --font-base: 20px;          
             --font-lg: 24px;
             --font-xl: 28px;
-            --font-btn: 22px;
+            --font-btn: 20px; /* ลดลงเล็กน้อยเพื่อให้ปุ่มไม่ล้น */
         }
 
         body {
@@ -94,17 +94,19 @@
         /* --- Buttons --- */
         .btn-custom {
             border-radius: 50px;
-            padding: 15px 25px;
+            padding: 12px 15px; /* ลด Padding ด้านข้าง */
             font-size: var(--font-btn);
             font-weight: 600;
             width: 100%;
             transition: transform 0.2s;
-            white-space: normal;
+            white-space: nowrap; /* ห้ามขึ้นบรรทัดใหม่ */
+            overflow: hidden;
+            text-overflow: ellipsis;
             box-shadow: 0 6px 10px rgba(0,0,0,0.15);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
         }
         .btn-custom:active { transform: scale(0.96); }
         .btn-custom:disabled { opacity: 0.7; cursor: not-allowed; }
@@ -161,20 +163,35 @@
             align-items: center;
             z-index: 10;
         }
-        .overlay-header h5 {
-            font-size: 24px; 
+        .overlay-header-content {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .overlay-header-title {
+            font-size: 20px; 
             color: var(--header-text); 
             font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 250px;
         }
+        .overlay-header-subtitle {
+            font-size: 14px;
+            color: #666;
+        }
+        
         .close-btn {
             background: #f1f1f1;
             border: none;
-            width: 45px; height: 45px;
+            width: 40px; height: 40px;
             border-radius: 50%;
-            font-size: 24px;
+            font-size: 20px;
             color: #333;
             display: flex; align-items: center; justify-content: center;
             cursor: pointer;
+            flex-shrink: 0;
         }
         .close-btn:hover { background: #ddd; }
 
@@ -188,14 +205,14 @@
         }
 
         .overlay-footer {
-            padding: 20px;
+            padding: 15px;
             background: #fff;
             border-top: 2px solid #f0f0f0;
             position: sticky;
             bottom: 0;
             z-index: 10;
             display: flex;
-            gap: 15px;
+            gap: 10px;
             justify-content: space-between;
         }
 
@@ -208,7 +225,7 @@
             margin-bottom: 25px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             background: #eee;
-            cursor: zoom-in; /* Indicate zoom */
+            cursor: zoom-in;
         }
         .lesson-img {
             width: 100%;
@@ -217,32 +234,44 @@
             display: block;
             object-fit: cover;
         }
+        
+        /* Floating Share Badge */
         .share-badge {
-            background: rgba(6, 199, 85, 0.95);
-            color: white;
-            padding: 10px 25px;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #06c755; /* LINE Green */
+            border: 2px solid #06c755;
+            padding: 8px 15px;
             border-radius: 50px;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            display: inline-flex; align-items: center; gap: 8px;
-            margin-top: 15px;
-            width: 100%;
-            justify-content: center;
-        }
-        .share-badge:active { transform: scale(0.98); }
-
-        .status-badge {
-            background-color: #d1e7dd;
-            color: #0f5132;
-            padding: 5px 12px;
-            border-radius: 20px;
             font-size: 18px;
             font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
             display: inline-flex; align-items: center; gap: 5px;
-            margin-left: 10px;
-            border: 1px solid #badbcc;
+            z-index: 5;
+        }
+        .share-badge:active { transform: scale(0.95); }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            display: inline-flex; align-items: center; gap: 5px;
+            margin-top: 5px;
+        }
+        .status-badge.done {
+            background-color: #198754;
+            color: white;
+            border: 1px solid #198754;
+            box-shadow: 0 2px 4px rgba(25, 135, 84, 0.3);
+        }
+        .status-badge.pending {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            border: 1px solid #ced4da;
         }
         
         .typography {
@@ -255,12 +284,16 @@
         .btn-audio {
             background: #fff3cd; color: #856404;
             border: 1px solid #ffeeba;
-            padding: 8px 15px; border-radius: 30px;
+            padding: 8px 20px; border-radius: 30px;
             font-size: 18px; font-weight: bold;
-            margin-bottom: 15px; display: inline-flex; align-items: center; gap: 8px;
+            display: inline-flex; align-items: center; gap: 8px;
             cursor: pointer;
+            transition: all 0.2s;
         }
+        .btn-audio:active { transform: scale(0.95); }
         .btn-audio.speaking { background: #ffc107; color: #000; animation: pulse 1.5s infinite; }
+        .btn-audio.loading { background: #e2e3e5; color: #6c757d; cursor: wait; }
+        .btn-audio.error { background: #f8d7da; color: #721c24; border-color: #f5c6cb; }
 
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(255, 193, 7, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); } }
 
@@ -417,7 +450,10 @@
     <!-- ================= Lesson Fullscreen Modal ================= -->
     <div id="lessonModal" class="fullscreen-overlay">
         <div class="overlay-header">
-            <h5 class="m-0 fw-bold text-truncate" id="lessonHeaderTitle" style="font-size: 24px;">บทเรียน</h5>
+            <div class="overlay-header-content">
+                <div class="overlay-header-title" id="lessonHeaderTitle">บทเรียน</div>
+                <div id="lessonHeaderBadge"></div>
+            </div>
             <button type="button" class="close-btn" onclick="closeLessons()"><i class="bi bi-x-lg"></i></button>
         </div>
         
@@ -426,10 +462,10 @@
         </div>
 
         <div class="overlay-footer">
-            <button class="btn btn-custom btn-gray w-50" id="btnPrevLesson" onclick="prevLesson()" disabled>
+            <button class="btn btn-custom btn-gray" id="btnPrevLesson" onclick="prevLesson()" disabled style="flex:1;">
                 <i class="bi bi-arrow-left-circle-fill"></i> บทก่อนหน้า
             </button>
-            <button class="btn btn-custom btn-blue w-50" id="btnNextLesson" onclick="nextLesson()">
+            <button class="btn btn-custom btn-blue" id="btnNextLesson" onclick="nextLesson()" style="flex:1;">
                 บทถัดไป <i class="bi bi-arrow-right-circle-fill"></i>
             </button>
         </div>
@@ -476,9 +512,11 @@
         let examStartTime = 0;
         let examTimerInterval;
         let synth = window.speechSynthesis;
+        let availableVoices = [];
 
         // Auto Start
         $(document).ready(async () => {
+            initTTS(); // Warm up TTS
             await initLiff();
         });
 
@@ -499,6 +537,18 @@
             } catch (e) {
                 console.error(e);
                 $('#userLoading').html('<div class="text-danger">เกิดข้อผิดพลาดในการเชื่อมต่อ<br>กรุณาลองใหม่</div>');
+            }
+        }
+
+        // --- TTS Helper ---
+        function initTTS() {
+            if (!synth) return;
+            const loadVoices = () => {
+                availableVoices = synth.getVoices();
+            };
+            loadVoices();
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = loadVoices;
             }
         }
 
@@ -571,11 +621,11 @@
         function updateProgressBar() {
             if(lessonsData.length === 0) return;
             let count = 0;
-            lessonsData.forEach((l) => {
-                if(completedLessons.has(String(l.module_id).toLowerCase())) {
-                    count++;
-                }
-            });
+            // นับโดยอิงว่า level = lesson1, lesson2 ... 
+            for(let i=0; i<lessonsData.length; i++) {
+                const quizLevel = 'lesson' + (i+1);
+                if(completedLessons.has(quizLevel)) count++;
+            }
             const pct = Math.round((count / lessonsData.length) * 100);
             $('#lessonProgressBar').css('width', pct + '%').text(pct + '%');
             $('#progressText').text(pct + '%');
@@ -595,14 +645,22 @@
 
         function renderLesson(index) {
             const lesson = lessonsData[index];
-            const level = String(lesson.module_id).toLowerCase();
-            const isCompleted = completedLessons.has(level);
+            const lessonNum = index + 1;
+            // Level สำหรับดึง Quiz ต้องเป็น lesson1, lesson2 ... ตามโจทย์
+            const quizLevel = 'lesson' + lessonNum;
+            const isCompleted = completedLessons.has(quizLevel);
 
-            const statusBadge = isCompleted 
-                ? `<span class="status-badge"><i class="bi bi-check-circle-fill"></i> เรียนแล้ว</span>` 
-                : `<span class="badge bg-light text-dark border ms-2" style="font-size:16px;">ยังไม่เรียน</span>`;
-
-            $('#lessonHeaderTitle').html(`บทที่ ${index+1} ${statusBadge}`);
+            // 1. Badge & Title Update
+            let badgeHtml = '';
+            if(isCompleted) {
+                badgeHtml = `<div class="status-badge done"><i class="bi bi-check-circle-fill"></i> เรียนและทำข้อสอบแล้ว</div>`;
+            } else {
+                badgeHtml = `<div class="status-badge pending"><i class="bi bi-circle"></i> ยังไม่เรียน</div>`;
+            }
+            
+            // อัปเดต Header แบบมีชื่อบทเรียนด้วย
+            $('#lessonHeaderTitle').text(`บทที่ ${lessonNum}: ${lesson.title}`);
+            $('#lessonHeaderBadge').html(badgeHtml);
             
             // Clean HTML content for reading
             const rawText = $('<div>').html(lesson.content_html).text();
@@ -610,15 +668,20 @@
             let contentHtml = `
                 <div class="lesson-image-container" onclick="zoomImage('${lesson.images}')">
                     <img src="${lesson.images}" class="lesson-img" onerror="this.src='https://via.placeholder.com/600x400?text=No+Image'">
+                    <!-- Floating Share Button -->
+                    <div class="share-badge" onclick="event.stopPropagation(); shareImage('${lesson.images}')">
+                        <i class="bi bi-line"></i> แชร์
+                    </div>
                 </div>
                 
-                <div class="text-center mb-4">
-                     <div class="share-badge" onclick="shareImage('${lesson.images}')"><i class="bi bi-line" style="font-size:24px;"></i> แชร์ความรู้นี้ให้เพื่อน</div>
-                </div>
-
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                     <div class="btn-audio" onclick="speakContent(this, '${escape(rawText)}')">
-                        <i class="bi bi-megaphone-fill"></i> ฟังเนื้อหา
+                <div class="mb-4">
+                     <div class="d-inline-block">
+                        <div class="btn-audio" onclick="speakContent(this, '${escape(rawText)}')">
+                            <i class="bi bi-megaphone-fill"></i> ฟังเนื้อหา
+                        </div>
+                        <small class="text-muted d-block mt-1 ms-2" style="font-size: 14px;">
+                            * เสียงอ่านขึ้นอยู่กับการตั้งค่าอุปกรณ์
+                        </small>
                      </div>
                 </div>
 
@@ -640,7 +703,8 @@
             $('#lessonContentArea').html(contentHtml);
             $('#lessonContentArea').scrollTop(0);
             
-            loadInlineQuiz(index, level);
+            // Load Quiz with specific level format (lessonX)
+            loadInlineQuiz(index, quizLevel);
             updateNavButtons();
         }
 
@@ -672,24 +736,61 @@
             }
         }
 
-        // --- TTS & Zoom ---
+        // --- TTS Function ---
         function speakContent(btn, text) {
             text = unescape(text);
+
+            if (!('speechSynthesis' in window)) {
+                return; // Fail silently or show subtle UI, user already warned by text
+            }
+
             if (synth.speaking) {
                 synth.cancel();
-                $(btn).removeClass('speaking').html('<i class="bi bi-megaphone-fill"></i> ฟังเนื้อหา');
+                $(btn).removeClass('speaking loading').html('<i class="bi bi-megaphone-fill"></i> ฟังเนื้อหา');
                 return;
             }
 
+            $(btn).addClass('loading').html('<span class="spinner-border spinner-border-sm"></span> กำลังโหลด...');
+
             const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'th-TH';
-            utterance.rate = 0.9; // อ่านช้าลงนิดนึงสำหรับผู้สูงอายุ
+            utterance.rate = 0.9;
+            
+            let thVoice = availableVoices.find(v => v.lang === 'th-TH' || v.lang === 'th_TH');
+            if (thVoice) {
+                utterance.voice = thVoice;
+            } else {
+                utterance.lang = 'th-TH';
+            }
+
+            // Watchdog
+            let speakingStarted = false;
+            const watchdog = setTimeout(() => {
+                if (!speakingStarted) {
+                    synth.cancel();
+                    $(btn).removeClass('loading').addClass('error').html('<i class="bi bi-exclamation-triangle"></i> เล่นไม่ได้');
+                    setTimeout(() => {
+                        $(btn).removeClass('error').html('<i class="bi bi-megaphone-fill"></i> ฟังเนื้อหา');
+                    }, 3000);
+                }
+            }, 5000);
 
             utterance.onstart = () => {
-                $(btn).addClass('speaking').html('<i class="bi bi-stop-circle-fill"></i> หยุดเสียง');
+                clearTimeout(watchdog);
+                speakingStarted = true;
+                $(btn).removeClass('loading').addClass('speaking').html('<i class="bi bi-stop-circle-fill"></i> หยุดเสียง');
             };
+
             utterance.onend = () => {
-                $(btn).removeClass('speaking').html('<i class="bi bi-megaphone-fill"></i> ฟังเนื้อหา');
+                $(btn).removeClass('speaking loading').html('<i class="bi bi-megaphone-fill"></i> ฟังเนื้อหา');
+            };
+
+            utterance.onerror = (e) => {
+                clearTimeout(watchdog);
+                if (e.error !== 'interrupted' && e.error !== 'canceled') {
+                     $(btn).removeClass('speaking loading').addClass('error').html('<i class="bi bi-exclamation-circle"></i> ผิดพลาด');
+                } else {
+                     $(btn).removeClass('speaking loading').html('<i class="bi bi-megaphone-fill"></i> ฟังเนื้อหา');
+                }
             };
 
             synth.speak(utterance);
