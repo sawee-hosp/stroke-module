@@ -19,12 +19,12 @@
             /* Palette */
             --primary-red: #ff3654;     /* สีพื้นหลัง */
             --primary-dark: #c62841;    /* สีปุ่มกดตอนกด */
-            --header-text: #002366;     /* สีหัวข้อ (น้ำเงินเข้ม) ตามที่ขอ */
+            --header-text: #002366;     /* สีหัวข้อ (น้ำเงินเข้ม) */
             --body-text: #333333;       /* สีเนื้อหา */
             --bg-card: #ffffff;
             
             /* Typography Scale for Elderly */
-            --font-base: 20px;          /* ขนาดพื้นฐานใหญ่ขึ้น */
+            --font-base: 20px;          
             --font-lg: 24px;
             --font-xl: 28px;
             --font-btn: 22px;
@@ -39,18 +39,18 @@
             background-repeat: no-repeat;
             min-height: 100vh;
             color: var(--body-text);
-            padding-bottom: 80px; /* เผื่อพื้นที่ด้านล่าง */
+            padding-bottom: 80px; 
         }
 
         /* --- Header Style --- */
         h1.app-title {
             color: #ffffff;
             font-weight: 900;
-            font-size: 36px; /* ใหญ่ขึ้น */
+            font-size: 36px;
             text-align: center;
             margin-top: 25px;
             margin-bottom: 25px;
-            text-shadow: 3px 3px 6px rgba(0,0,0,0.5); /* เงาเข้มขึ้นให้อ่านง่าย */
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
             letter-spacing: 1px;
         }
 
@@ -67,7 +67,7 @@
 
         /* --- Internal Section Cards --- */
         .section-card {
-            background: #f8faff; /* พื้นหลังเทาฟ้าจางๆ ให้สบายตา */
+            background: #f8faff; 
             border-radius: 18px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             border: 1px solid #e1e8ed;
@@ -78,7 +78,7 @@
         .section-title {
             font-size: var(--font-xl);
             font-weight: 700;
-            color: var(--header-text); /* น้ำเงินเข้ม */
+            color: var(--header-text);
             margin-bottom: 10px;
             display: flex;
             align-items: center;
@@ -107,20 +107,29 @@
             gap: 10px;
         }
         .btn-custom:active { transform: scale(0.96); }
+        .btn-custom:disabled { opacity: 0.7; cursor: not-allowed; }
+
         .btn-red { background-color: var(--primary-red); color: white; border: none; }
-        .btn-red:hover, .btn-red:focus { background-color: var(--primary-dark); color: white; }
+        .btn-red:hover:not(:disabled) { background-color: var(--primary-dark); color: white; }
         
         .btn-blue { background-color: #0d6efd; color: white; border: none; }
-        .btn-blue:hover, .btn-blue:focus { background-color: #0b5ed7; color: white; }
+        .btn-blue:hover:not(:disabled) { background-color: #0b5ed7; color: white; }
 
         .btn-outline { 
             background: #fff; border: 2px solid #ddd; color: #444; 
             font-size: 20px; padding: 12px;
         }
 
-        /* --- Progress Bar --- */
+        /* --- Progress Bar (Moved to Lesson Card) --- */
+        .progress-container {
+            margin-bottom: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 15px;
+            border: 1px solid #eee;
+        }
         .progress {
-            height: 30px; /* หนาขึ้น */
+            height: 30px;
             border-radius: 20px;
             background-color: #e9ecef;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
@@ -131,7 +140,7 @@
             font-weight: bold;
         }
 
-        /* --- Full Screen Overlay (Lessons & Exam) --- */
+        /* --- Full Screen Overlay --- */
         .fullscreen-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -166,7 +175,7 @@
             max-width: 800px;
             margin: 0 auto;
             width: 100%;
-            font-size: 22px; /* เนื้อหาบทเรียนตัวใหญ่ */
+            font-size: 22px;
         }
 
         .overlay-footer {
@@ -189,7 +198,7 @@
             overflow: hidden;
             margin-bottom: 25px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            background: #eee; /* Placeholder color */
+            background: #eee;
         }
         .lesson-img {
             width: 100%;
@@ -202,7 +211,7 @@
             position: absolute;
             bottom: 15px;
             right: 15px;
-            background: rgba(0, 100, 0, 0.9); /* เขียวเข้มขึ้น */
+            background: rgba(0, 100, 0, 0.9);
             color: white;
             padding: 8px 20px;
             border-radius: 30px;
@@ -290,30 +299,44 @@
         <div class="main-card">
             
             <!-- ส่วนข้อมูลผู้ใช้ (โหลดทีหลัง) -->
-            <div class="text-center mb-4" style="min-height: 100px;">
-                <div id="userLoading" class="loader-container">
-                    <span class="loader" style="border-width: 4px; width: 30px; height: 30px; border-bottom-color: #888; border-color: #ddd;"></span><br>
-                    กำลังโหลดข้อมูล...
+            <div class="text-center mb-4" style="min-height: 60px;">
+                <div id="userLoading" class="loader-container" style="padding:10px;">
+                    กำลังโหลดข้อมูลผู้ใช้...
                 </div>
                 <div id="userInfo" style="display:none;">
-                    <h2 class="fw-bold mb-3" style="color: var(--header-text);" id="userNameDisplay">สวัสดี</h2>
-                    <div class="progress mb-2">
-                        <div id="lessonProgressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 0%">0%</div>
-                    </div>
-                    <div style="font-size: 18px; color: #666;">ความคืบหน้าการเรียนรู้</div>
+                    <h2 class="fw-bold m-0" style="color: var(--header-text);" id="userNameDisplay">สวัสดี</h2>
                 </div>
             </div>
 
             <!-- ปุ่มเมนูหลัก (แสดงทันที) -->
             <div class="d-grid gap-4">
+                
+                <!-- Card บทเรียน -->
                 <div class="section-card">
                     <div class="section-title"><i class="bi bi-book-half"></i> บทเรียนรู้ทันสโตรก</div>
+                    
+                    <!-- Progress Bar (ย้ายมาที่นี่) -->
+                    <div class="progress-container">
+                        <div class="d-flex justify-content-between mb-1" style="font-size:18px;">
+                            <span>ความคืบหน้า</span>
+                            <span id="progressText">0%</span>
+                        </div>
+                        <div class="progress">
+                            <div id="lessonProgressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 0%"></div>
+                        </div>
+                    </div>
+
                     <p class="section-desc">เรียนรู้ 10 บทเรียนและทำแบบทดสอบย่อยเพื่อสะสมแต้ม</p>
-                    <button class="btn btn-custom btn-red" onclick="openLessons()">
-                        <i class="bi bi-play-circle-fill" style="font-size: 28px;"></i> เข้าสู่บทเรียน
+                    
+                    <!-- ปุ่มเข้าบทเรียน (มีสถานะ Loading) -->
+                    <button id="btnEnterLesson" class="btn btn-custom btn-red" onclick="openLessons()" disabled>
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        กำลังโหลดเนื้อหา...
                     </button>
+                    <div id="lessonLoadError" class="text-danger mt-2 text-center" style="display:none;">โหลดข้อมูลไม่สำเร็จ กรุณารีเฟรช</div>
                 </div>
 
+                <!-- Card ข้อสอบ -->
                 <div class="section-card">
                     <div class="section-title"><i class="bi bi-clipboard-check"></i> แบบทดสอบวัดผล</div>
                     <p class="section-desc">ทดสอบความรู้รวม 10 ข้อ (10 คะแนน)</p>
@@ -348,7 +371,7 @@
         </div>
         
         <div class="overlay-content" id="lessonContentArea">
-            <div class="loader-container"><span class="loader"></span></div>
+            <!-- Content will be injected here -->
         </div>
 
         <div class="overlay-footer">
@@ -395,9 +418,10 @@
         let examStartTime = 0;
         let examTimerInterval;
 
+        // Auto Start
         $(document).ready(async () => {
-            // โครงสร้างหน้าเว็บโหลดเสร็จแล้วตั้งแต่เปิดไฟล์ (Skeleton Loaded)
-            // ตอนนี้เริ่มโหลดข้อมูลจริงผ่าน LIFF และ API
+            // เริ่มโหลดทันทีที่เปิดหน้าเว็บ (Pre-fetching)
+            // ระหว่างนี้ปุ่มจะขึ้น "กำลังโหลด..."
             await initLiff();
         });
 
@@ -412,7 +436,7 @@
                     $('#userLoading').hide();
                     $('#userInfo').fadeIn();
                     
-                    // เริ่มดึงข้อมูลเบื้องหลัง
+                    // ดึงข้อมูล Background ทันที
                     loadHistory();
                     fetchLessonsAndProgress();
                 }
@@ -422,17 +446,30 @@
             }
         }
 
-        // --- Data Fetching ---
+        // --- Data Fetching (Pre-fetch Logic) ---
         function fetchLessonsAndProgress() {
-            // ดึงบทเรียน
+            console.log("Start fetching lessons...");
+            
+            // 1. ดึงบทเรียน
             $.ajax({
                 url: GAS_URL, dataType: 'jsonp',
                 data: { action: 'getLessons' },
+                timeout: 20000, // 20 วินาที Timeout
                 success: function(data) {
                     lessonsData = data || [];
-                    updateNavButtons();
+                    console.log("Lessons loaded:", lessonsData.length);
                     
-                    // ดึง Progress ต่อเลย
+                    if (lessonsData.length > 0) {
+                        // โหลดเสร็จแล้ว -> ปลดล็อคปุ่ม
+                        $('#btnEnterLesson').html('<i class="bi bi-play-circle-fill" style="font-size: 28px;"></i> เข้าสู่บทเรียน')
+                            .prop('disabled', false)
+                            .removeClass('btn-secondary').addClass('btn-red');
+                    } else {
+                        $('#btnEnterLesson').text('ไม่พบข้อมูลบทเรียน').prop('disabled', true);
+                        $('#lessonLoadError').show().text('ไม่พบข้อมูลใน Sheet (ตรวจสอบชื่อ Sheet/Column)');
+                    }
+                    
+                    // 2. ดึง Progress (ทำเงียบๆ)
                     $.ajax({
                         url: GAS_URL, dataType: 'jsonp',
                         data: { action: 'getStudentProgress', userId: userProfile.userId },
@@ -443,6 +480,11 @@
                             updateProgressBar();
                         }
                     });
+                },
+                error: function(xhr, status, error) {
+                    console.error("Fetch error:", error);
+                    $('#btnEnterLesson').text('โหลดล้มเหลว').prop('disabled', true);
+                    $('#lessonLoadError').show().text('การเชื่อมต่อล่าช้า กรุณารีเฟรช');
                 }
             });
         }
@@ -476,17 +518,22 @@
         function updateProgressBar() {
             if(lessonsData.length === 0) return;
             let count = 0;
-            lessonsData.forEach((l, i) => {
-                const levelName = `lesson${i+1}`;
-                if(completedLessons.has(levelName)) count++;
+            // นับบทเรียนที่ทำเสร็จแล้ว โดยดูว่า ID ตรงกับที่เราโหลดมาไหม
+            lessonsData.forEach((l) => {
+                // สมมติ module_id คือ 'lesson1', 'lesson2' หรือ '1', '2'
+                // เราเช็คว่า completedLessons มี ID นี้ไหม
+                if(completedLessons.has(l.module_id) || completedLessons.has(String(l.module_id).toLowerCase())) {
+                    count++;
+                }
             });
             const pct = Math.round((count / lessonsData.length) * 100);
             $('#lessonProgressBar').css('width', pct + '%').text(pct + '%');
+            $('#progressText').text(pct + '%');
         }
 
         // --- Lesson System ---
         function openLessons() {
-            if(lessonsData.length === 0) { alert('กำลังโหลดข้อมูลบทเรียน กรุณารอสักครู่...'); return; }
+            if(lessonsData.length === 0) return; // ปุ่ม disabled อยู่แล้ว แต่กันไว้
             $('#lessonModal').fadeIn().css('display', 'flex');
             renderLesson(currentLessonIndex);
         }
@@ -497,7 +544,7 @@
 
         function renderLesson(index) {
             const lesson = lessonsData[index];
-            const level = `lesson${index+1}`;
+            const level = lesson.module_id; // ใช้ module_id จาก sheet เป็น level
             
             $('#lessonHeaderTitle').text(`บทที่ ${index+1}: ${lesson.title}`);
             
@@ -638,6 +685,7 @@
                 </div>
             `);
 
+            // บันทึกว่าทำบทนี้แล้ว
             completedLessons.add(level);
             updateProgressBar();
 
