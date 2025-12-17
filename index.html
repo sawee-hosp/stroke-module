@@ -2,517 +2,1186 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ข้อมูลสุขภาพ รู้ทันสโตรก by รพ.สวี</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>คลังความรู้ สวีรู้ทันสโตรก</title>
     
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;700&display=swap" rel="stylesheet">
     
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
     <style>
-        /* Base Variables */
-        :root { 
-            --base-size: 20px; 
-            --theme-color: #ff3654; /* Default Red */
-            --theme-bg-start: #ff3654;
-            --theme-bg-end: #ffffff;
-            --theme-text-primary: #ff3654;
+        :root {
+            /* Palette */
+            --primary-red: #ff3654;     /* สีพื้นหลัง */
+            --primary-dark: #c62841;    /* สีปุ่มกดตอนกด */
+            --header-text: #002366;     /* สีหัวข้อ (น้ำเงินเข้ม) */
+            --body-text: #333333;       /* สีเนื้อหา */
+            --bg-card: #ffffff;
+            
+            /* Typography Scale */
+            --font-base: 20px;          
+            --font-lg: 24px;
+            --font-xl: 28px;
+            --font-btn: 20px; 
         }
 
-        html { font-size: var(--base-size); }
-
-        body { 
-            font-family: "Noto Sans Thai", sans-serif; 
-            font-size: 1rem; 
-            /* Default Background (Red Fade) */
-            background: linear-gradient(180deg, var(--theme-bg-start) 0%, var(--theme-bg-end) 450px);
+        body {
+            font-family: 'Noto Sans Thai', sans-serif;
+            font-size: var(--font-base);
+            line-height: 1.5;
+            background: linear-gradient(to bottom, var(--primary-red) 0%, var(--primary-red) 120px, #ffffff 350px);
             background-attachment: fixed;
-            margin: 0; 
-            padding-bottom: 5rem; 
-            transition: background 0.5s ease; /* Smooth transition */
-        }
-        
-        /* --- VHV Mode Theme Overrides --- */
-        body.vhv-mode {
-            --theme-color: #dfa000; /* Darker Gold for text */
-            --theme-bg-start: #FFD700; /* Gold */
-            --theme-text-primary: #856404; /* Dark brownish gold for text */
-        }
-        
-        /* Typography overrides */
-        h1, h2, h3, h4, h5 { font-weight: 700 !important; }
-        .h5, h5 { font-size: 1.6rem; }
-        .small, small { font-size: 0.85rem; }
-        .btn { font-size: 1.1rem; font-weight: 600; }
-        
-        /* Floating Header */
-        .app-header { text-align: center; padding: 110px 20px 20px; /* Increased top padding for fixed tabs */ }
-        .app-title { 
-            color: white; 
-            font-weight: 900; 
-            font-size: 2rem; 
-            text-shadow: 2px 2px 5px rgba(0,0,0,0.3); 
-            margin: 0; 
-            transition: color 0.3s;
-        }
-        /* In VHV mode, header text needs to be readable on Gold */
-        body.vhv-mode .app-title {
-            color: #333;
-            text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            color: var(--body-text);
+            padding-bottom: 20px; /* ลดพื้นที่ด้านล่างสุด */
         }
 
-        /* Fixed Tabs - Big & Full Width */
-        .nav-tabs-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
-            background-color: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            padding: 10px 0;
+        /* --- Header Style --- */
+        h1.app-title {
+            color: #ffffff;
+            font-weight: 900;
+            font-size: 24px; /* ปรับลดขนาดให้พอดี 1 บรรทัด */
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+            white-space: nowrap; /* บังคับไม่ให้ขึ้นบรรทัดใหม่ */
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-        .nav-tabs { border-bottom: none; justify-content: center; }
-        .nav-link { 
-            font-size: 1.2rem;
-            color: #999; 
-            border: 2px solid transparent; 
-            border-radius: 50px; 
-            margin: 0 5px; 
-            padding: 10px 30px; 
-            font-weight: 700; 
+
+        /* --- Main Card Style --- */
+        .main-card {
+            background: var(--bg-card);
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border: none;
+            padding: 25px 15px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        /* --- Custom Gradients for Cards --- */
+        .card-green-gradient {
+            background: linear-gradient(to bottom, #e8f5e9 0%, #ffffff 100%);
+            border-color: #c8e6c9;
+        }
+        .card-orange-gradient {
+            background: linear-gradient(to bottom, #fff3e0 0%, #ffffff 100%);
+            border-color: #ffe0b2;
+        }
+        .card-blue-gradient {
+            background: linear-gradient(to bottom, #e3f2fd 0%, #ffffff 100%);
+            border-color: #bbdefb;
+        }
+        .card-yellow-gradient {
+            background: linear-gradient(to bottom, #fffde7 0%, #ffffff 100%);
+            border-color: #f0f4c3;
+        }
+
+        /* --- Internal Section Cards --- */
+        .section-card {
+            border-radius: 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #e1e8ed;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: var(--font-xl);
+            font-weight: 700;
+            color: var(--header-text);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .section-desc {
+            font-size: var(--font-base);
+            color: #555;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        /* --- Video Player & List Style (NEW) --- */
+        .video-player-wrapper {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+            background: #000;
+        }
+        .video-list-container {
+            height: 240px; /* ความสูงรายการวิดีโอ */
+            overflow-y: auto;
             background: #f8f9fa;
-            transition: all 0.3s;
+            border-radius: 12px;
+            border: 1px solid #dee2e6;
         }
-        
-        /* Active State - User Mode (Red) */
-        .nav-link.active { 
-            color: #ff3654; 
-            background: #ffebee; 
-            border-color: #ff3654; 
+        .video-item {
+            display: flex;
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #e9ecef;
+            transition: background 0.2s;
+            background: #fff;
         }
-        
-        /* Active State - VHV Mode (Gold) - controlled via JS class on body or specific targeting */
-        body.vhv-mode .nav-link#vhv-tab-btn.active {
-            color: #000;
-            background: #FFD700;
-            border-color: #dfa000;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        .video-item:last-child { border-bottom: none; }
+        .video-item:hover { background: #e9ecef; }
+        .video-item.active { 
+            background: #e3f2fd; 
+            border-left: 5px solid #0d6efd; 
         }
-        
-        .bg-vhv-theme { min-height: 100vh; padding-bottom: 40px; }
-        
-        /* Card Styles */
-        .card { 
-            border: none; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
-            margin-bottom: 1.5rem; 
-            border-radius: 15px; 
-            overflow: hidden; 
+        .video-thumb {
+            width: 110px;
+            height: 62px;
+            object-fit: cover;
+            border-radius: 6px;
+            flex-shrink: 0;
+            margin-right: 12px;
+            background: #ccc;
         }
-        
-        .section-title { 
-            font-size: 1.4rem; 
-            font-weight: 700; 
-            margin-bottom: 1rem; 
-            color: #333; 
-            display: flex; 
-            align-items: center; 
+        .video-info {
+            font-size: 16px;
+            line-height: 1.3;
+            color: #333;
+            display: flex;
+            align-items: center;
         }
-        .section-title i { margin-right: 0.8rem; color: var(--theme-text-primary); font-size: 1.6rem; }
-        
-        /* Loading Screen */
-        #loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; color: white; }
-        #loading-text { font-size: 1.8rem; font-weight: bold; margin-bottom: 40px; color: #aaaaaa; position: absolute; top: 15%; }
-        .loading-content { display: flex; flex-direction: column; align-items: center; transition: opacity 0.5s ease-in-out; opacity: 1; }
-        #loading-icon { font-size: 7rem; margin-bottom: 20px; transition: all 0.5s ease-in-out; display: block; }
-        .loading-prefix { font-size: 1.3rem; color: #dddddd; margin-bottom: 10px; }
-        #loading-subtext { font-size: 3.2rem; font-weight: 800; line-height: 1.2; text-shadow: 0 0 20px rgba(255, 255, 255, 0.3); transition: all 0.5s ease-in-out; }
-        
-        /* Game Score Box */
-        .game-score-card { border: 2px solid #fff; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); }
-        .game-score-box { background: #fff; border-radius: 12px; padding: 15px 5px; text-align: center; border: 2px solid #dee2e6; height: 100%; cursor: pointer; transition: transform 0.2s; }
-        .game-score-box h3 { margin: 5px 0; font-weight: 800; color: #0d6efd; font-size: 2.2rem; }
-        .game-score-box span { font-size: 0.9rem; color: #666; line-height: 1.2; display: block; }
-        
-        .profile-edit-btn { position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 50px; height: 50px; color: #0d6efd; font-size: 1.5rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .check-icon { font-size: 1.8rem; margin-right: 10px; }
-        .text-line-id { font-size: 0.9rem; color: #0d6efd; cursor: pointer; background: #e3f2fd; padding: 2px 8px; border-radius: 5px; display: inline-block; }
-        
-        /* Info Grid */
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 10px; }
-        .info-item { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 10px; padding: 12px 10px; display: flex; align-items: center; font-size: 0.9rem; }
-        .info-item i { font-size: 1.6rem; color: var(--theme-text-primary); margin-right: 10px; width: 30px; text-align: center; }
-        .info-item .label { display: block; font-size: 0.8rem; color: #6c757d; line-height: 1; }
-        .info-item b { font-size: 1.1rem; color: #333; }
-        
-        /* Leaderboard */
-        .leaderboard-card { height: 100%; border: 1px solid #dee2e6; }
-        .leaderboard-row { display: flex; align-items: center; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #eee; }
-        .leaderboard-rank { font-size: 1.2rem; font-weight: bold; width: 30px; text-align: center; color: var(--theme-text-primary); }
-        .leaderboard-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 10px; border: 1px solid #ddd; }
-        .leaderboard-score { margin-left: auto; font-weight: bold; color: #198754; font-size: 1rem; }
-        
-        /* VHV Patient Risk Colors */
-        .vhv-patient-item { border-left: 10px solid #ccc; margin-bottom: 10px; border-radius: 8px; background-color: #fff; padding: 15px; }
-        .vhv-risk-5 { border-left-color: #8B0000; }
-        .vhv-risk-4 { border-left-color: #dc3545; }
-        .vhv-risk-3 { border-left-color: #fd7e14; }
-        .vhv-risk-2 { border-left-color: #ffc107; }
-        .vhv-risk-1 { border-left-color: #28a745; }
-
-        /* Buttons Adaptive */
-        .btn-primary { background-color: var(--theme-text-primary); border-color: var(--theme-text-primary); }
-        body.vhv-mode .btn-primary { 
-            background-color: #FFD700; color: #000; border-color: #FFD700; font-weight: bold; 
-        }
-        body.vhv-mode .btn-outline-primary {
-            color: #856404; border-color: #856404;
+        .video-title {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            font-weight: 500;
         }
 
-        /* Footer */
-        .app-footer { text-align: center; color: #888; font-size: 0.8rem; margin-top: 30px; }
-        body.vhv-mode .app-footer { color: #555; font-weight: 500; }
+        /* --- Buttons --- */
+        .btn-custom {
+            border-radius: 50px;
+            padding: 12px 15px;
+            font-size: var(--font-btn);
+            font-weight: 600;
+            width: 100%;
+            transition: transform 0.2s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-custom:active { transform: scale(0.96); }
+        .btn-custom:disabled { opacity: 0.7; cursor: not-allowed; }
+
+        .btn-red { background-color: var(--primary-red); color: white; border: none; }
+        .btn-red:hover:not(:disabled) { background-color: var(--primary-dark); color: white; }
+        
+        .btn-blue { background-color: #0d6efd; color: white; border: none; }
+        .btn-blue:hover:not(:disabled) { background-color: #0b5ed7; color: white; }
+
+        .btn-gray { background-color: #6c757d; color: white; border: none; }
+        .btn-gray:hover:not(:disabled) { background-color: #5a6268; color: white; }
+
+        /* --- Progress Bar --- */
+        .progress-container {
+            margin-bottom: 15px;
+            background: rgba(255,255,255,0.6);
+            padding: 10px;
+            border-radius: 15px;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .progress {
+            height: 24px;
+            border-radius: 20px;
+            background-color: rgba(0,0,0,0.05);
+        }
+        .progress-bar {
+            font-size: 16px;
+            line-height: 24px;
+            font-weight: bold;
+        }
+
+        /* --- Full Screen Overlay --- */
+        .fullscreen-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #ffffff;
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .overlay-header {
+            position: sticky;
+            top: 0;
+            background: white;
+            padding: 15px 20px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start; /* Align top specifically for multi-line title */
+            z-index: 10;
+        }
+        .overlay-header-content {
+            display: flex;
+            flex-direction: column;
+            overflow: visible; /* Allow text wrap */
+            flex-grow: 1;
+            padding-right: 10px;
+        }
+        .overlay-header-title {
+            font-size: 26px; /* Increased Size */
+            color: var(--header-text); 
+            font-weight: bold;
+            white-space: normal; /* Allow wrap */
+            line-height: 1.3;
+        }
+        
+        .close-btn {
+            background: #f1f1f1;
+            border: none;
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            font-size: 20px;
+            color: #333;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            margin-top: 5px;
+        }
+        .close-btn:hover { background: #ddd; }
+
+        .overlay-content {
+            flex-grow: 1;
+            padding: 20px 15px;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+            font-size: 22px;
+        }
+
+        .overlay-footer {
+            padding: 15px;
+            background: #fff;
+            border-top: 2px solid #f0f0f0;
+            position: sticky;
+            bottom: 0;
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+        }
+
+        /* --- Lesson Specifics --- */
+        .lesson-image-container {
+            position: relative;
+            width: 100%;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            background: #eee;
+            cursor: zoom-in;
+        }
+        .lesson-img {
+            width: 100%;
+            height: auto;
+            min-height: 200px;
+            display: block;
+            object-fit: cover;
+        }
+        
+        /* Floating Share Badge */
+        .share-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #06c755; /* Solid LINE Green */
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            display: inline-flex; align-items: center; gap: 6px;
+            z-index: 5;
+        }
+        .share-badge:active { transform: scale(0.95); background: #05b54d; }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            display: inline-flex; align-items: center; gap: 5px;
+            margin-top: 5px;
+        }
+        .status-badge.done {
+            background-color: #198754;
+            color: white;
+            border: 1px solid #198754;
+        }
+        .status-badge.pending {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            border: 1px solid #ced4da;
+        }
+        
+        .typography {
+            font-size: 22px;
+            line-height: 1.8;
+            color: #222;
+        }
+
+        /* --- Audio Button --- */
+        .btn-audio {
+            background: #fff3cd; color: #856404;
+            border: 1px solid #ffeeba;
+            padding: 8px 20px; border-radius: 30px;
+            font-size: 18px; font-weight: bold;
+            display: inline-flex; align-items: center; gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-audio:active { transform: scale(0.95); }
+        .btn-audio.speaking { background: #ffc107; color: #000; animation: pulse 1.5s infinite; }
+        .btn-audio.loading { background: #e2e3e5; color: #6c757d; cursor: wait; }
+        .btn-audio.error { background: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(255, 193, 7, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); } }
+
+        /* --- Quiz UI --- */
+        .quiz-item {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid #ddd;
+            margin-bottom: 25px;
+        }
+        .quiz-question-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--header-text);
+            margin-bottom: 20px;
+        }
+        .quiz-option {
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 18px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 22px;
+            background: #fff;
+        }
+        .quiz-option:hover { background: #f9f9f9; }
+        .quiz-option.selected { border-color: var(--primary-red); background-color: #fff0f2; font-weight: 600; }
+        .quiz-option.correct { border-color: #198754; background-color: #e6f9ee; }
+        .quiz-option.wrong { border-color: #dc3545; background-color: #ffe6e6; }
+
+        /* --- Zoom Modal --- */
+        #imageZoomModal {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 3000;
+            display: none;
+            justify-content: center; align-items: center;
+            flex-direction: column;
+        }
+        #zoomedImage { max-width: 100%; max-height: 80vh; object-fit: contain; }
+        .close-zoom {
+            position: absolute; top: 20px; right: 20px;
+            color: white; font-size: 40px; cursor: pointer;
+        }
+
+        /* --- Footer --- */
+        .app-footer {
+            text-align: center;
+            color: #555;
+            font-size: 14px;
+            margin-top: 10px;
+            font-weight: 500;
+            line-height: 1.2;
+        }
+        
+        /* --- Loader --- */
+        .loader {
+            width: 50px; height: 50px;
+            border: 6px solid #FFF;
+            border-bottom-color: var(--primary-red);
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+        }
+        .loader-container {
+            text-align: center;
+            padding: 20px;
+            font-size: 20px;
+            color: #666;
+        }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- Badge History --- */
+        .badge-history { font-size: 16px; padding: 6px 12px; border-radius: 8px; }
+
     </style>
 </head>
 <body>
 
-    <!-- Loading Screen -->
-    <div id="loading">
-        <div id="loading-text">กำลังโหลดข้อมูล...</div>
-        <div id="loading-content" class="loading-content">
-            <i id="loading-icon" class="bi"></i>
-            <div class="loading-prefix">จำใส่ใจอาการสโตรก:</div>
-            <div id="loading-subtext"></div>
-        </div>
-    </div>
+    <div class="container" style="max-width: 650px;">
+        <!-- Header -->
+        <h1 class="app-title">คลังความรู้ สวีรู้ทันสโตรก</h1>
 
-    <!-- Fixed Header Tabs -->
-    <div class="nav-tabs-container">
-        <ul class="nav nav-tabs" id="mainTabs" role="tablist">
-            <li class="nav-item">
-                <button class="nav-link active" id="health-tab-btn" data-bs-toggle="tab" data-bs-target="#health-tab-content">ข้อมูลสุขภาพ</button>
-            </li>
-            <li class="nav-item">
-                <button class="nav-link" id="vhv-tab-btn" data-bs-toggle="tab" data-bs-target="#vhv-tab-content">สำหรับ อสม.</button>
-            </li>
-        </ul>
-    </div>
-
-    <!-- App Title (Floating under tabs) -->
-    <div class="app-header">
-        <h1 class="app-title">สวีรู้ทันสโตรก</h1>
-    </div>
-
-    <!-- Main Content Area -->
-    <div class="tab-content">
-        
-        <!-- Tab 1: Health Information (Default) -->
-        <div class="tab-pane fade show active" id="health-tab-content">
-            <div class="container tab-content-container">
-                <div class="row" id="dynamic-content-container">
-                    <!-- Cards will be dynamically injected here via JS -->
+        <!-- Main Card -->
+        <div class="main-card">
+            
+            <!-- User Info (Reduced Space) -->
+            <div class="text-center mb-3">
+                <div id="userLoading" class="loader-container" style="padding:10px;">
+                    กำลังโหลดข้อมูลผู้ใช้...
+                </div>
+                <div id="userInfo" style="display:none;">
+                    <h2 class="fw-bold m-0" style="color: var(--header-text); line-height: 1.2;" id="userNameDisplay">สวัสดี</h2>
                 </div>
             </div>
-        </div>
-        
-        <!-- Tab 2: VHV Dashboard (Gold Theme) -->
-        <div class="tab-pane fade" id="vhv-tab-content">
-            <div class="bg-vhv-theme tab-content-container">
-                <div class="container pt-3">
-                    <div id="vhv-dashboard-area">
-                        <!-- VHV content will be injected here -->
+
+            <!-- Menu Buttons -->
+            <div class="d-grid gap-3">
+                
+                <!-- Lesson Card (Green Gradient) -->
+                <div class="section-card card-green-gradient">
+                    <div class="section-title"><i class="bi bi-book-half" style="color: #2e7d32;"></i> บทเรียนรู้ทันสโตรก</div>
+                    
+                    <!-- Progress Bar -->
+                    <div class="progress-container">
+                        <div class="d-flex justify-content-between mb-1" style="font-size:16px;">
+                            <span>ความคืบหน้า</span>
+                            <span id="progressText">0%</span>
+                        </div>
+                        <div class="progress">
+                            <div id="lessonProgressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <p class="section-desc">เรียนรู้ 10 บทเรียนและทำแบบทดสอบย่อยเพื่อสะสมแต้ม</p>
+                    
+                    <button id="btnEnterLesson" class="btn btn-custom btn-red" onclick="openLessons()" disabled>
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        กำลังโหลดเนื้อหา...
+                    </button>
+                    <div id="lessonLoadError" class="text-danger mt-2 text-center" style="display:none;">โหลดข้อมูลไม่สำเร็จ กรุณารีเฟรช</div>
+                </div>
+
+                <!-- Video Card (Blue Gradient) - Custom Player List -->
+                <div class="section-card card-blue-gradient">
+                    <div class="section-title"><i class="bi bi-youtube" style="color: #ff0000;"></i> สื่อวิดีโอเรื่องสโตรก</div>
+                    <p class="section-desc">รวมคลิปความรู้เรื่องสโตรกและการดูแลตัวเองจากผู้เชี่ยวชาญ</p>
+                    
+                    <!-- Main Player -->
+                    <div class="video-player-wrapper ratio ratio-16x9">
+                        <iframe id="mainVideoPlayer" src="" title="YouTube video player" allowfullscreen></iframe>
+                    </div>
+
+                    <!-- Scrollable Playlist -->
+                    <div class="video-list-container" id="videoPlaylist">
+                        <!-- JS will populate this -->
+                        <div class="text-center p-3 text-muted">กำลังโหลดรายการวิดีโอ...</div>
                     </div>
                 </div>
+
+                <!-- Exam Card (Orange Gradient) -->
+                <div class="section-card card-orange-gradient">
+                    <div class="section-title"><i class="bi bi-clipboard-check" style="color: #ef6c00;"></i> แบบทดสอบวัดผล</div>
+                    <p class="section-desc">ทดสอบความรู้รวม 10 ข้อ (10 คะแนน)</p>
+                    <button class="btn btn-custom btn-blue" onclick="startMainExam()">
+                        <i class="bi bi-pencil-square" style="font-size: 24px;"></i> เริ่มทำแบบทดสอบ
+                    </button>
+                </div>
+                
+                <!-- History Card (Yellow Gradient) -->
+                <div class="section-card card-yellow-gradient mt-2">
+                    <div class="section-title"><i class="bi bi-clock-history" style="color: #fbc02d;"></i> ประวัติคะแนนสอบ</div>
+                    <div id="scoreHistory" style="font-size: 20px; min-height: 50px;">
+                        <div class="text-center text-muted py-3">กำลังโหลดประวัติ...</div>
+                    </div>
+                </div>
+
             </div>
+
+        </div> 
+
+        <!-- Footer (Minimized) -->
+        <div class="app-footer">
+            จัดทำโดย สวีรู้ทันสโตรก รพ.สวี จ.ชุมพร
         </div>
     </div>
 
-    <div class="app-footer">จัดทำโดย คลินิกโรคหลอดเลือดสมอง รพ.สวี จ.ชุมพร</div>
+    <!-- ================= Lesson Fullscreen Modal ================= -->
+    <div id="lessonModal" class="fullscreen-overlay">
+        <div class="overlay-header">
+            <div class="overlay-header-content">
+                <div class="overlay-header-title" id="lessonHeaderTitle">บทเรียน</div>
+                <div id="lessonHeaderBadge"></div>
+            </div>
+            <button type="button" class="close-btn" onclick="closeLessons()"><i class="bi bi-x-lg"></i></button>
+        </div>
+        
+        <div class="overlay-content" id="lessonContentArea">
+            <!-- Content will be injected here -->
+        </div>
 
-    <!-- ================= MODALS ================= -->
+        <div class="overlay-footer">
+            <button class="btn btn-custom btn-gray" id="btnPrevLesson" onclick="prevLesson()" disabled style="flex:1;">
+                <i class="bi bi-arrow-left-circle-fill"></i> บทก่อนหน้า
+            </button>
+            <button class="btn btn-custom btn-blue" id="btnNextLesson" onclick="nextLesson()" style="flex:1;">
+                บทถัดไป <i class="bi bi-arrow-right-circle-fill"></i>
+            </button>
+        </div>
+    </div>
 
-    <!-- 1. Edit Profile Modal -->
-    <div class="modal fade" id="editProfileModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h1 class="modal-title fs-4">แก้ไขข้อมูลส่วนตัว</h1><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="editProfileForm"><div class="mb-3 text-center"><img id="edit-preview-img" src="" style="width:120px;height:120px;border-radius:50%;object-fit:cover;margin-bottom:15px;"></div><div class="mb-3"><label class="form-label">ชื่อ-นามสกุล</label><input type="text" class="form-control form-control-lg" id="editName" required></div><div class="mb-3"><label class="form-label">เบอร์โทรศัพท์</label><input type="tel" class="form-control form-control-lg" id="editPhone" required pattern="[0-9]{10}"></div></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button><button type="button" class="btn btn-primary" onclick="saveUserProfile()">บันทึก</button></div></div></div></div>
+    <!-- ================= Image Zoom Modal ================= -->
+    <div id="imageZoomModal" onclick="closeZoomImage()">
+        <span class="close-zoom">&times;</span>
+        <img id="zoomedImage">
+        <div class="text-white mt-3 fs-4">แตะที่ว่างเพื่อปิด</div>
+    </div>
 
-    <!-- 2. VHV Registration Modal -->
-    <div class="modal fade" id="vhvRegisterModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h1 class="modal-title fs-4">ลงทะเบียน อสม.</h1><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="vhvForm"><div class="mb-3"><label class="form-label">ชื่อ-นามสกุล</label><input type="text" class="form-control" id="vhvName" required></div><div class="mb-3"><label class="form-label">เบอร์โทรศัพท์</label><input type="tel" class="form-control" id="vhvPhone" required></div><div class="mb-3"><label class="form-label">LINE ID</label><input type="text" class="form-control" id="vhvLineId"></div><div class="mb-3"><label class="form-label">พื้นที่ดูแล</label><div class="row g-2"><div class="col-6"><select class="form-select" id="vhvDistrict" onchange="updateVillages()"><option value="" disabled selected>เลือกตำบล</option></select></div><div class="col-6"><select class="form-select" id="vhvVillage" disabled><option value="" disabled selected>เลือกหมู่</option></select></div></div></div><div class="mb-3 p-3 bg-light border rounded"><label class="form-label text-danger fw-bold">📍 ปักหมุดบ้าน อสม.</label><div class="input-group"><input type="text" class="form-control" id="vhvAsmHome" placeholder="ยังไม่มีพิกัด" readonly><button class="btn btn-primary" type="button" onclick="pinVhvHomeInForm()"><i class="bi bi-geo-alt-fill"></i> ปักหมุด</button></div></div></form></div><div class="modal-footer"><button class="btn btn-primary" onclick="handleVhvRegistration()">บันทึกข้อมูล</button></div></div></div></div>
+    <!-- ================= Main Exam Fullscreen Modal ================= -->
+    <div id="examModal" class="fullscreen-overlay">
+        <div class="overlay-header bg-light">
+            <div class="d-flex align-items-center gap-3">
+                <h5 class="m-0 fw-bold" style="color: var(--header-text);">แบบทดสอบ</h5>
+                <span class="badge bg-danger fs-5" id="examTimer">00:00</span>
+            </div>
+            <button class="btn btn-outline-danger fw-bold" style="font-size: 18px; border-radius: 30px; padding: 5px 15px;" onclick="closeMainExam()">ออก</button>
+        </div>
+        <div class="overlay-content" id="examContentArea">
+            <div class="loader-container"><span class="loader" style="border-bottom-color: #0d6efd;"></span></div>
+        </div>
+        <div class="overlay-footer justify-content-center">
+            <button class="btn btn-custom btn-blue w-100" id="btnSubmitExam" onclick="submitMainExam()" style="display:none;">ส่งคำตอบ</button>
+        </div>
+    </div>
 
-    <!-- 3. Register Offline Patient Modal -->
-    <div class="modal fade" id="registerOfflineModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-info text-white"><h1 class="modal-title fs-5">ลงทะเบียนชาวบ้านใหม่ (ไม่มีไลน์)</h1><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="offlineForm"><div class="mb-3"><label>ชื่อ-นามสกุล</label><input type="text" class="form-control" id="offName" required></div><div class="row mb-3"><div class="col-6"><label>อายุ</label><input type="number" class="form-control" id="offAge"></div><div class="col-6"><label>เพศ</label><select class="form-select" id="offSex"><option value="ชาย">ชาย</option><option value="หญิง">หญิง</option></select></div></div><div class="mb-3"><label>เบอร์โทรศัพท์</label><input type="tel" class="form-control" id="offPhone"></div><div class="mb-3"><label>ความเสี่ยง (ประเมินคร่าวๆ)</label><select class="form-select" id="offRisk"><option value="0">เสี่ยงต่ำ (เขียว)</option><option value="10">ปานกลาง (เหลือง)</option><option value="20">สูง (ส้ม)</option><option value="30">สูงมาก (แดง)</option></select></div><div class="d-grid gap-2"><button type="button" class="btn btn-outline-primary" onclick="pinOfflineLocation()"><i class="bi bi-geo-alt"></i> ปักหมุดที่นี่</button><input type="text" id="offLocation" class="form-control text-center small" readonly placeholder="พิกัด..."></div></form></div><div class="modal-footer"><button type="button" class="btn btn-primary" onclick="submitOfflinePatient()">บันทึกข้อมูล</button></div></div></div></div>
-
-    <!-- 4. QR Code Modal -->
-    <div class="modal fade" id="qrModal" tabindex="-1"><div class="modal-dialog modal-fullscreen"><div class="modal-content bg-dark text-white"><div class="modal-header border-0"><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body d-flex flex-column justify-content-center align-items-center"><h2 class="mb-4">สวีรู้ทันสโตรก</h2><img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://lin.ee/qRgD07N" alt="QR Code" style="max-width:90%;width:350px;border:15px solid white;border-radius:15px;"><p class="mt-4 fs-3">ให้ชาวบ้านสแกนเพื่อเพิ่มเพื่อน</p><a href="https://lin.ee/qRgD07N" class="btn btn-success btn-lg mt-3 rounded-pill px-5 fs-4"><i class="bi bi-line"></i> เพิ่มเพื่อน</a><button class="btn btn-light btn-lg mt-5 rounded-pill px-5 py-3 fs-3" data-bs-dismiss="modal">ปิด</button></div></div></div></div>
-
-    <!-- 5. Share Profile Modal -->
-    <div class="modal fade" id="shareProfileModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h1 class="modal-title fs-5">แชร์นามบัตร อสม.</h1><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><p class="text-muted">ระบบจะสร้างนามบัตรดิจิทัลพร้อมคะแนนของคุณเพื่อส่งให้ชาวบ้าน</p><button type="button" class="btn btn-primary btn-lg w-100" onclick="handleShareProfile()"><i class="bi bi-line"></i> ส่งเข้าไลน์</button></div></div></div></div>
-
-    <!-- 6. Home Visit Modal -->
-    <div class="modal fade" id="homeVisitModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content"><div class="modal-header bg-success text-white"><h1 class="modal-title fs-4">บันทึกการเยี่ยมบ้าน</h1><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="hvPatientId"><input type="hidden" id="hvPatientNameVal"><h5 id="hvTitle" class="mb-3">เยี่ยม: ...</h5><div class="alert alert-warning d-flex justify-content-between align-items-center"><span><i class="bi bi-geo-alt-fill"></i> อัปเดตพิกัดบ้านผู้ป่วย</span><button class="btn btn-warning btn-sm" onclick="pinForCurrentPatient()">ปักหมุดที่นี่</button></div><div class="mb-3"><label class="form-label">กิจกรรมการเยี่ยม</label><div class="form-check"><input class="form-check-input" type="checkbox" id="chkAdvice1" checked><label class="form-check-label" for="chkAdvice1">แนะนำ 5 สัญญาณเตือน</label></div><div class="form-check"><input class="form-check-input" type="checkbox" id="chkAdvice2" checked><label class="form-check-label" for="chkAdvice2">แนะนำการปฏิบัติตัว</label></div></div><div class="mb-3"><label class="form-label">บันทึกเพิ่มเติม</label><textarea class="form-control" id="hvNoteAdvice" rows="2"></textarea></div><button class="btn btn-success w-100 btn-lg" onclick="submitHomeVisit('Advice')">บันทึกการเยี่ยม</button></div></div></div></div>
-    
-    <!-- 7. Stroke Report Modal -->
-    <div class="modal fade" id="strokeReportModal" tabindex="-1"><div class="modal-dialog modal-fullscreen"><div class="modal-content"><div class="modal-header bg-danger text-white"><h1 class="modal-title fs-4">🚑 รายงานเคสสโตรก (Fast Track)</h1><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body bg-light"><form id="strokeReportForm" class="p-2"><div class="form-section-title">1. ข้อมูลผู้ป่วย</div><div class="mb-3"><label>ชื่อ-นามสกุลผู้ป่วย</label><input type="text" class="form-control" id="srName"></div><div class="mb-3"><label>เบอร์โทรศัพท์ญาติ (สำคัญ)</label><input type="tel" class="form-control border-danger" id="srRelPhone" required></div><div class="form-section-title text-danger">2. เรื่องเวลา (สำคัญที่สุด!)</div><div class="mb-3"><label>เวลาที่เริ่มมีอาการ (Onset)</label><input type="time" class="form-control form-control-lg border-danger" id="srOnsetTime"></div><div class="d-grid gap-2 mt-4"><button type="button" class="btn btn-secondary" onclick="getLocationForReport()"><i class="bi bi-geo-alt"></i> แนบพิกัดปัจจุบัน</button><input type="text" id="srLocation" class="form-control text-center small" readonly placeholder="ยังไม่มีพิกัด"></div></form></div><div class="modal-footer"><button type="button" class="btn btn-danger btn-lg flex-grow-1" onclick="submitStrokeReport()">ส่งข้อมูล</button></div></div></div></div>
-
-    <!-- 8. Distance Modal -->
-    <div class="modal fade" id="distanceModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h1 class="modal-title fs-4">ปักหมุดตำแหน่ง</h1><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p class="text-muted">สามารถปักหมุดได้เสมอ ไม่ว่าอยู่ที่ไหน โดยเลือกว่าตำแหน่งนี้คืออะไร</p><div class="mb-3"><label class="form-label">ประเภทตำแหน่ง</label><select class="form-select form-select-lg" id="locationType"><option value="บ้าน">บ้าน (ใช้อ้างอิงระยะทาง)</option><option value="ทางผ่าน">ทางผ่าน (เช็คระยะทางเฉยๆ)</option></select></div><button class="btn btn-primary w-100 btn-lg" onclick="handlePinNewLocation()"><i class="bi bi-geo-alt-fill"></i> ปักหมุดที่นี่</button></div></div></div></div>
-    
-    <!-- 9. Risk Info Modal -->
-    <div class="modal fade" id="riskInfoModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-warning text-dark"><h1 class="modal-title fs-5">ความเสี่ยงสโตรกสำคัญอย่างไร?</h1><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body fs-5"><p>เราควรลดปัจจัยเสี่ยงที่เปลี่ยนแปลงได้ เช่น สูบบุหรี่ เบาหวาน ความดัน เพื่อให้ % การเกิดสโตรกลดลง</p></div><div class="modal-footer"><button type="button" class="btn btn-secondary btn-lg w-100" data-bs-dismiss="modal">รับทราบ</button></div></div></div></div>
-
-    <!-- 10. Score Info Modal -->
-    <div class="modal fade" id="scoreInfoModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-primary text-white"><h1 class="modal-title fs-5">เกณฑ์คะแนนความตระหนักรู้</h1><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><ul class="list-group list-group-flush"><li class="list-group-item"><b>1. ความใส่ใจ (40%):</b> เช็คอาการสม่ำเสมอทุกวัน (หายไปนานคะแนนลด)</li><li class="list-group-item"><b>2. ความรู้ (30%):</b> คะแนนสอบเรื่องสโตรก (ต้องสอบผ่านเกณฑ์)</li><li class="list-group-item"><b>3. บอกต่อ (20%):</b> การแชร์ความรู้/สติกเกอร์ให้ผู้อื่น</li><li class="list-group-item"><b>4. เตรียมพร้อม (10%):</b> ปักหมุดบ้านและรู้ระยะทางถึง รพ.</li></ul></div></div></div></div>
-    
-    <!-- 11. RTPA Info Modal -->
-    <div class="modal fade" id="rtpaModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-danger text-white"><h1 class="modal-title fs-5">ทำไมต้องไป รพ. ภายใน 4.5 ชม.?</h1><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body fs-5"><p>โรคหลอดเลือดสมองตีบ จำเป็นต้องได้รับยาละลายลิ่มเลือด (rT-PA) ให้ทันเวลา</p></div><div class="modal-footer"><button type="button" class="btn btn-secondary btn-lg w-100" data-bs-dismiss="modal">เข้าใจแล้ว</button></div></div></div></div>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz-nmfZUs5zFM8ZGvNnOjPSu77weGpOeNQgkdCLajx0YG3sb5aoHp3xynsByTv90dmT/exec';
-        const LIFF_ID_MAIN = "2005789397-RLAGXrBJ";
-        const LINKS = {
-            REGIS: "https://liff.line.me/2005789397-nebQ8oJy",
-            DAILY: "https://liff.line.me/2005789397-WRm1lYd9",
-            STICKER: "https://liff.line.me/2005789397-37lemBgX",
-            KNOWLEDGE: "https://liff.line.me/2005789397-ROQvjpYk"
-        };
-        const SAWEE_LOCATIONS = { "นาโพธิ์": 8, "สวี": 4, "ทุ่งคา": 5, "วิสัยใต้": 3, "ด่านสวี": 4, "ท่าหิน": 3, "ปากแพรก": 4, "ครน": 4, "วิสัยเหนือ": 3, "นาสัก": 3, "เขาทะลุ": 3 };
-        
-        let LIFF_PROFILE = null, ALL_USER_DATA = null, loadingInterval;
-        let EDIT_PROFILE_MODAL, VHV_REG_MODAL, STROKE_REPORT_MODAL, HOME_VISIT_MODAL, REGISTER_OFFLINE_MODAL, QR_MODAL, SHARE_PROFILE_MODAL, RTPA_MODAL, RISK_INFO_MODAL, DISTANCE_MODAL, SCORE_INFO_MODAL;
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbwt4O6aTK_NqGGdYaIF6gRbv5f37dgFeQYZ7ZLxZIRYGBEz54EnJx1hS36XPhET1AOgHg/exec'; 
+        const LIFF_ID = '2005789397-ROQvjpYk';
 
-        function startLoadingAnimation() {
-            const msgs = [{t:"เซมึนหัว", i:"bi-person-walking", c:"#ffc107", falling:true}, {t:"ตามัวมาก", i:"bi-eye-slash-fill", c:"#9C27B0", falling:false}, {t:"มุมปากตก", i:"bi-emoji-frown", c:"#dc3545", falling:false}, {t:"ยกแขนยาก", i:"bi-person-arms-up", c:"#0d6efd", falling:false}, {t:"ลำบากพูด", i:"bi-chat-square-dots", c:"#198754", falling:false}];
-            let i = 0;
-            const sub = document.getElementById('loading-subtext'), icon = document.getElementById('loading-icon'), content = document.getElementById('loading-content');
-            if(sub && icon) { sub.textContent = msgs[0].t; sub.style.color = msgs[0].c; icon.className = `bi ${msgs[0].i}`; icon.style.color = msgs[0].c; if(content) content.style.opacity = 1; }
-            loadingInterval = setInterval(() => {
-                if(content) content.style.opacity = 0;
-                setTimeout(() => {
-                    i = (i + 1) % msgs.length;
-                    if(sub) { sub.textContent = msgs[i].t; sub.style.color = msgs[i].c; }
-                    if(icon) {
-                        icon.className = `bi ${msgs[i].i}`;
-                        icon.classList.toggle('icon-falling', msgs[i].falling);
-                        icon.style.color = msgs[i].c;
-                    }
-                    if(content) content.style.opacity = 1;
-                }, 500); 
-            }, 2500);
-        }
+        let userProfile = null;
+        let lessonsData = [];
+        let currentLessonIndex = 0;
+        let completedLessons = new Set();
+        let examStartTime = 0;
+        let examTimerInterval;
+        let synth = window.speechSynthesis;
+        let availableVoices = [];
 
-        function toggleLoading(show) {
-            const el = document.getElementById('loading');
-            if(el) el.style.display = show ? 'flex' : 'none';
-        }
+        // --- Video Playlist Data ---
+        const strokeVideos = [
+            { id: 'O7MRB-dXjEc', title: 'วิธีสังเกตอาการโรคหลอดเลือดสมอง (FAST) - รพ.บำรุงราษฎร์' },
+            { id: 'AdSLYKZh1hk', title: 'โรคหลอดเลือดสมอง รู้เร็ว รักษาทัน - RAMA Channel' },
+            { id: 'G6Z9cHqT4Tc', title: 'ผักพื้นบ้านต้านโรคหลอดเลือดสมอง - Thai PBS' },
+            { id: 'm50O1bgnHWk', title: 'กายภาพบำบัดสำหรับผู้ป่วยโรคหลอดเลือดสมอง' },
+            { id: 'PC-d46v1rpo', title: 'เข้าใจและป้องกันหลอดเลือดสมองตีบ - รพ.บำรุงราษฎร์' },
+            { id: 'xqgDboazJjE', title: 'เมนูป้องกันโรคหลอดเลือดสมองอุดตัน - Chef Table' }
+        ];
 
-        function stopLoadingAnimation() {
-            if(loadingInterval) clearInterval(loadingInterval);
-            toggleLoading(false);
-        }
-
-        function handleFailure(e) { 
-            alert("Error: "+e.message); 
-            stopLoadingAnimation(); 
-        }
-
-        // --- Mode Switching Logic ---
-        function setAppMode(isVhvMode) {
-            if (isVhvMode) {
-                document.body.classList.add('vhv-mode');
-            } else {
-                document.body.classList.remove('vhv-mode');
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', async () => {
-            startLoadingAnimation();
-            const initModal = (id) => { const el = document.getElementById(id); return el ? new bootstrap.Modal(el) : null; };
-            EDIT_PROFILE_MODAL = initModal('editProfileModal'); VHV_REG_MODAL = initModal('vhvRegisterModal'); QR_MODAL = initModal('qrModal'); RTPA_MODAL = initModal('rtpaModal'); SHARE_PROFILE_MODAL = initModal('shareProfileModal'); STROKE_REPORT_MODAL = initModal('strokeReportModal'); HOME_VISIT_MODAL = initModal('homeVisitModal'); RISK_INFO_MODAL = initModal('riskInfoModal'); DISTANCE_MODAL = initModal('distanceModal'); REGISTER_OFFLINE_MODAL = initModal('registerOfflineModal'); SCORE_INFO_MODAL = initModal('scoreInfoModal');
-            
-            // Tab Event Listeners for Theme Switching
-            document.getElementById('health-tab-btn').addEventListener('shown.bs.tab', () => setAppMode(false));
-            document.getElementById('vhv-tab-btn').addEventListener('shown.bs.tab', () => setAppMode(true));
-
-            try {
-                await liff.init({ liffId: LIFF_ID_MAIN });
-                if (!liff.isLoggedIn()) { liff.login(); return; }
-                LIFF_PROFILE = await liff.getProfile();
-                
-                let url = `${WEB_APP_URL}?action=getUserData&userId=${LIFF_PROFILE.userId}&pictureUrl=${encodeURIComponent(LIFF_PROFILE.pictureUrl)}`;
-                const ref = new URLSearchParams(window.location.search).get('ref');
-                if(ref) url += `&ref=${ref}`;
-                
-                fetch(url).then(r => r.json()).then(data => {
-                    if (data.error) throw new Error(data.error);
-                    ALL_USER_DATA = data;
-                    updatePage(data);
-                }).catch(err => alert("Error: " + err.message)).finally(() => {
-                    stopLoadingAnimation();
-                });
-            } catch (err) { alert(err.message); }
+        // Auto Start
+        $(document).ready(async () => {
+            initTTS(); 
+            initVideoPlayer(); // Init Video Player
+            await initLiff();
         });
 
-        // --- 4. Page Logic ---
-        function updatePage(data) {
-            const hContainer = document.getElementById('dynamic-content-container');
-            if (hContainer) {
-                if (!data.userProfile) {
-                    hContainer.innerHTML = `<div class="col-12 text-center p-5"><h2 class="mb-3">ไม่พบข้อมูลผู้ใช้</h2><p class="text-muted">กรุณาลงทะเบียน</p><a href="${LINKS.REGIS}" class="btn btn-primary btn-lg rounded-pill px-5">ลงทะเบียน</a></div>`;
+        async function initLiff() {
+            try {
+                await liff.init({ liffId: LIFF_ID });
+                if (!liff.isLoggedIn()) {
+                    liff.login();
                 } else {
-                    const gamification = data.gamification || {};
-                    const dailyCheck = data.dailyCheckInfo || {};
-                    const distance = data.homeDistance; 
-                    const leaders = data.communityLeaders; 
-                    const sticker = data.stickerShareCount || 0;
-                    const exam = data.knowledgeTestStats || {};
-
-                    hContainer.innerHTML = 
-                        buildProfileCard(data.userProfile) +
-                        buildGamificationCard(gamification) +
-                        `<div id="card-check">` + buildDailyCheckCard(dailyCheck) + `</div>` +
-                        `<div id="card-emergency">` + buildDistanceCard(distance, data.userProfile.help) + `</div>` +
-                        `<div id="card-leaders">` + buildCommunityLeadersCard(leaders) + `</div>` +
-                        `<div id="card-sticker">` + buildStickerCard(sticker) + `</div>` +
-                        `<div id="card-exam">` + buildKnowledgeTestCard(exam) + `</div>`;
+                    userProfile = await liff.getProfile();
+                    $('#userNameDisplay').text(`สวัสดีคุณ ${userProfile.displayName}`);
+                    $('#userLoading').hide();
+                    $('#userInfo').fadeIn();
+                    
+                    loadHistory();
+                    fetchLessonsAndProgress();
                 }
+            } catch (e) {
+                console.error(e);
+                $('#userLoading').html('<div class="text-danger">เกิดข้อผิดพลาดในการเชื่อมต่อ<br>กรุณาลองใหม่</div>');
+            }
+        }
+
+        // --- Video Player Logic ---
+        function initVideoPlayer() {
+            renderPlaylist();
+            // Load first video without autoplay to save data on load
+            const firstVid = strokeVideos[0];
+            $('#mainVideoPlayer').attr('src', `https://www.youtube.com/embed/${firstVid.id}`);
+        }
+
+        function renderPlaylist() {
+            const container = $('#videoPlaylist');
+            container.empty();
+            strokeVideos.forEach((v, index) => {
+                const thumb = `https://img.youtube.com/vi/${v.id}/mqdefault.jpg`;
+                const activeClass = index === 0 ? 'active' : '';
+                const html = `
+                    <div class="video-item ${activeClass}" onclick="playVideo('${v.id}', this)">
+                        <img src="${thumb}" class="video-thumb" onerror="this.src='https://via.placeholder.com/110x62?text=No+Img'">
+                        <div class="video-info">
+                            <div class="video-title">${v.title}</div>
+                        </div>
+                    </div>
+                `;
+                container.append(html);
+            });
+        }
+
+        function playVideo(id, el) {
+            // Update Player with Autoplay
+            const url = `https://www.youtube.com/embed/${id}?autoplay=1`;
+            $('#mainVideoPlayer').attr('src', url);
+
+            // Update Active UI
+            if (el) {
+                $('.video-item').removeClass('active');
+                $(el).addClass('active');
+            }
+        }
+
+        // --- TTS Helper ---
+        function initTTS() {
+            if (!synth) return;
+            const loadVoices = () => {
+                availableVoices = synth.getVoices();
+            };
+            loadVoices();
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = loadVoices;
+            }
+        }
+
+        // --- Data Fetching ---
+        function fetchLessonsAndProgress() {
+            console.log("Start fetching lessons...");
+            
+            // 1. ดึงบทเรียน
+            $.ajax({
+                url: GAS_URL, dataType: 'jsonp',
+                data: { action: 'getLessons' },
+                timeout: 20000, 
+                success: function(data) {
+                    lessonsData = data || [];
+                    
+                    if (lessonsData.length > 0) {
+                        $('#btnEnterLesson').html('<i class="bi bi-play-circle-fill" style="font-size: 28px;"></i> เข้าสู่บทเรียน')
+                            .prop('disabled', false)
+                            .removeClass('btn-secondary').addClass('btn-red');
+                    } else {
+                        $('#btnEnterLesson').text('ไม่พบข้อมูลบทเรียน').prop('disabled', true);
+                        $('#lessonLoadError').show().text('ไม่พบข้อมูลใน Sheet (ตรวจสอบชื่อ Sheet/Column)');
+                    }
+                    
+                    // 2. ดึง Progress
+                    $.ajax({
+                        url: GAS_URL, dataType: 'jsonp',
+                        data: { action: 'getStudentProgress', userId: userProfile.userId },
+                        success: function(res) {
+                            if(res.completedLevels) {
+                                res.completedLevels.forEach(lvl => completedLessons.add(lvl.toLowerCase()));
+                            }
+                            updateProgressBar();
+                        }
+                    });
+                },
+                error: function(xhr, status, error) {
+                    $('#btnEnterLesson').text('โหลดล้มเหลว').prop('disabled', true);
+                    $('#lessonLoadError').show().text('การเชื่อมต่อล่าช้า กรุณารีเฟรช');
+                }
+            });
+        }
+
+        function loadHistory() {
+            $.ajax({
+                url: GAS_URL, dataType: 'jsonp',
+                data: { action: 'get_score', userId: userProfile.userId },
+                success: function(res) {
+                    let html = '';
+                    if(!res.pre && !res.post) html = '<div class="text-center text-muted py-3" style="font-size:16px;">- ยังไม่มีประวัติการสอบ -</div>';
+                    
+                    if(res.pre) {
+                        html += `<div class="d-flex justify-content-between align-items-center mb-2 p-3 bg-white rounded shadow-sm border">
+                            <div><span class="badge bg-warning text-dark badge-history me-2">ก่อนเรียน</span> <span style="color:#555; font-size:16px;">${res.pre.date}</span></div>
+                            <span class="fw-bold text-primary" style="font-size:20px;">${res.pre.score} คะแนน</span>
+                        </div>`;
+                    }
+                    if(res.post) {
+                        html += `<div class="d-flex justify-content-between align-items-center mb-2 p-3 bg-white rounded shadow-sm border">
+                            <div><span class="badge bg-success badge-history me-2">หลังเรียน</span> <span style="color:#555; font-size:16px;">${res.post.date}</span></div>
+                            <span class="fw-bold text-primary" style="font-size:20px;">${res.post.score} คะแนน</span>
+                        </div>`;
+                    }
+                    $('#scoreHistory').html(html);
+                    $('#scoreHistory').data('hasPre', !!res.pre);
+                }
+            });
+        }
+
+        function updateProgressBar() {
+            if(lessonsData.length === 0) return;
+            let count = 0;
+            // นับโดยอิงว่า level = lesson1, lesson2 ... 
+            for(let i=0; i<lessonsData.length; i++) {
+                const quizLevel = 'lesson' + (i+1);
+                if(completedLessons.has(quizLevel)) count++;
+            }
+            const pct = Math.round((count / lessonsData.length) * 100);
+            $('#lessonProgressBar').css('width', pct + '%').text(pct + '%');
+            $('#progressText').text(pct + '%');
+        }
+
+        // --- Lesson System ---
+        function openLessons() {
+            if(lessonsData.length === 0) return;
+            $('#lessonModal').fadeIn().css('display', 'flex');
+            renderLesson(currentLessonIndex);
+        }
+
+        function closeLessons() {
+            if(synth) synth.cancel(); // Stop speaking
+            $('#lessonModal').fadeOut();
+        }
+
+        function renderLesson(index) {
+            const lesson = lessonsData[index];
+            const lessonNum = index + 1;
+            const quizLevel = 'lesson' + lessonNum;
+            const isCompleted = completedLessons.has(quizLevel);
+
+            // 1. Badge & Title Update
+            let badgeHtml = '';
+            if(isCompleted) {
+                badgeHtml = `<div class="status-badge done"><i class="bi bi-check-circle-fill"></i> เรียนและทำข้อสอบแล้ว</div>`;
+            } else {
+                badgeHtml = `<div class="status-badge pending"><i class="bi bi-circle"></i> ยังไม่เรียน</div>`;
             }
             
-            const vContainer = document.getElementById('vhv-dashboard-area');
-            if (vContainer) {
-                if (data.isVhv) {
-                    vContainer.innerHTML = 
-                        buildTopVhvCard(data.vhvDashboard.totalVhv, data.vhvDashboard.topVhvs) +
-                        buildVhvInstructions(true, data.vhvDashboard.checklist) +
-                        buildVhvInfoCard(data.vhvProfile) +
-                        buildVhvLeaderboards(data.vhvDashboard.leaderboards) +
-                        `<div class="d-grid gap-2 mb-3"><button class="btn btn-primary btn-lg shadow" onclick="REGISTER_OFFLINE_MODAL.show()"><i class="bi bi-person-plus-fill"></i> เพิ่มชาวบ้านใหม่ (ไม่มีไลน์)</button></div>` +
-                        buildVhvPatientListCard(data.vhvPatientList);
-                } else {
-                    vContainer.innerHTML = 
-                        buildTopVhvCard(data.vhvDashboard.totalVhv, data.vhvDashboard.topVhvs) +
-                        buildVhvInstructions(false) +
-                        buildVhvRegistrationButton();
-                }
+            // อัปเดต Header
+            $('#lessonHeaderTitle').text(`บทที่ ${lessonNum}: ${lesson.title}`);
+            $('#lessonHeaderBadge').html(badgeHtml);
+            
+            // Clean HTML content for reading
+            const rawText = $('<div>').html(lesson.content_html).text();
+            
+            let contentHtml = `
+                <div class="lesson-image-container" onclick="zoomImage('${lesson.images}')">
+                    <img src="${lesson.images}" class="lesson-img" onerror="this.src='https://via.placeholder.com/600x400?text=No+Image'">
+                    <!-- Floating Share Button (Updated) -->
+                    <div class="share-badge" onclick="event.stopPropagation(); shareImage('${lesson.images}')">
+                        <i class="bi bi-line"></i> แชร์
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                     <div class="d-inline-block">
+                        <div class="btn-audio" onclick="speakContent(this, '${escape(rawText)}')">
+                            <i class="bi bi-megaphone-fill"></i> ฟังเนื้อหา
+                        </div>
+                        <small class="text-muted d-block mt-1 ms-2" style="font-size: 14px;">
+                            * เสียงอ่านขึ้นอยู่กับการตั้งค่าอุปกรณ์
+                        </small>
+                     </div>
+                </div>
+
+                <div class="typography mb-5">
+                    <h3 class="fw-bold text-primary mb-3">${lesson.title}</h3>
+                    ${lesson.content_html || '<p class="text-center text-muted">ไม่มีเนื้อหา</p>'}
+                </div>
+                
+                <div class="card border-0 shadow-sm" style="background-color: #f0f7ff; border-radius: 15px;">
+                    <div class="card-body p-4">
+                        <h4 class="card-title fw-bold mb-3" style="color: var(--header-text);"><i class="bi bi-puzzle-fill"></i> แบบทดสอบท้ายบท</h4>
+                        <div id="lessonQuizArea-${index}" class="mt-3">
+                            <div class="text-center py-3"><span class="loader" style="width:30px; height:30px; border-width:3px;"></span> กำลังโหลดคำถาม...</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            $('#lessonContentArea').html(contentHtml);
+            $('#lessonContentArea').scrollTop(0);
+            
+            loadInlineQuiz(index, quizLevel);
+            updateNavButtons();
+        }
+
+        function updateNavButtons() {
+            $('#btnPrevLesson').prop('disabled', currentLessonIndex === 0);
+            
+            if(currentLessonIndex === lessonsData.length - 1) {
+                $('#btnNextLesson').html('จบการเรียนรู้ <i class="bi bi-check-circle-fill"></i>').removeClass('btn-blue').addClass('btn-success');
+            } else {
+                $('#btnNextLesson').html('บทถัดไป <i class="bi bi-arrow-right-circle-fill"></i>').removeClass('btn-success').addClass('btn-blue');
             }
         }
 
-        // --- 5. Builders --- 
-        function buildGamificationCard(scores) {
-            if (!scores) scores = { totalScore: 0, rank: '-', checkScore:0, emergencyScore:0, stickerScore:0, knowledgeScore:0, totalUsers: '-' };
-            const rankText = `(${scores.totalScore} คะแนน สูงเป็นลำดับที่ ${scores.rank} จาก ${scores.totalUsers} คน)`;
-            return `<div class="col-12 mb-3"><div class="card game-score-card shadow-sm"><div class="card-body p-3"><div class="d-flex justify-content-between align-items-center mb-2"><h5 class="section-title mb-0 text-primary"><i class="bi bi-trophy-fill text-warning"></i>คะแนนความตระหนักรู้</h5><button class="btn btn-sm btn-outline-info rounded-circle" onclick="SCORE_INFO_MODAL.show()"><i class="bi bi-info-lg"></i></button></div><div class="text-center mb-3"><div class="text-primary fw-bold fs-5">${rankText}</div></div><div class="row g-2 text-center"><div class="col-3"><div class="game-score-box"><h3>${scores.checkScore||0}</h3><span>ใส่ใจ</span></div></div><div class="col-3"><div class="game-score-box"><h3>${scores.emergencyScore||0}</h3><span>เตรียมพร้อม</span></div></div><div class="col-3"><div class="game-score-box"><h3>${scores.stickerScore||0}</h3><span>บอกต่อ</span></div></div><div class="col-3"><div class="game-score-box"><h3>${scores.knowledgeScore||0}</h3><span>ความรู้</span></div></div></div><div class="text-center mt-2 small text-muted">* ประเมินซ้ำทุกสัปดาห์เพื่อเพิ่มคะแนน</div></div></div></div>`;
+        function prevLesson() {
+            if(currentLessonIndex > 0) {
+                if(synth) synth.cancel();
+                currentLessonIndex--;
+                renderLesson(currentLessonIndex);
+            }
         }
 
-        function buildProfileCard(p, riskOnly = false) {
-             if (!p) return '';
-             const riskValue = (p.thai_cv_risk_score || 0) / 100;
-             const color = classifyRisk(riskValue).color;
-             const factors = [{l:'เพศ', v: p.gender == 1 ? 'ชาย' : 'หญิง', i:'bi-gender-ambiguous'}, {l:'อายุ', v: `${p.age || 'ไม่มี'} ปี`, i:'bi-calendar-event'}, {l:'สูบบุหรี่', v: p.smoke == 1 ? 'สูบ' : 'ไม่สูบ', i:'bi-fire'}, {l:'เบาหวาน', v: p.dm == 1 ? 'เป็น' : 'ไม่เป็น', i:'bi-bandaid'}, {l:'ความดัน', v: `${p.sbp || 'ไม่มี'}`, i:'bi-speedometer2'}, {l:'ไขมัน', v: `${p.cholesterol || 'ไม่มี'}`, i:'bi-droplet-fill'}, {l:'รอบเอว', v: `${p.waist || 'ไม่มี'}`, i:'bi-arrows-expand'}, {l:'ส่วนสูง', v: `${p.height || 'ไม่มี'}`, i:'bi-rulers'}];
-             let factorHtml = ''; factors.forEach(f => factorHtml += `<div class="info-item"><i class="bi ${f.i}"></i><div><span class="label">${f.l}</span> <b>${f.v}</b></div></div>`);
-             if(riskOnly) {
-                 return `<div class="col-12"><div class="card"><div class="card-body"><h6 class="section-title">การประเมินปัจจัยเสี่ยงสโตรก</h6><div class="text-center mb-3" style="color: ${color}"><h1>${p.thai_cv_risk_score}%</h1></div><div class="info-grid">${factorHtml}</div></div></div></div>`;
-             } else {
-                 const regDate = p.timestamp ? new Date(p.timestamp).toLocaleDateString('th-TH') : '-';
-                 return `<div class="col-12"><div class="card bg-white"><div class="card-body position-relative"><button class="profile-edit-btn shadow-sm" onclick="openEditProfile()"><i class="bi bi-pencil-fill"></i></button><div class="d-flex align-items-center"><img src="${p.pictureUrl || 'https://via.placeholder.com/90'}" class="rounded-circle border border-3 border-primary me-3" style="width: 110px; height: 110px; object-fit: cover;"><div><h3 class="fw-bold mb-1">${p.name || 'ไม่ระบุชื่อ'}</h3><div class="text-muted fs-5"><i class="bi bi-telephone"></i> ${p.telephone || 'ไม่ระบุ'}</div><span class="badge bg-secondary fs-6 fw-normal mt-1">ลงทะเบียน: ${regDate}</span></div></div></div></div></div>`;
-             }
+        function nextLesson() {
+            if(synth) synth.cancel();
+            if(currentLessonIndex < lessonsData.length - 1) {
+                currentLessonIndex++;
+                renderLesson(currentLessonIndex);
+            } else {
+                closeLessons();
+            }
         }
 
-        function buildVhvPatientListCard(pts) {
-            if(!pts || pts.length===0) return '<div class="alert alert-secondary">ยังไม่มีชาวบ้านในเขต</div>';
-            let html = '';
-            pts.forEach(p => {
-                const riskVal = (p.thai_cv_risk_score || 0) / 100;
-                let c = 'vhv-risk-1'; if(riskVal>=0.4) c='vhv-risk-5'; else if(riskVal>=0.3) c='vhv-risk-4'; else if(riskVal>=0.2) c='vhv-risk-3'; else if(riskVal>=0.1) c='vhv-risk-2';
-                html += `<div class="card vhv-patient-item ${c} p-2 shadow-sm"><div class="d-flex justify-content-between align-items-center"><div><div class="fw-bold fs-5">${p.name} <span class="badge bg-secondary">${p.thai_cv_risk_score}%</span></div><div class="small text-muted">ประเมินล่าสุด: ${p.latestCheckTimestamp ? p.latestCheckTimestamp.split('T')[0] : 'ยังไม่เคย'}</div><div class="small text-muted">ระยะห่าง: ${p.distanceFromVhv_km || '?'} กม.</div></div><div class="d-flex flex-column gap-2"><a href="tel:${p.telephone}" class="btn btn-outline-success btn-sm rounded-circle"><i class="bi bi-telephone-fill"></i></a><button class="btn btn-sm btn-warning rounded-pill" onclick="openHomeVisit('${p.userId}', '${p.name}')">เยี่ยมบ้าน/ปักหมุด</button></div></div></div>`;
+        // --- TTS Function ---
+        function speakContent(btn, text) {
+            text = unescape(text);
+
+            if (!('speechSynthesis' in window)) {
+                return;
+            }
+
+            if (synth.speaking) {
+                synth.cancel();
+                $(btn).removeClass('speaking loading').html('<i class="bi bi-megaphone-fill"></i> ฟังเนื้อหา');
+                return;
+            }
+
+            $(btn).addClass('loading').html('<span class="spinner-border spinner-border-sm"></span> กำลังโหลด...');
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.9;
+            
+            let thVoice = availableVoices.find(v => v.lang === 'th-TH' || v.lang === 'th_TH');
+            if (thVoice) {
+                utterance.voice = thVoice;
+            } else {
+                utterance.lang = 'th-TH';
+            }
+
+            // Watchdog
+            let speakingStarted = false;
+            const watchdog = setTimeout(() => {
+                if (!speakingStarted) {
+                    synth.cancel();
+                    $(btn).removeClass('loading').addClass('error').html('<i class="bi bi-exclamation-triangle"></i> เล่นไม่ได้');
+                    setTimeout(() => {
+                        $(btn).removeClass('error').html('<i class="bi bi-megaphone-fill"></i> ฟังเนื้อหา');
+                    }, 3000);
+                }
+            }, 5000);
+
+            utterance.onstart = () => {
+                clearTimeout(watchdog);
+                speakingStarted = true;
+                $(btn).removeClass('loading').addClass('speaking').html('<i class="bi bi-stop-circle-fill"></i> หยุดเสียง');
+            };
+
+            utterance.onend = () => {
+                $(btn).removeClass('speaking loading').html('<i class="bi bi-megaphone-fill"></i> ฟังเนื้อหา');
+            };
+
+            utterance.onerror = (e) => {
+                clearTimeout(watchdog);
+                if (e.error !== 'interrupted' && e.error !== 'canceled') {
+                     $(btn).removeClass('speaking loading').addClass('error').html('<i class="bi bi-exclamation-circle"></i> ผิดพลาด');
+                } else {
+                     $(btn).removeClass('speaking loading').html('<i class="bi bi-megaphone-fill"></i> ฟังเนื้อหา');
+                }
+            };
+
+            synth.speak(utterance);
+        }
+
+        function zoomImage(src) {
+            $('#zoomedImage').attr('src', src);
+            $('#imageZoomModal').css('display', 'flex').fadeIn();
+        }
+
+        function closeZoomImage() {
+            $('#imageZoomModal').fadeOut();
+        }
+
+        // --- Lesson Quiz ---
+        function loadInlineQuiz(index, level) {
+            $.ajax({
+                url: GAS_URL, dataType: 'jsonp',
+                data: { action: 'getQuiz', level: level },
+                success: function(questions) {
+                    const container = $(`#lessonQuizArea-${index}`);
+                    if(!questions || questions.length === 0) {
+                        container.html('<div class="text-muted text-center" style="font-size:20px;">ไม่มีข้อสอบสำหรับบทนี้</div>');
+                        return;
+                    }
+
+                    let html = '';
+                    questions.forEach((q, i) => {
+                        const choices = [
+                            { t: q.choice1, v: q.choice1 }, { t: q.choice2, v: q.choice2 },
+                            { t: q.choice3, v: q.choice3 }, { t: q.choice4, v: q.choice4 }
+                        ].filter(c => c.t).sort(() => Math.random() - 0.5);
+
+                        html += `<div class="quiz-item" data-correct="${q.correct_choice}" data-testid="${q.test_id}">
+                            <div class="quiz-question-text">${i+1}. ${q.question}</div>`;
+                        choices.forEach(c => {
+                            html += `<div class="quiz-option" onclick="selectOption(this)">
+                                <input type="radio" name="q_l_${index}_${i}" value="${c.v}" class="d-none">
+                                ${c.t}
+                            </div>`;
+                        });
+                        html += `</div>`;
+                    });
+
+                    html += `<button class="btn btn-custom btn-red mt-2" onclick="submitLessonQuiz(this, '${level}', ${questions.length})">
+                        <i class="bi bi-check-lg"></i> ตรวจคำตอบ
+                    </button>`;
+                    container.html(html);
+                }
             });
-            return `<div class="card"><div class="card-header bg-white fw-bold d-flex justify-content-between align-items-center"><span>ชาวบ้านในเขตรับผิดชอบ</span> <button class="btn btn-sm btn-danger" onclick="STROKE_REPORT_MODAL.show()">รายงานเคสสโตรก</button></div><div class="card-body bg-light">${html}<div class="d-grid mt-3"><a href="https://sawee-hosp.github.io/stroke-risk/" target="_blank" class="btn btn-success">บันทึกการประเมินผู้ป่วย (Web)</a></div></div></div>`;
         }
 
-        function buildTopVhvCard(total, topList) {
-            let listHtml = '';
-            if(topList && topList.length > 0) {
-                topList.forEach((t, i) => { listHtml += `<div class="d-flex align-items-center mb-2"><div class="me-2 fw-bold text-primary">#${i+1}</div><img src="${t.picture}" class="rounded-circle me-2" style="width:40px;height:40px;"><div class="small fw-bold text-truncate" style="max-width:100px;">${t.name}</div><div class="ms-auto badge bg-success">${t.score} แชร์</div></div>`; });
-            } else { listHtml = '<small class="text-muted">ยังไม่มีข้อมูล</small>'; }
-            return `<div class="card mb-3 border-primary shadow"><div class="card-body p-3"><div class="row"><div class="col-5 text-center border-end"><div class="text-muted small fw-bold">อสม.ทั้งหมด</div><div class="display-3 fw-bold text-primary">${total || 0}</div><div class="small">ท่าน</div></div><div class="col-7"><div class="text-muted small fw-bold mb-2"><i class="bi bi-award-fill text-warning"></i> อสม. ยอดเยี่ยม (7 วัน)</div>${listHtml}</div></div></div></div>`;
-        }
-        function buildVhvLeaderboards(lb) {
-             if(!lb) return '';
-             const row = (t, l) => {
-                 let content = l && l.length > 0 ? l.map((x,i)=>`<div class="leaderboard-row"><div class="leaderboard-rank">${i+1}</div><img src="${x.pic||'https://via.placeholder.com/40'}" class="leaderboard-img"><div class="small text-truncate" style="max-width:80px;">${x.name}</div><div class="leaderboard-score">${x.score}</div></div>`).join('') : '<div class="text-center text-muted small py-2">-</div>';
-                 return `<div class="col-6 mb-2"><div class="card h-100 leaderboard-card"><div class="card-header bg-light small fw-bold text-center">${t}</div><div class="card-body p-2">${content}</div></div></div>`;
-             };
-             return `<h5 class="fw-bold mb-3"><i class="bi bi-bar-chart-fill text-primary"></i> อันดับผลงาน อสม.</h5><div class="row g-2 mb-3">${row('ยอดเยี่ยมบ้าน', lb.visits)}${row('แจ้งเหตุสโตรก', lb.reports)}${row('สอบผ่านเกณฑ์', lb.exams)}${row('ยอดปักหมุด', lb.pins)}</div>`;
-        }
-        function buildVhvInstructions(isRegistered, cl) {
-            const getIcon = (status) => status ? '<i class="bi bi-check-circle-fill check-icon check-ok"></i>' : '<i class="bi bi-x-circle-fill check-icon check-no"></i>';
-            return `<div class="card mb-4"><div class="card-body"><h5 class="fw-bold text-dark mb-3"><i class="bi bi-list-check"></i> ขั้นตอนการทำงาน</h5><ul class="list-group list-group-flush fs-5"><li class="list-group-item">${getIcon(true)} ลงทะเบียน อสม.</li><li class="list-group-item">${getIcon(cl?.hasPinned)} ปักหมุดบ้านตนเอง</li><li class="list-group-item">${getIcon(cl?.hasSharedSticker)} แชร์ความรู้ (สติกเกอร์)</li></ul></div></div>`;
-        }
-        function buildVhvInfoCard(vhv) {
-            const pinBtnText = vhv.asm_home ? 'อัปเดตหมุดบ้าน' : 'ปักหมุดบ้าน อสม.';
-            return `<div class="card border-warning shadow"><div class="card-body"><div class="text-center mb-3"><button class="btn btn-dark btn-lg w-100 shadow rounded-pill py-3" onclick="showQrModal()"><i class="bi bi-qr-code fs-2"></i> แสดง QR Code</button></div><hr><h5 class="section-title text-dark">ข้อมูลส่วนตัว อสม.</h5><p class="mb-1 fs-5"><b>ชื่อ:</b> ${vhv.name || ''}</p><p class="mb-1 fs-5"><b>พื้นที่:</b> ${vhv.area || ''}</p><div class="row mt-3 g-2"><div class="col-6"><button class="btn btn-primary w-100 btn-lg" onclick="handleShareProfile()"><i class="bi bi-share-fill"></i> แชร์นามบัตร</button></div><div class="col-6"><button class="btn btn-outline-dark w-100 btn-lg" onclick="openVhvModal()">แก้ไขข้อมูล</button></div><div class="col-12 mt-2"><button class="btn btn-secondary w-100" onclick="pinVhvHomeInForm()"><i class="bi bi-geo-alt-fill"></i> ${pinBtnText}</button></div><div class="col-12 mt-2"><a href="${LINKS.KNOWLEDGE}" class="btn btn-info w-100 text-white">ทำแบบทดสอบเรื่องสโตรก</a></div></div></div></div>`;
-        }
-        function buildVhvRegistrationButton() { return `<div class="card bg-white text-center p-4"><i class="bi bi-person-plus-fill display-1 text-warning mb-3"></i><h3>สมัครเป็น อสม.สโตรก</h3><p class="text-muted">สำหรับ อสม. รพ.สวี เท่านั้น</p><button class="btn btn-lg btn-warning fw-bold w-100" onclick="openVhvModal()">ลงทะเบียน</button></div>`; }
-        function buildDistanceCard(d, help) {
-             if(!d) return `<div class="card mb-3"><div class="card-body text-center"><h5 class="section-title"><i class="bi bi-geo-alt-fill text-danger"></i> พิกัดบ้าน</h5><p>ยังไม่ปักหมุดบ้าน</p><button class="btn btn-primary" onclick="new bootstrap.Modal(document.getElementById('distanceModal')).show()">ปักหมุด</button></div></div>`;
-             const min = parseInt(d.duration_mins); const dist = parseFloat(d.distance_km).toFixed(1); let cls = 'card mb-3'; let advice = '';
-             if(min < 150) { cls += ' border-success'; advice = `<div class="alert alert-success mt-2"><b>ทันเวลา!</b> สามารถสแกนสมองและรับยาได้ทัน แต่ต้องรีบที่สุด</div>`; } else if (min < 210) { cls += ' border-warning'; advice = `<div class="alert alert-warning mt-2"><b>ค่อนข้างเสี่ยง!</b> อาจรับยาไม่ทัน ต้องรีบมา รพ. ทันที</div>`; } else { cls += ' border-danger'; advice = `<div class="alert alert-danger mt-2"><b>อาจไม่ทันยา!</b> แต่ต้องรีบมาเพื่อรักษาอาการฉุกเฉิน</div>`; }
-             const graphic = `<div class="d-flex align-items-center justify-content-center my-3"><div class="text-center"><i class="bi bi-person-fill-exclamation text-danger" style="font-size: 3rem;"></i><div>ผู้ป่วย</div></div><div class="flex-grow-1 text-center px-2 position-relative"><div style="border-top: 3px dashed #666; width: 100%; position: absolute; top: 50%;"></div><i class="bi bi-arrow-right-circle-fill text-primary position-relative" style="font-size: 2rem; background: #fff; z-index: 1;"></i><div class="small fw-bold mt-1">${dist} กม.</div><div class="small text-muted">${Math.floor(min/60)} ชม. ${min%60} นาที</div></div><div class="text-center"><i class="bi bi-hospital-fill text-success" style="font-size: 3rem;"></i><div>รพ.สวี</div></div></div>`;
-             return `<div class="col-12"><div class="${cls}"><div class="card-body"><h5 class="section-title"><i class="bi bi-truck-front-fill text-danger"></i>การเข้าถึงฉุกเฉิน (รพ.สวี)</h5>${graphic}${advice}<div class="d-flex gap-2 mt-2"><button class="btn btn-outline-danger w-50" onclick="RTPA_MODAL.show()">ทำไมต้อง 4.5 ชม.?</button><button class="btn btn-secondary w-50" onclick="new bootstrap.Modal(document.getElementById('distanceModal')).show()"><i class="bi bi-geo-alt-fill"></i> แก้ไขหมุด</button></div></div></div></div>`;
-        }
-        function buildDailyCheckCard(info) {
-             let daysSinceCheck = '';
-             if (info.latestCheckTimestamp) {
-                const diffDays = Math.ceil(Math.abs(new Date() - new Date(info.latestCheckTimestamp).setHours(0,0,0,0)) / (864e5));
-                if (diffDays > 7) daysSinceCheck = `<p class="text-center text-danger mt-2">ไม่ได้ประเมินมา ${diffDays} วัน (ถูกหักคะแนน)</p>`;
-                else if (diffDays > 0) daysSinceCheck = `<p class="text-center text-muted mt-2">ไม่ได้ประเมินมา ${diffDays} วัน</p>`;
-            } else { daysSinceCheck = `<p class="text-center text-danger mt-2">ยังไม่เคยประเมิน</p>`; }
-            return `<div class="col-12"><div class="card"><div class="card-body"><h5 class="section-title"><i class="bi bi-calendar-check-fill"></i>ใส่ใจประเมินอาการ</h5><div class="d-flex justify-content-around text-center"><div><div class="display-3 fw-bold text-danger">${info.symptomCount || 0}</div><div class="small">มีอาการ</div></div><div><div class="display-3 fw-bold text-success">${info.noSymptomCount || 0}</div><div class="small">ปกติ</div></div></div>${daysSinceCheck}<p class="small text-center text-muted">ไม่มีอาการก็เช็คอินได้ (เพิ่มคะแนน)</p><a href="${LINKS.DAILY}" class="btn btn-primary w-100 btn-lg mt-1">เช็คอาการ</a></div></div></div>`;
-        }
-        function buildStickerCard(c) { return `<div class="col-12"><div class="card"><div class="card-body"><h5 class="section-title"><i class="bi bi-send-check-fill"></i>แชร์สติกเกอร์ไลน์</h5><div class="text-center"><h1>${c || 0} ครั้ง</h1></div><a href="${LINKS.STICKER}" class="btn btn-info w-100 btn-lg text-white mt-2">ส่งสติกเกอร์</a></div></div></div>`; }
-        function buildKnowledgeTestCard(s) { 
-            return `<div class="col-12"><div class="card"><div class="card-body"><h5 class="section-title"><i class="bi bi-book-half"></i>ความรู้เรื่องสโตรก</h5><div class="text-center"><h1>${s.maxScore || 0}/10</h1><small>สอบไป ${s.testCount || 0} ครั้ง</small></div><a href="${LINKS.KNOWLEDGE}" class="btn btn-success w-100 btn-lg mt-2">ทำแบบทดสอบ</a></div></div></div>`; 
-        }
-        function buildCommunityLeadersCard(l) { 
-            if(!l) return '<div class="col-12"><div class="card"><div class="card-body text-center text-muted">ไม่พบข้อมูลผู้นำชุมชน</div></div></div>';
-            let html = '<ul class="list-group list-group-flush fs-5">';
-            if(l.pcu) html += `<li class="list-group-item d-flex justify-content-between align-items-center"><div><span class="fw-bold text-primary"><i class="bi bi-hospital"></i> ${l.pcu}</span></div>${l.pcu_tel ? `<a href="tel:${l.pcu_tel}" class="btn btn-outline-primary btn-sm rounded-pill"><i class="bi bi-telephone-fill"></i> โทร</a>` : ''}</li>`;
-            if(l.headman) html += `<li class="list-group-item d-flex justify-content-between align-items-center"><div><span class="fw-bold text-dark"><i class="bi bi-person-badge"></i> ผญบ: ${l.headman}</span></div>${l.headman_tel ? `<a href="tel:${l.headman_tel}" class="btn btn-outline-dark btn-sm rounded-pill"><i class="bi bi-telephone-fill"></i> โทร</a>` : ''}</li>`;
-            if (l.vhvList && l.vhvList.length > 0) { html += `<li class="list-group-item bg-light fw-bold text-secondary"><i class="bi bi-people-fill"></i> อสม. ในพื้นที่</li>`; l.vhvList.forEach(v => { html += `<li class="list-group-item d-flex justify-content-between align-items-center"><span>${v.name}</span>${v.phone ? `<a href="tel:${v.phone}" class="btn btn-success btn-sm rounded-circle"><i class="bi bi-telephone-fill"></i></a>` : ''}</li>`; }); }
-            html += '</ul>';
-            return `<div class="col-12"><div class="card"><div class="card-body"><h5 class="section-title"><i class="bi bi-geo-fill"></i>อสม. และผู้นำชุมชนใกล้ฉัน</h5>${html}</div></div></div>`;
+        function selectOption(el) {
+            const parent = $(el).parent(); 
+            if(parent.hasClass('answered')) return; 
+
+            parent.find('.quiz-option').removeClass('selected').find('input').prop('checked', false);
+            $(el).addClass('selected').find('input').prop('checked', true);
         }
 
-        // Logic
-        function openEditProfile() { document.getElementById('editName').value = ALL_USER_DATA.userProfile.name; document.getElementById('editPhone').value = ALL_USER_DATA.userProfile.telephone ? ALL_USER_DATA.userProfile.telephone.replace(/'/g,'') : ''; document.getElementById('edit-preview-img').src = ALL_USER_DATA.userProfile.pictureUrl; EDIT_PROFILE_MODAL.show(); }
-        function saveUserProfile() { const name = document.getElementById('editName').value; const phone = document.getElementById('editPhone').value; if(!name || !phone) return alert("กรุณากรอกข้อมูลให้ครบ"); toggleLoading(true); fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'updateUserProfile', data: { userId: LIFF_PROFILE.userId, name: name, phone: phone, pictureUrl: LIFF_PROFILE.pictureUrl } }) }).then(() => { alert("บันทึกสำเร็จ"); window.location.reload(); }).catch(handleFailure); }
-        function openVhvModal() { const distSelect = document.getElementById('vhvDistrict'); distSelect.innerHTML = '<option value="" disabled selected>เลือกตำบล</option>'; for (const d in SAWEE_LOCATIONS) { const opt = document.createElement('option'); opt.value = d; opt.textContent = d; distSelect.appendChild(opt); } const vhv = ALL_USER_DATA.vhvProfile || {}; const user = ALL_USER_DATA.userProfile || {}; document.getElementById('vhvName').value = vhv.name || user.name || ''; document.getElementById('vhvPhone').value = vhv.phone ? vhv.phone.replace(/'/g,'') : (user.telephone ? user.telephone.replace(/'/g,'') : ''); document.getElementById('vhvLineId').value = vhv.line_id || user.line_id || ''; document.getElementById('vhvAsmHome').value = vhv.asm_home || ''; if (vhv.area) { const parts = vhv.area.match(/ต\.(.*?) ม\.(.*)/); if (parts && parts[1] && parts[2]) { distSelect.value = parts[1].trim(); updateVillages(); document.getElementById('vhvVillage').value = "หมู่ " + parts[2].trim(); } } VHV_REG_MODAL.show(); }
-        function updateVillages() { const dist = document.getElementById('vhvDistrict').value; const villSelect = document.getElementById('vhvVillage'); villSelect.innerHTML = '<option value="" disabled selected>เลือกหมู่</option>'; villSelect.disabled = false; for(let i=1; i<=20; i++) { const opt = document.createElement('option'); opt.value = "หมู่ " + i; opt.textContent = "หมู่ " + i; villSelect.appendChild(opt); } }
-        function showQrModal() { fetch(`${WEB_APP_URL}?action=logQrShare&userId=${LIFF_PROFILE.userId}`); QR_MODAL.show(); }
-        function scrollToId(id) { const el = document.getElementById(id); if(el) { const tabBtn = document.getElementById('health-tab-btn'); const tab = new bootstrap.Tab(tabBtn); tab.show(); setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300); } }
-        function handlePinNewLocation() { toggleLoading(true); navigator.geolocation.getCurrentPosition(p => { fetch(`${WEB_APP_URL}?action=calculateDistance&lat=${p.coords.latitude}&lon=${p.coords.longitude}`).then(r=>r.json()).then(d=> { fetch(WEB_APP_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({action:'saveNewLocation',data:{userId:LIFF_PROFILE.userId,type:document.getElementById('locationType').value,latlong:`${p.coords.latitude},${p.coords.longitude}`,distance:d.distance_km,duration:d.duration_mins}})}).then(()=>{alert("บันทึกสำเร็จ"); window.location.reload();}); }); }, e=>handleFailure(e), {enableHighAccuracy: true}); }
-        function pinVhvHomeInForm() { toggleLoading(true); navigator.geolocation.getCurrentPosition(p => { document.getElementById('vhvAsmHome').value = `${p.coords.latitude},${p.coords.longitude}`; toggleLoading(false); }, e=>handleFailure(e), {enableHighAccuracy: true}); }
-        function getLocationForReport() { toggleLoading(true); navigator.geolocation.getCurrentPosition(p => { document.getElementById('srLocation').value = `${p.coords.latitude},${p.coords.longitude}`; toggleLoading(false); }, e=>handleFailure(e)); }
-        function submitStrokeReport() { const pn = document.getElementById('srName').value; const ph = document.getElementById('srRelPhone').value; const ot = document.getElementById('srOnsetTime').value; const loc = document.getElementById('srLocation').value; if(!pn || !ph || !ot || !loc) return alert("กรุณากรอกข้อมูลให้ครบถ้วน"); let sym = []; ['B','E','F','A','S'].forEach(k => { if(document.getElementById('sym'+k) && document.getElementById('sym'+k).checked) sym.push(document.getElementById('sym'+k).value); }); toggleLoading(true); fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'saveStrokeReport', data: { reporterId: LIFF_PROFILE.userId, reporterName: LIFF_PROFILE.displayName, patientName: pn, patientPhone: ph, onsetTime: ot, location: loc, symptoms: sym.join(',') }}) }).then(() => { alert("ส่งข้อมูลเรียบร้อยแล้ว ทีมสโตรกจะรีบดำเนินการ"); window.location.reload(); }).catch(handleFailure); }
-        function openHomeVisit(uid, name) { document.getElementById('hvPatientId').value = uid; document.getElementById('hvPatientNameVal').value = name; document.getElementById('hvTitle').textContent = `เยี่ยม: ${name}`; HOME_VISIT_MODAL.show(); }
-        function pinForCurrentPatient() { const uid = document.getElementById('hvPatientId').value; const name = document.getElementById('hvPatientNameVal').value; if(!confirm(`ยืนยันพิกัดบ้านของ ${name} ที่นี่?`)) return; toggleLoading(true); navigator.geolocation.getCurrentPosition(p => { const latlong = `${p.coords.latitude},${p.coords.longitude}`; fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'saveNewLocation', data: { userId: uid, type: 'บ้าน_โดย_อสม', latlong: latlong, distance: 0, duration: 0, recorderId: LIFF_PROFILE.userId } }) }).then(() => { alert("บันทึกพิกัดแล้ว"); toggleLoading(false); }); }, handleFailure); }
-        function submitHomeVisit(type) { const pname = document.getElementById('hvPatientNameVal').value; let data = { vhvId: LIFF_PROFILE.userId, patientName: pname, activityType: type, note: '' }; if (type === 'Advice') { let adv = []; if(document.getElementById('chkAdvice1').checked) adv.push("5 สัญญาณเตือน"); if(document.getElementById('chkAdvice2').checked) adv.push("การปฏิบัติตัว"); data.note = adv.join(', ') + " : " + document.getElementById('hvNoteAdvice').value; } else { data.adl = { feeding: document.getElementById('adlFeeding').value, transfer: document.getElementById('adlTransfer').value, grooming: document.getElementById('adlGrooming').value, toilet: document.getElementById('adlToilet').value, bathing: document.getElementById('adlBathing').value, mobility: document.getElementById('adlMobility').value }; } toggleLoading(true); fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'saveHomeVisit', data: data }) }).then(() => { alert("บันทึกการเยี่ยมสำเร็จ"); HOME_VISIT_MODAL.hide(); toggleLoading(false); }).catch(handleFailure); }
-        function pinOfflineLocation() { navigator.geolocation.getCurrentPosition(p => { document.getElementById('offLocation').value = `${p.coords.latitude},${p.coords.longitude}`; }); }
-        function submitOfflinePatient() { const data = { vhvId: LIFF_PROFILE.userId, vhvName: ALL_USER_DATA.vhvProfile.name, name: document.getElementById('offName').value, age: document.getElementById('offAge').value, gender: document.getElementById('offSex').value, phone: document.getElementById('offPhone').value, riskScore: document.getElementById('offRisk').value, latlong: document.getElementById('offLocation').value, district: ALL_USER_DATA.vhvProfile.area.split(' ')[0].replace('ต.', ''), village: ALL_USER_DATA.vhvProfile.area.split(' ')[1].replace('ม.', '') }; toggleLoading(true); fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'registerOfflinePatient', data: data }) }).then(() => { alert("ลงทะเบียนเรียบร้อย"); window.location.reload(); }).catch(handleFailure); }
-        
-        async function handleShareProfile() { toggleLoading(true); try { const res = await fetch(`${WEB_APP_URL}?action=getShareCard&userId=${LIFF_PROFILE.userId}`); const data = await res.json(); toggleLoading(false); if (data.success && data.flex) { SHARE_PROFILE_MODAL.hide(); await liff.shareTargetPicker([data.flex]); } else { alert("สร้างนามบัตรไม่ได้: " + data.message); } } catch (err) { handleFailure(err); } }
-        function trackTelCall(tel) { if(confirm("โทรออก?")) window.location.href = 'tel:'+tel.replace(/'/g,''); }
-        function copyToClipboard(txt) { navigator.clipboard.writeText(txt).then(()=>alert("คัดลอก Line ID แล้ว")).catch(()=>alert("คัดลอกไม่ได้")); }
-        function classifyRisk(r) { return r<0.1?{text:"เสี่ยงต่ำ",color:"#28a745"}:r<0.2?{text:"ปานกลาง",color:"#ffc107"}:r<0.3?{text:"สูง",color:"#fd7e14"}:r<0.4?{text:"สูงมาก",color:"#dc3545"}:{text:"อันตราย",color:"#8B0000"}; }
-        function toggleLoading(show) { const el = document.getElementById('loading'); if(el) el.style.display = show ? 'flex' : 'none'; }
-        function stopLoadingAnimation() { if(loadingInterval) clearInterval(loadingInterval); toggleLoading(false); }
-        function handleFailure(e) { alert("Error: "+e.message); stopLoadingAnimation(); }
+        function submitLessonQuiz(btn, level, total) {
+            const container = $(btn).parent();
+            let score = 0;
+            let answeredCount = 0;
+            let wrongAnswers = [];
+
+            container.find('.quiz-item').each(function() {
+                const correct = $(this).data('correct');
+                const testId = $(this).data('testid');
+                const selectedEl = $(this).find('input:checked');
+                const selectedVal = selectedEl.val();
+
+                if(selectedVal) {
+                    answeredCount++;
+                    $(this).addClass('answered'); 
+                    const choiceDiv = selectedEl.parent();
+                    
+                    if(selectedVal == correct) {
+                        score++;
+                        choiceDiv.addClass('correct');
+                    } else {
+                        choiceDiv.addClass('wrong');
+                        $(this).find(`input[value="${correct}"]`).parent().addClass('correct');
+                        if(testId) wrongAnswers.push(testId);
+                    }
+                }
+            });
+
+            if(answeredCount < total) {
+                alert('กรุณาตอบคำถามให้ครบทุกข้อครับ');
+                container.find('.quiz-item').removeClass('answered'); 
+                return;
+            }
+
+            $(btn).replaceWith(`
+                <div class="alert alert-info text-center fw-bold mt-3" style="font-size: 24px;">
+                    คะแนนของคุณ: ${score} / ${total}
+                </div>
+            `);
+
+            // Mark as done
+            completedLessons.add(level.toLowerCase());
+            updateProgressBar();
+
+            $.ajax({
+                url: GAS_URL, dataType: 'jsonp',
+                data: {
+                    action: 'recordResult',
+                    userId: userProfile.userId,
+                    name: userProfile.displayName,
+                    level: level,
+                    full_score: total,
+                    get_score: score,
+                    wrong_answer: wrongAnswers.join(','),
+                    type: ''
+                }
+            });
+        }
+
+
+        // --- Main Exam ---
+        function startMainExam() {
+            $('#examModal').fadeIn().css('display', 'flex');
+            $('#btnSubmitExam').hide();
+            $('#examContentArea').html('<div class="loader-container"><span class="loader" style="border-bottom-color: #0d6efd;"></span><br>กำลังโหลดข้อสอบ...</div>');
+
+            examStartTime = new Date().getTime();
+            clearInterval(examTimerInterval);
+            examTimerInterval = setInterval(() => {
+                const now = new Date().getTime();
+                const diff = Math.floor((now - examStartTime) / 1000);
+                const mins = Math.floor(diff / 60).toString().padStart(2, '0');
+                const secs = (diff % 60).toString().padStart(2, '0');
+                $('#examTimer').text(`${mins}:${secs}`);
+            }, 1000);
+
+            $.ajax({
+                url: GAS_URL, dataType: 'jsonp',
+                data: { action: 'getExam' },
+                success: function(questions) {
+                    renderExamQuestions(questions);
+                }
+            });
+        }
+
+        function renderExamQuestions(questions) {
+            let html = '<div class="container pb-5">';
+            questions.forEach((q, i) => {
+                const choices = [
+                    { t: q.choice1, v: q.choice1 }, { t: q.choice2, v: q.choice2 },
+                    { t: q.choice3, v: q.choice3 }, { t: q.choice4, v: q.choice4 }
+                ].filter(c => c.t).sort(() => Math.random() - 0.5);
+
+                html += `<div class="quiz-item" data-correct="${q.correct_choice}" data-testid="${q.test_id}">
+                    <div class="quiz-question-text">${i+1}. ${q.question}</div>`;
+                choices.forEach(c => {
+                    html += `<div class="quiz-option" onclick="selectOption(this)">
+                        <input type="radio" name="exam_q_${i}" value="${c.v}" class="d-none">
+                        ${c.t}
+                    </div>`;
+                });
+                html += `</div>`;
+            });
+            html += '</div>';
+            
+            $('#examContentArea').html(html);
+            $('#btnSubmitExam').fadeIn();
+        }
+
+        function submitMainExam() {
+            const container = $('#examContentArea');
+            const total = container.find('.quiz-item').length;
+            let score = 0;
+            let answered = 0;
+            let wrongAnswers = [];
+
+            container.find('.quiz-item').each(function() {
+                const correct = $(this).data('correct');
+                const testId = $(this).data('testid');
+                const selected = $(this).find('input:checked').val();
+                
+                if(selected) {
+                    answered++;
+                    if(selected == correct) {
+                        score++;
+                    } else {
+                        if(testId) wrongAnswers.push(testId);
+                    }
+                }
+            });
+
+            if(answered < total) { alert('กรุณาตอบให้ครบทุกข้อก่อนส่งครับ'); return; }
+
+            clearInterval(examTimerInterval);
+            const endTime = new Date().getTime();
+            const timeTaken = Math.floor((endTime - examStartTime) / 1000);
+
+            const hasPre = $('#scoreHistory').data('hasPre');
+            const type = hasPre ? 'post' : 'pre';
+
+            $('#examContentArea').html(`
+                <div class="text-center mt-5">
+                    <i class="bi bi-trophy-fill text-warning" style="font-size: 80px;"></i>
+                    <h2 class="mt-3 fw-bold" style="color: var(--header-text);">บันทึกผลเรียบร้อย</h2>
+                    <div class="display-3 fw-bold text-primary my-4">${score} / ${total}</div>
+                    <div class="fs-4 text-muted">ใช้เวลา: ${timeTaken} วินาที</div>
+                    <div class="mt-3"><span class="badge bg-secondary fs-5">${type === 'pre' ? 'ก่อนเรียน' : 'หลังเรียน'}</span></div>
+                </div>
+            `);
+            $('#btnSubmitExam').hide();
+            $('.overlay-footer').html('<button class="btn btn-outline-secondary w-100" style="font-size:22px; border-radius:50px; padding:15px;" onclick="location.reload()">กลับหน้าหลัก</button>');
+
+            $.ajax({
+                url: GAS_URL, dataType: 'jsonp',
+                data: {
+                    action: 'recordResult',
+                    userId: userProfile.userId,
+                    name: userProfile.displayName,
+                    level: 'asm',
+                    full_score: total,
+                    get_score: score,
+                    wrong_answer: wrongAnswers.join(','),
+                    type: type,
+                    time: timeTaken
+                }
+            });
+        }
+
+        function closeMainExam() {
+            if(confirm('ต้องการออกจากแบบทดสอบหรือไม่?')) {
+                clearInterval(examTimerInterval);
+                $('#examModal').fadeOut();
+            }
+        }
+
+        function shareImage(url) {
+            if (liff.isApiAvailable('shareTargetPicker')) {
+                const msg = {
+                    type: "flex",
+                    altText: "ความรู้เรื่องสโตรก",
+                    contents: {
+                        type: "bubble",
+                        hero: { type: "image", url: url, size: "full", aspectRatio: "1:1", aspectMode: "cover" },
+                        body: {
+                            type: "box", layout: "vertical",
+                            contents: [
+                                { type: "text", text: "สาระดีๆ จาก รพ.สวี", weight: "bold", size: "lg", align: "center", color: "#ff3654" }
+                            ]
+                        }
+                    }
+                };
+                liff.shareTargetPicker([msg]).catch(e => console.log(e));
+            } else {
+                alert("กรุณาเปิดใน LINE เพื่อใช้งานฟีเจอร์แชร์");
+            }
+        }
     </script>
 </body>
 </html>
