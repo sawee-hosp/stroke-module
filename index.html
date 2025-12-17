@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>สวีรู้ทันสโตรก</title>
+    <title>คลังความรู้ สวีรู้ทันสโตรก</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,31 +27,35 @@
             --font-base: 20px;          
             --font-lg: 24px;
             --font-xl: 28px;
-            --font-btn: 20px; /* ลดลงเล็กน้อยเพื่อให้ปุ่มไม่ล้น */
+            --font-btn: 20px; 
         }
 
         body {
             font-family: 'Noto Sans Thai', sans-serif;
             font-size: var(--font-base);
-            line-height: 1.6;
+            line-height: 1.5;
             background: linear-gradient(to bottom, var(--primary-red) 0%, var(--primary-red) 120px, #ffffff 350px);
             background-attachment: fixed;
             background-repeat: no-repeat;
             min-height: 100vh;
             color: var(--body-text);
-            padding-bottom: 80px; 
+            padding-bottom: 20px; /* ลดพื้นที่ด้านล่างสุด */
         }
 
         /* --- Header Style --- */
         h1.app-title {
             color: #ffffff;
             font-weight: 900;
-            font-size: 36px;
+            font-size: 24px; /* ปรับลดขนาดให้พอดี 1 บรรทัด */
             text-align: center;
-            margin-top: 25px;
-            margin-bottom: 25px;
+            margin-top: 20px;
+            margin-bottom: 20px;
             text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+            white-space: nowrap; /* บังคับไม่ให้ขึ้นบรรทัดใหม่ */
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         /* --- Main Card Style --- */
@@ -60,26 +64,43 @@
             border-radius: 25px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             border: none;
-            padding: 30px 20px;
-            margin-bottom: 25px;
+            padding: 25px 15px;
+            margin-bottom: 15px;
             position: relative;
+        }
+
+        /* --- Custom Gradients for Cards --- */
+        .card-green-gradient {
+            background: linear-gradient(to bottom, #e8f5e9 0%, #ffffff 100%);
+            border-color: #c8e6c9;
+        }
+        .card-orange-gradient {
+            background: linear-gradient(to bottom, #fff3e0 0%, #ffffff 100%);
+            border-color: #ffe0b2;
+        }
+        .card-blue-gradient {
+            background: linear-gradient(to bottom, #e3f2fd 0%, #ffffff 100%);
+            border-color: #bbdefb;
+        }
+        .card-yellow-gradient {
+            background: linear-gradient(to bottom, #fffde7 0%, #ffffff 100%);
+            border-color: #f0f4c3;
         }
 
         /* --- Internal Section Cards --- */
         .section-card {
-            background: #f8faff; 
             border-radius: 18px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             border: 1px solid #e1e8ed;
-            padding: 25px;
-            margin-bottom: 25px;
+            padding: 20px;
+            margin-bottom: 20px;
         }
 
         .section-title {
             font-size: var(--font-xl);
             font-weight: 700;
             color: var(--header-text);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 12px;
@@ -88,21 +109,75 @@
         .section-desc {
             font-size: var(--font-base);
             color: #555;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        /* --- Video Player & List Style (NEW) --- */
+        .video-player-wrapper {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+            background: #000;
+        }
+        .video-list-container {
+            height: 240px; /* ความสูงรายการวิดีโอ */
+            overflow-y: auto;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border: 1px solid #dee2e6;
+        }
+        .video-item {
+            display: flex;
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #e9ecef;
+            transition: background 0.2s;
+            background: #fff;
+        }
+        .video-item:last-child { border-bottom: none; }
+        .video-item:hover { background: #e9ecef; }
+        .video-item.active { 
+            background: #e3f2fd; 
+            border-left: 5px solid #0d6efd; 
+        }
+        .video-thumb {
+            width: 110px;
+            height: 62px;
+            object-fit: cover;
+            border-radius: 6px;
+            flex-shrink: 0;
+            margin-right: 12px;
+            background: #ccc;
+        }
+        .video-info {
+            font-size: 16px;
+            line-height: 1.3;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+        .video-title {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            font-weight: 500;
         }
 
         /* --- Buttons --- */
         .btn-custom {
             border-radius: 50px;
-            padding: 12px 15px; /* ลด Padding ด้านข้าง */
+            padding: 12px 15px;
             font-size: var(--font-btn);
             font-weight: 600;
             width: 100%;
             transition: transform 0.2s;
-            white-space: nowrap; /* ห้ามขึ้นบรรทัดใหม่ */
+            white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -122,21 +197,20 @@
 
         /* --- Progress Bar --- */
         .progress-container {
-            margin-bottom: 20px;
-            background: white;
+            margin-bottom: 15px;
+            background: rgba(255,255,255,0.6);
             padding: 10px;
             border-radius: 15px;
-            border: 1px solid #eee;
+            border: 1px solid rgba(0,0,0,0.05);
         }
         .progress {
-            height: 30px;
+            height: 24px;
             border-radius: 20px;
-            background-color: #e9ecef;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+            background-color: rgba(0,0,0,0.05);
         }
         .progress-bar {
-            font-size: 18px;
-            line-height: 30px;
+            font-size: 16px;
+            line-height: 24px;
             font-weight: bold;
         }
 
@@ -160,26 +234,22 @@
             border-bottom: 2px solid #f0f0f0;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start; /* Align top specifically for multi-line title */
             z-index: 10;
         }
         .overlay-header-content {
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow: visible; /* Allow text wrap */
+            flex-grow: 1;
+            padding-right: 10px;
         }
         .overlay-header-title {
-            font-size: 20px; 
+            font-size: 26px; /* Increased Size */
             color: var(--header-text); 
             font-weight: bold;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 250px;
-        }
-        .overlay-header-subtitle {
-            font-size: 14px;
-            color: #666;
+            white-space: normal; /* Allow wrap */
+            line-height: 1.3;
         }
         
         .close-btn {
@@ -192,12 +262,13 @@
             display: flex; align-items: center; justify-content: center;
             cursor: pointer;
             flex-shrink: 0;
+            margin-top: 5px;
         }
         .close-btn:hover { background: #ddd; }
 
         .overlay-content {
             flex-grow: 1;
-            padding: 25px 20px;
+            padding: 20px 15px;
             max-width: 800px;
             margin: 0 auto;
             width: 100%;
@@ -220,10 +291,10 @@
         .lesson-image-container {
             position: relative;
             width: 100%;
-            border-radius: 20px;
+            border-radius: 15px;
             overflow: hidden;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             background: #eee;
             cursor: zoom-in;
         }
@@ -240,24 +311,24 @@
             position: absolute;
             top: 15px;
             right: 15px;
-            background: rgba(255, 255, 255, 0.95);
-            color: #06c755; /* LINE Green */
-            border: 2px solid #06c755;
-            padding: 8px 15px;
+            background: #06c755; /* Solid LINE Green */
+            color: white;
+            border: none;
+            padding: 8px 18px;
             border-radius: 50px;
             font-size: 18px;
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            display: inline-flex; align-items: center; gap: 5px;
+            display: inline-flex; align-items: center; gap: 6px;
             z-index: 5;
         }
-        .share-badge:active { transform: scale(0.95); }
+        .share-badge:active { transform: scale(0.95); background: #05b54d; }
 
         .status-badge {
             padding: 5px 12px;
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
             display: inline-flex; align-items: center; gap: 5px;
             margin-top: 5px;
@@ -266,7 +337,6 @@
             background-color: #198754;
             color: white;
             border: 1px solid #198754;
-            box-shadow: 0 2px 4px rgba(25, 135, 84, 0.3);
         }
         .status-badge.pending {
             background-color: #f8f9fa;
@@ -345,10 +415,11 @@
         /* --- Footer --- */
         .app-footer {
             text-align: center;
-            color: #666;
-            font-size: 16px;
-            margin-top: 30px;
+            color: #555;
+            font-size: 14px;
+            margin-top: 10px;
             font-weight: 500;
+            line-height: 1.2;
         }
         
         /* --- Loader --- */
@@ -363,7 +434,7 @@
         }
         .loader-container {
             text-align: center;
-            padding: 40px;
+            padding: 20px;
             font-size: 20px;
             color: #666;
         }
@@ -378,31 +449,31 @@
 
     <div class="container" style="max-width: 650px;">
         <!-- Header -->
-        <h1 class="app-title">สวีรู้ทันสโตรก</h1>
+        <h1 class="app-title">คลังความรู้ สวีรู้ทันสโตรก</h1>
 
         <!-- Main Card -->
         <div class="main-card">
             
-            <!-- User Info -->
-            <div class="text-center mb-4" style="min-height: 60px;">
+            <!-- User Info (Reduced Space) -->
+            <div class="text-center mb-3">
                 <div id="userLoading" class="loader-container" style="padding:10px;">
                     กำลังโหลดข้อมูลผู้ใช้...
                 </div>
                 <div id="userInfo" style="display:none;">
-                    <h2 class="fw-bold m-0" style="color: var(--header-text);" id="userNameDisplay">สวัสดี</h2>
+                    <h2 class="fw-bold m-0" style="color: var(--header-text); line-height: 1.2;" id="userNameDisplay">สวัสดี</h2>
                 </div>
             </div>
 
             <!-- Menu Buttons -->
-            <div class="d-grid gap-4">
+            <div class="d-grid gap-3">
                 
-                <!-- Lesson Card -->
-                <div class="section-card">
-                    <div class="section-title"><i class="bi bi-book-half"></i> บทเรียนรู้ทันสโตรก</div>
+                <!-- Lesson Card (Green Gradient) -->
+                <div class="section-card card-green-gradient">
+                    <div class="section-title"><i class="bi bi-book-half" style="color: #2e7d32;"></i> บทเรียนรู้ทันสโตรก</div>
                     
                     <!-- Progress Bar -->
                     <div class="progress-container">
-                        <div class="d-flex justify-content-between mb-1" style="font-size:18px;">
+                        <div class="d-flex justify-content-between mb-1" style="font-size:16px;">
                             <span>ความคืบหน้า</span>
                             <span id="progressText">0%</span>
                         </div>
@@ -420,30 +491,47 @@
                     <div id="lessonLoadError" class="text-danger mt-2 text-center" style="display:none;">โหลดข้อมูลไม่สำเร็จ กรุณารีเฟรช</div>
                 </div>
 
-                <!-- Exam Card -->
-                <div class="section-card">
-                    <div class="section-title"><i class="bi bi-clipboard-check"></i> แบบทดสอบวัดผล</div>
+                <!-- Video Card (Blue Gradient) - Custom Player List -->
+                <div class="section-card card-blue-gradient">
+                    <div class="section-title"><i class="bi bi-youtube" style="color: #ff0000;"></i> สื่อวิดีโอเรื่องสโตรก</div>
+                    <p class="section-desc">รวมคลิปความรู้เรื่องสโตรกและการดูแลตัวเองจากผู้เชี่ยวชาญ</p>
+                    
+                    <!-- Main Player -->
+                    <div class="video-player-wrapper ratio ratio-16x9">
+                        <iframe id="mainVideoPlayer" src="" title="YouTube video player" allowfullscreen></iframe>
+                    </div>
+
+                    <!-- Scrollable Playlist -->
+                    <div class="video-list-container" id="videoPlaylist">
+                        <!-- JS will populate this -->
+                        <div class="text-center p-3 text-muted">กำลังโหลดรายการวิดีโอ...</div>
+                    </div>
+                </div>
+
+                <!-- Exam Card (Orange Gradient) -->
+                <div class="section-card card-orange-gradient">
+                    <div class="section-title"><i class="bi bi-clipboard-check" style="color: #ef6c00;"></i> แบบทดสอบวัดผล</div>
                     <p class="section-desc">ทดสอบความรู้รวม 10 ข้อ (10 คะแนน)</p>
                     <button class="btn btn-custom btn-blue" onclick="startMainExam()">
-                        <i class="bi bi-pencil-square" style="font-size: 26px;"></i> เริ่มทำแบบทดสอบ
+                        <i class="bi bi-pencil-square" style="font-size: 24px;"></i> เริ่มทำแบบทดสอบ
                     </button>
                 </div>
-            </div>
-
-            <!-- History -->
-            <div class="mt-5">
-                <h3 class="fw-bold pb-2 border-bottom" style="color: var(--header-text); font-size: 24px;">ประวัติคะแนนสอบ</h3>
-                <div id="scoreHistory" style="font-size: 20px; min-height: 50px;">
-                    <div class="text-center text-muted py-3">กำลังโหลดประวัติ...</div>
+                
+                <!-- History Card (Yellow Gradient) -->
+                <div class="section-card card-yellow-gradient mt-2">
+                    <div class="section-title"><i class="bi bi-clock-history" style="color: #fbc02d;"></i> ประวัติคะแนนสอบ</div>
+                    <div id="scoreHistory" style="font-size: 20px; min-height: 50px;">
+                        <div class="text-center text-muted py-3">กำลังโหลดประวัติ...</div>
+                    </div>
                 </div>
+
             </div>
 
         </div> 
 
-        <!-- Footer -->
+        <!-- Footer (Minimized) -->
         <div class="app-footer">
-            &copy; 2024 โรงพยาบาลสวี<br>
-            ร่วมสร้างสรรค์สังคมสุขภาพดี
+            จัดทำโดย สวีรู้ทันสโตรก รพ.สวี จ.ชุมพร
         </div>
     </div>
 
@@ -514,9 +602,20 @@
         let synth = window.speechSynthesis;
         let availableVoices = [];
 
+        // --- Video Playlist Data ---
+        const strokeVideos = [
+            { id: 'O7MRB-dXjEc', title: 'วิธีสังเกตอาการโรคหลอดเลือดสมอง (FAST) - รพ.บำรุงราษฎร์' },
+            { id: 'AdSLYKZh1hk', title: 'โรคหลอดเลือดสมอง รู้เร็ว รักษาทัน - RAMA Channel' },
+            { id: 'G6Z9cHqT4Tc', title: 'ผักพื้นบ้านต้านโรคหลอดเลือดสมอง - Thai PBS' },
+            { id: 'm50O1bgnHWk', title: 'กายภาพบำบัดสำหรับผู้ป่วยโรคหลอดเลือดสมอง' },
+            { id: 'PC-d46v1rpo', title: 'เข้าใจและป้องกันหลอดเลือดสมองตีบ - รพ.บำรุงราษฎร์' },
+            { id: 'xqgDboazJjE', title: 'เมนูป้องกันโรคหลอดเลือดสมองอุดตัน - Chef Table' }
+        ];
+
         // Auto Start
         $(document).ready(async () => {
-            initTTS(); // Warm up TTS
+            initTTS(); 
+            initVideoPlayer(); // Init Video Player
             await initLiff();
         });
 
@@ -537,6 +636,44 @@
             } catch (e) {
                 console.error(e);
                 $('#userLoading').html('<div class="text-danger">เกิดข้อผิดพลาดในการเชื่อมต่อ<br>กรุณาลองใหม่</div>');
+            }
+        }
+
+        // --- Video Player Logic ---
+        function initVideoPlayer() {
+            renderPlaylist();
+            // Load first video without autoplay to save data on load
+            const firstVid = strokeVideos[0];
+            $('#mainVideoPlayer').attr('src', `https://www.youtube.com/embed/${firstVid.id}`);
+        }
+
+        function renderPlaylist() {
+            const container = $('#videoPlaylist');
+            container.empty();
+            strokeVideos.forEach((v, index) => {
+                const thumb = `https://img.youtube.com/vi/${v.id}/mqdefault.jpg`;
+                const activeClass = index === 0 ? 'active' : '';
+                const html = `
+                    <div class="video-item ${activeClass}" onclick="playVideo('${v.id}', this)">
+                        <img src="${thumb}" class="video-thumb" onerror="this.src='https://via.placeholder.com/110x62?text=No+Img'">
+                        <div class="video-info">
+                            <div class="video-title">${v.title}</div>
+                        </div>
+                    </div>
+                `;
+                container.append(html);
+            });
+        }
+
+        function playVideo(id, el) {
+            // Update Player with Autoplay
+            const url = `https://www.youtube.com/embed/${id}?autoplay=1`;
+            $('#mainVideoPlayer').attr('src', url);
+
+            // Update Active UI
+            if (el) {
+                $('.video-item').removeClass('active');
+                $(el).addClass('active');
             }
         }
 
@@ -598,18 +735,18 @@
                 data: { action: 'get_score', userId: userProfile.userId },
                 success: function(res) {
                     let html = '';
-                    if(!res.pre && !res.post) html = '<div class="text-center text-muted py-3">- ยังไม่มีประวัติการสอบ -</div>';
+                    if(!res.pre && !res.post) html = '<div class="text-center text-muted py-3" style="font-size:16px;">- ยังไม่มีประวัติการสอบ -</div>';
                     
                     if(res.pre) {
-                        html += `<div class="d-flex justify-content-between align-items-center mb-3 p-3 bg-light rounded shadow-sm border">
-                            <div><span class="badge bg-warning text-dark badge-history me-2">ก่อนเรียน</span> <span style="color:#555;">${res.pre.date}</span></div>
-                            <span class="fw-bold text-primary" style="font-size:22px;">${res.pre.score} คะแนน</span>
+                        html += `<div class="d-flex justify-content-between align-items-center mb-2 p-3 bg-white rounded shadow-sm border">
+                            <div><span class="badge bg-warning text-dark badge-history me-2">ก่อนเรียน</span> <span style="color:#555; font-size:16px;">${res.pre.date}</span></div>
+                            <span class="fw-bold text-primary" style="font-size:20px;">${res.pre.score} คะแนน</span>
                         </div>`;
                     }
                     if(res.post) {
-                        html += `<div class="d-flex justify-content-between align-items-center mb-3 p-3 bg-light rounded shadow-sm border">
-                            <div><span class="badge bg-success badge-history me-2">หลังเรียน</span> <span style="color:#555;">${res.post.date}</span></div>
-                            <span class="fw-bold text-primary" style="font-size:22px;">${res.post.score} คะแนน</span>
+                        html += `<div class="d-flex justify-content-between align-items-center mb-2 p-3 bg-white rounded shadow-sm border">
+                            <div><span class="badge bg-success badge-history me-2">หลังเรียน</span> <span style="color:#555; font-size:16px;">${res.post.date}</span></div>
+                            <span class="fw-bold text-primary" style="font-size:20px;">${res.post.score} คะแนน</span>
                         </div>`;
                     }
                     $('#scoreHistory').html(html);
@@ -646,7 +783,6 @@
         function renderLesson(index) {
             const lesson = lessonsData[index];
             const lessonNum = index + 1;
-            // Level สำหรับดึง Quiz ต้องเป็น lesson1, lesson2 ... ตามโจทย์
             const quizLevel = 'lesson' + lessonNum;
             const isCompleted = completedLessons.has(quizLevel);
 
@@ -658,7 +794,7 @@
                 badgeHtml = `<div class="status-badge pending"><i class="bi bi-circle"></i> ยังไม่เรียน</div>`;
             }
             
-            // อัปเดต Header แบบมีชื่อบทเรียนด้วย
+            // อัปเดต Header
             $('#lessonHeaderTitle').text(`บทที่ ${lessonNum}: ${lesson.title}`);
             $('#lessonHeaderBadge').html(badgeHtml);
             
@@ -668,7 +804,7 @@
             let contentHtml = `
                 <div class="lesson-image-container" onclick="zoomImage('${lesson.images}')">
                     <img src="${lesson.images}" class="lesson-img" onerror="this.src='https://via.placeholder.com/600x400?text=No+Image'">
-                    <!-- Floating Share Button -->
+                    <!-- Floating Share Button (Updated) -->
                     <div class="share-badge" onclick="event.stopPropagation(); shareImage('${lesson.images}')">
                         <i class="bi bi-line"></i> แชร์
                     </div>
@@ -703,7 +839,6 @@
             $('#lessonContentArea').html(contentHtml);
             $('#lessonContentArea').scrollTop(0);
             
-            // Load Quiz with specific level format (lessonX)
             loadInlineQuiz(index, quizLevel);
             updateNavButtons();
         }
@@ -741,7 +876,7 @@
             text = unescape(text);
 
             if (!('speechSynthesis' in window)) {
-                return; // Fail silently or show subtle UI, user already warned by text
+                return;
             }
 
             if (synth.speaking) {
